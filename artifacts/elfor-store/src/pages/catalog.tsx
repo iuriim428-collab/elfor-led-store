@@ -1,10 +1,16 @@
 import { useListProducts, useListCategories } from "@workspace/api-client-react";
 import { Link, useSearch } from "wouter";
-import { ArrowRight, Search, SlidersHorizontal } from "lucide-react";
+import { ArrowRight, Search, Download, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+
+interface CatalogInfo {
+  objectPath: string | null;
+  filename: string | null;
+}
 
 export default function Catalog() {
   const [searchParams] = useSearch();
@@ -22,6 +28,11 @@ export default function Catalog() {
     search: search || undefined,
     categoryId: selectedCategory,
   });
+  const { data: catalog } = useQuery<CatalogInfo>({
+    queryKey: ["catalog"],
+    queryFn: async () => (await fetch("/api/catalog")).json(),
+    staleTime: 5 * 60 * 1000,
+  });
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -32,7 +43,21 @@ export default function Catalog() {
         <span className="text-primary">Каталог</span>
       </div>
 
-      <h1 className="text-4xl font-serif font-black uppercase mb-8">Каталог</h1>
+      <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
+        <h1 className="text-4xl font-serif font-black uppercase">Каталог</h1>
+        {catalog?.objectPath && (
+          <a
+            href={`/api/storage${catalog.objectPath}`}
+            download={catalog.filename ?? "ELFOR-catalog.pdf"}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-5 py-3 bg-primary text-primary-foreground font-bold text-sm uppercase tracking-wider hover:bg-accent transition-colors"
+          >
+            <Download className="h-4 w-4" />
+            Скачать каталог PDF
+          </a>
+        )}
+      </div>
 
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Sidebar */}
