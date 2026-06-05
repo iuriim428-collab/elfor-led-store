@@ -40,7 +40,7 @@ export default function ProductDetail() {
   const activeAngle = selectedAngle ?? (beamAngles[0] || null);
 
   const handleAddToCart = () => {
-    addItem(product, quantity);
+    addItem(product, quantity, activeKelvin, activeAngle);
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };

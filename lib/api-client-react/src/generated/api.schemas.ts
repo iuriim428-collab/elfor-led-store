@@ -232,6 +232,10 @@ export interface OrderItem {
   productSku: string;
   quantity: number;
   unitPrice: number;
+  /** @nullable */
+  selectedKelvin?: string | null;
+  /** @nullable */
+  selectedAngle?: string | null;
 }
 
 export type OrderStatus = typeof OrderStatus[keyof typeof OrderStatus];

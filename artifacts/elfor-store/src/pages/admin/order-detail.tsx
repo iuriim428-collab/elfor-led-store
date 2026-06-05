@@ -45,16 +45,33 @@ export default function AdminOrderDetail() {
             
             <div className="flex flex-col gap-4 font-mono text-sm">
               {order.items.map((item, i) => (
-                <div key={i} className="flex justify-between items-center pb-4 border-b border-border/50 last:border-0 last:pb-0">
-                  <div className="flex-1">
-                    <div className="text-xs text-muted-foreground mb-1">{item.productSku}</div>
-                    <Link href={`/catalog/${item.productId}`} className="font-bold hover:text-accent" target="_blank">
-                      {item.productName}
-                    </Link>
-                  </div>
-                  <div className="text-right ml-4">
-                    <div className="whitespace-nowrap">{item.quantity} шт × {item.unitPrice.toLocaleString("ru-RU")} ₽</div>
-                    <div className="font-bold mt-1">{(item.quantity * item.unitPrice).toLocaleString("ru-RU")} ₽</div>
+                <div key={i} className="pb-4 border-b border-border/50 last:border-0 last:pb-0">
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <div className="text-xs text-muted-foreground mb-1">{item.productSku}</div>
+                      <Link href={`/catalog/${item.productId}`} className="font-bold hover:text-accent" target="_blank">
+                        {item.productName}
+                      </Link>
+                      {/* Selected options */}
+                      {(item.selectedKelvin || item.selectedAngle) && (
+                        <div className="flex gap-2 mt-2 flex-wrap">
+                          {item.selectedKelvin && (
+                            <span className="px-2 py-0.5 border border-border text-[10px] font-bold uppercase bg-primary text-primary-foreground">
+                              ЦТ: {item.selectedKelvin}
+                            </span>
+                          )}
+                          {item.selectedAngle && (
+                            <span className="px-2 py-0.5 border border-border text-[10px] font-bold uppercase bg-primary text-primary-foreground">
+                              Угол: {item.selectedAngle}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                    <div className="text-right ml-4 shrink-0">
+                      <div className="whitespace-nowrap">{item.quantity} шт × {item.unitPrice.toLocaleString("ru-RU")} ₽</div>
+                      <div className="font-bold mt-1">{(item.quantity * item.unitPrice).toLocaleString("ru-RU")} ₽</div>
+                    </div>
                   </div>
                 </div>
               ))}

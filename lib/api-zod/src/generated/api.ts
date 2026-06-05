@@ -494,7 +494,9 @@ export const ListOrdersResponseItem = zod.object({
   "productName": zod.string(),
   "productSku": zod.string(),
   "quantity": zod.number(),
-  "unitPrice": zod.number()
+  "unitPrice": zod.number(),
+  "selectedKelvin": zod.string().nullish(),
+  "selectedAngle": zod.string().nullish()
 })),
   "createdAt": zod.string(),
   "updatedAt": zod.string().optional()
@@ -522,7 +524,9 @@ export const CreateOrderBody = zod.object({
   "productName": zod.string(),
   "productSku": zod.string(),
   "quantity": zod.number(),
-  "unitPrice": zod.number()
+  "unitPrice": zod.number(),
+  "selectedKelvin": zod.string().nullish(),
+  "selectedAngle": zod.string().nullish()
 }))
 })
 
@@ -549,7 +553,9 @@ export const GetOrderResponse = zod.object({
   "productName": zod.string(),
   "productSku": zod.string(),
   "quantity": zod.number(),
-  "unitPrice": zod.number()
+  "unitPrice": zod.number(),
+  "selectedKelvin": zod.string().nullish(),
+  "selectedAngle": zod.string().nullish()
 })),
   "createdAt": zod.string(),
   "updatedAt": zod.string().optional()
@@ -583,7 +589,9 @@ export const UpdateOrderResponse = zod.object({
   "productName": zod.string(),
   "productSku": zod.string(),
   "quantity": zod.number(),
-  "unitPrice": zod.number()
+  "unitPrice": zod.number(),
+  "selectedKelvin": zod.string().nullish(),
+  "selectedAngle": zod.string().nullish()
 })),
   "createdAt": zod.string(),
   "updatedAt": zod.string().optional()
@@ -615,7 +623,9 @@ export const GetDashboardStatsResponse = zod.object({
   "productName": zod.string(),
   "productSku": zod.string(),
   "quantity": zod.number(),
-  "unitPrice": zod.number()
+  "unitPrice": zod.number(),
+  "selectedKelvin": zod.string().nullish(),
+  "selectedAngle": zod.string().nullish()
 })),
   "createdAt": zod.string(),
   "updatedAt": zod.string().optional()

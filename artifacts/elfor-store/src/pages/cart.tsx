@@ -36,7 +36,9 @@ export default function Cart() {
           productName: item.product.name,
           productSku: item.product.sku,
           quantity: item.quantity,
-          unitPrice: item.product.price // Simplified, ideally we'd pass the calculated tier price
+          unitPrice: item.product.price,
+          selectedKelvin: item.selectedKelvin ?? undefined,
+          selectedAngle: item.selectedAngle ?? undefined,
         }))
       }
     }, {
@@ -76,7 +78,7 @@ export default function Cart() {
             
             <div className="flex flex-col gap-6">
               {items.map((item) => (
-                <div key={item.product.id} className="flex flex-col sm:flex-row gap-6 border-b border-border/50 pb-6 last:border-0 last:pb-0">
+                <div key={item.cartKey} className="flex flex-col sm:flex-row gap-6 border-b border-border/50 pb-6 last:border-0 last:pb-0">
                   <div className="w-24 h-24 border border-border bg-white flex items-center justify-center shrink-0 p-2">
                     {item.product.imageUrl ? (
                       <img src={item.product.imageUrl} alt={item.product.name} className="max-w-full max-h-full object-contain" />
@@ -90,16 +92,31 @@ export default function Cart() {
                     <Link href={`/catalog/${item.product.id}`} className="font-serif font-bold text-sm uppercase hover:text-accent transition-colors mb-2">
                       {item.product.name}
                     </Link>
+                    {/* Selected options */}
+                    {(item.selectedKelvin || item.selectedAngle) && (
+                      <div className="flex gap-2 flex-wrap mb-2">
+                        {item.selectedKelvin && (
+                          <span className="px-2 py-0.5 border border-border font-mono text-[10px] font-bold uppercase bg-primary text-primary-foreground">
+                            {item.selectedKelvin}
+                          </span>
+                        )}
+                        {item.selectedAngle && (
+                          <span className="px-2 py-0.5 border border-border font-mono text-[10px] font-bold uppercase bg-primary text-primary-foreground">
+                            {item.selectedAngle}
+                          </span>
+                        )}
+                      </div>
+                    )}
                     <div className="font-mono font-bold">{item.product.price.toLocaleString("ru-RU")} ₽/шт</div>
                   </div>
 
                   <div className="flex items-center gap-4 sm:flex-col sm:items-end justify-between">
                     <div className="flex items-center">
-                      <Button variant="outline" className="h-8 w-8 p-0 rounded-none border-border" onClick={() => updateQuantity(item.product.id, Math.max(1, item.quantity - 1))}>-</Button>
-                      <Input type="number" value={item.quantity} onChange={(e) => updateQuantity(item.product.id, Math.max(1, parseInt(e.target.value) || 1))} className="h-8 w-16 rounded-none border-x-0 border-border text-center font-mono text-sm px-1 focus-visible:ring-0" />
-                      <Button variant="outline" className="h-8 w-8 p-0 rounded-none border-border" onClick={() => updateQuantity(item.product.id, item.quantity + 1)}>+</Button>
+                      <Button variant="outline" className="h-8 w-8 p-0 rounded-none border-border" onClick={() => updateQuantity(item.cartKey, Math.max(1, item.quantity - 1))}>-</Button>
+                      <Input type="number" value={item.quantity} onChange={(e) => updateQuantity(item.cartKey, Math.max(1, parseInt(e.target.value) || 1))} className="h-8 w-16 rounded-none border-x-0 border-border text-center font-mono text-sm px-1 focus-visible:ring-0" />
+                      <Button variant="outline" className="h-8 w-8 p-0 rounded-none border-border" onClick={() => updateQuantity(item.cartKey, item.quantity + 1)}>+</Button>
                     </div>
-                    <Button variant="ghost" size="sm" className="h-8 px-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-none" onClick={() => removeItem(item.product.id)}>
+                    <Button variant="ghost" size="sm" className="h-8 px-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-none" onClick={() => removeItem(item.cartKey)}>
                       <Trash2 className="h-4 w-4 mr-2" /> Удалить
                     </Button>
                   </div>

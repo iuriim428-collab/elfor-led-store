@@ -48,7 +48,7 @@ router.post("/orders", async (req, res): Promise<void> => {
     res.status(400).json({ error: parsed.error.message });
     return;
   }
-  const items = parsed.data.items as Array<{ productId: number; productName: string; productSku: string; quantity: number; unitPrice: number }>;
+  const items = parsed.data.items;
   const totalAmount = items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
   const [row] = await db
     .insert(ordersTable)
