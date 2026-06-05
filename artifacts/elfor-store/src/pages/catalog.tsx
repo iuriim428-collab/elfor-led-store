@@ -1,11 +1,19 @@
 import { useListProducts, useListCategories } from "@workspace/api-client-react";
 import { Link, useSearch } from "wouter";
-import { ArrowRight, Search, Download, SlidersHorizontal } from "lucide-react";
+import { ArrowRight, Search, Download, SlidersHorizontal, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 
 interface CatalogInfo {
   objectPath: string | null;
@@ -23,6 +31,12 @@ export default function Catalog() {
     categoryIdParam ? parseInt(categoryIdParam) : undefined
   );
 
+  const [modalOpen, setModalOpen] = useState(false);
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const { data: categories = [] } = useListCategories();
   const { data: products = [], isLoading } = useListProducts({
     search: search || undefined,
@@ -33,6 +47,42 @@ export default function Catalog() {
     queryFn: async () => (await fetch("/api/catalog")).json(),
     staleTime: 5 * 60 * 1000,
   });
+
+  async function handleDownloadSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    if (!phone.trim() || phone.trim().length < 6) {
+      setError("Укажите телефон");
+      return;
+    }
+    if (!email.trim() || !email.includes("@")) {
+      setError("Укажите корректный email");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      await fetch("/api/catalog-leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone: phone.trim(), email: email.trim() }),
+      });
+    } catch {
+    } finally {
+      setSubmitting(false);
+    }
+    setModalOpen(false);
+    setPhone("");
+    setEmail("");
+    if (catalog?.objectPath) {
+      const link = document.createElement("a");
+      link.href = `/api/storage${catalog.objectPath}`;
+      link.download = catalog.filename ?? "ELFOR-catalog.pdf";
+      link.target = "_blank";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -46,18 +96,95 @@ export default function Catalog() {
       <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
         <h1 className="text-4xl font-serif font-black uppercase">Каталог</h1>
         {catalog?.objectPath && (
-          <a
-            href={`/api/storage${catalog.objectPath}`}
-            download={catalog.filename ?? "ELFOR-catalog.pdf"}
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            onClick={() => setModalOpen(true)}
             className="inline-flex items-center gap-2 px-5 py-3 bg-primary text-primary-foreground font-bold text-sm uppercase tracking-wider hover:bg-accent transition-colors"
           >
             <Download className="h-4 w-4" />
             Скачать каталог PDF
-          </a>
+          </button>
         )}
       </div>
+
+      {/* Download Modal */}
+      <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+        <DialogContent className="rounded-none border border-border bg-background max-w-md p-0 overflow-hidden">
+          <div className="bg-primary text-primary-foreground px-6 py-5">
+            <DialogHeader>
+              <DialogTitle className="font-serif font-black text-xl uppercase tracking-tight">
+                Скачать каталог PDF
+              </DialogTitle>
+              <DialogDescription className="text-primary-foreground/70 font-mono text-sm mt-1">
+                Оставьте контакты — мы пришлём обновления каталога на ваш email
+              </DialogDescription>
+            </DialogHeader>
+          </div>
+
+          <form onSubmit={handleDownloadSubmit} className="px-6 py-6 flex flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="lead-phone" className="font-mono text-xs uppercase tracking-wider">
+                Телефон <span className="text-accent">*</span>
+              </Label>
+              <Input
+                id="lead-phone"
+                type="tel"
+                placeholder="+7 (999) 000-00-00"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="rounded-none border-border font-mono h-12"
+                required
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="lead-email" className="font-mono text-xs uppercase tracking-wider">
+                Email <span className="text-accent">*</span>
+              </Label>
+              <Input
+                id="lead-email"
+                type="email"
+                placeholder="example@company.ru"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="rounded-none border-border font-mono h-12"
+                required
+              />
+            </div>
+
+            {error && (
+              <p className="text-sm font-mono text-red-600">{error}</p>
+            )}
+
+            <div className="flex gap-3 pt-2">
+              <Button
+                type="submit"
+                disabled={submitting}
+                className="flex-1 rounded-none bg-accent text-white hover:bg-accent/90 font-bold uppercase tracking-wider h-12 gap-2"
+              >
+                {submitting ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Download className="h-4 w-4" />
+                )}
+                Скачать
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setModalOpen(false)}
+                className="rounded-none border-border font-bold uppercase tracking-wider h-12 px-6"
+              >
+                Отмена
+              </Button>
+            </div>
+
+            <p className="text-xs font-mono text-muted-foreground text-center leading-relaxed">
+              Нажимая «Скачать», вы соглашаетесь с&nbsp;
+              <Link href="/privacy" className="underline hover:text-primary">политикой конфиденциальности</Link>
+            </p>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Sidebar */}

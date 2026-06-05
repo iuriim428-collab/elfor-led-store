@@ -1,24 +1,12 @@
 import { useListFeaturedProducts, useListCategories, useListArticles } from "@workspace/api-client-react";
 import { Link } from "wouter";
-import { ArrowRight, Zap, Shield, Factory, Award, Download } from "lucide-react";
+import { ArrowRight, Zap, Shield, Factory, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useQuery } from "@tanstack/react-query";
-
-interface CatalogInfo {
-  objectPath: string | null;
-  filename: string | null;
-  updatedAt: string | null;
-}
 
 export default function Home() {
   const { data: featuredProducts = [], isLoading: isLoadingProducts } = useListFeaturedProducts();
   const { data: categories = [] } = useListCategories();
   const { data: articles = [] } = useListArticles({ type: "news", limit: 3, published: true });
-  const { data: catalog } = useQuery<CatalogInfo>({
-    queryKey: ["catalog"],
-    queryFn: async () => (await fetch("/api/catalog")).json(),
-    staleTime: 5 * 60 * 1000,
-  });
 
   return (
     <div className="flex flex-col">
@@ -46,19 +34,7 @@ export default function Home() {
                   О компании
                 </Button>
               </Link>
-              {catalog?.objectPath && (
-                <a
-                  href={`/api/storage${catalog.objectPath}`}
-                  download={catalog.filename ?? "ELFOR-catalog.pdf"}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Button size="lg" variant="outline" className="border-primary-foreground/40 text-primary-foreground/80 hover:bg-primary-foreground/10 rounded-none font-bold uppercase tracking-wider text-sm h-14 px-8 gap-2">
-                    <Download className="h-4 w-4" />
-                    Скачать каталог PDF
-                  </Button>
-                </a>
-              )}
+
             </div>
           </div>
         </div>
