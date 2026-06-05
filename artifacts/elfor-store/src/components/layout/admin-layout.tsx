@@ -1,0 +1,74 @@
+import { Link, useLocation } from "wouter";
+import { LayoutDashboard, Package, FolderTree, ShoppingBag, FileText, LogOut } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+export function AdminLayout({ children }: { children: React.ReactNode }) {
+  const [location] = useLocation();
+
+  const navigation = [
+    { name: "Дашборд", href: "/admin", icon: LayoutDashboard, exact: true },
+    { name: "Заказы", href: "/admin/orders", icon: ShoppingBag },
+    { name: "Товары", href: "/admin/products", icon: Package },
+    { name: "Категории", href: "/admin/categories", icon: FolderTree },
+    { name: "Статьи", href: "/admin/articles", icon: FileText },
+  ];
+
+  return (
+    <div className="min-h-screen bg-background flex">
+      {/* Sidebar */}
+      <aside className="w-64 bg-primary text-primary-foreground border-r border-border flex flex-col fixed h-full z-10">
+        <div className="h-20 flex items-center px-6 border-b border-primary-foreground/10">
+          <Link href="/admin" className="font-serif font-black text-xl tracking-tighter text-white">
+            ELFOR ADMIN
+          </Link>
+        </div>
+        
+        <nav className="flex-1 py-6 px-4 flex flex-col gap-2 overflow-y-auto">
+          {navigation.map((item) => {
+            const isActive = item.exact 
+              ? location === item.href 
+              : location.startsWith(item.href);
+              
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "flex items-center gap-3 px-4 py-3 text-sm font-semibold transition-colors",
+                  isActive 
+                    ? "bg-accent text-white" 
+                    : "text-primary-foreground/70 hover:text-white hover:bg-primary-foreground/5"
+                )}
+              >
+                <item.icon className="h-5 w-5" />
+                {item.name}
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div className="p-4 border-t border-primary-foreground/10">
+          <Link
+            href="/"
+            className="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-primary-foreground/70 hover:text-white transition-colors"
+          >
+            <LogOut className="h-5 w-5" />
+            В магазин
+          </Link>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 ml-64 flex flex-col min-h-screen">
+        <header className="h-20 bg-background border-b border-border flex items-center px-8 sticky top-0 z-10">
+          <h1 className="text-xl font-serif font-bold uppercase tracking-wider">
+            {navigation.find(item => item.exact ? location === item.href : location.startsWith(item.href))?.name || "Панель управления"}
+          </h1>
+        </header>
+        <div className="p-8 flex-1">
+          {children}
+        </div>
+      </main>
+    </div>
+  );
+}

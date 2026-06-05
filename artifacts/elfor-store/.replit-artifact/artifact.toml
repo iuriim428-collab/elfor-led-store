@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "ЭЛФОР — LED интернет-магазин"
+version = "1.0.0"
+id = "artifacts/elfor-store"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 18113
+
+[services.development]
+run = "pnpm --filter @workspace/elfor-store run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/elfor-store", "run", "build" ]
+publicDir = "artifacts/elfor-store/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "18113"
+BASE_PATH = "/"

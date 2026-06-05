@@ -1,0 +1,1855 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L4U10 — Промышленный светильник UFO 100Вт, 17 000 лм | ЭЛФОР</title>
+<meta name="description" content="Светодиодный подвесной светильник L4U10 для цехов и складов. 200 лм/Вт, IP65, гарантия 5 лет. Цена 10 300 ₽. Производство Россия.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Manrope:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --bg: #F4F1EA;
+    --cream: #D4CEBC;
+    --cream-dark: #BFB8A2;
+    --dark: #2B2D2B;
+    --dark-soft: #3A3D3A;
+    --accent: #E8500B;
+    --accent-soft: #F47536;
+    --line: #2B2D2B;
+    --muted: #6B6E6B;
+    --success: #4A6B3A;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+    font-family: 'Manrope', sans-serif;
+    background: var(--bg);
+    color: var(--dark);
+    font-size: 16px;
+    line-height: 1.5;
+    overflow-x: hidden;
+}
+
+/* === ТОП-БАР === */
+.topbar {
+    background: var(--dark);
+    color: var(--cream);
+    font-size: 13px;
+    padding: 10px 0;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.02em;
+}
+.topbar-inner {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.topbar-left span { margin-right: 24px; opacity: 0.7; }
+.topbar-right a { color: var(--cream); text-decoration: none; margin-left: 20px; opacity: 0.8; transition: opacity .2s; }
+.topbar-right a:hover { opacity: 1; }
+
+/* === ХЕДЕР === */
+.header {
+    background: var(--bg);
+    border-bottom: 1px solid var(--dark);
+    padding: 20px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+    background: rgba(244, 241, 234, 0.95);
+}
+.header-inner {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+}
+.logo {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 800;
+    font-size: 26px;
+    letter-spacing: -0.02em;
+    color: var(--dark);
+    text-decoration: none;
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+.logo-mark {
+    display: inline-block;
+    width: 32px; height: 32px;
+    background: var(--dark);
+    border-radius: 50%;
+    margin-right: 8px;
+    position: relative;
+    align-self: center;
+}
+.logo-mark::after {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 12px rgba(232, 80, 11, 0.6);
+}
+.logo-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-left: 4px;
+}
+
+.nav {
+    display: flex;
+    gap: 28px;
+}
+.nav a {
+    color: var(--dark);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color .2s;
+    position: relative;
+}
+.nav a:hover { color: var(--accent); }
+.nav a.active::after {
+    content: '';
+    position: absolute;
+    bottom: -6px; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+}
+
+.header-actions { display: flex; gap: 12px; align-items: center; }
+.btn-ghost {
+    background: transparent;
+    border: 1px solid var(--dark);
+    color: var(--dark);
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    font-family: 'Manrope', sans-serif;
+    cursor: pointer;
+    transition: all .2s;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.btn-ghost:hover { background: var(--dark); color: var(--cream); }
+
+/* === ХЛЕБНЫЕ КРОШКИ === */
+.crumbs {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 24px 40px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+}
+.crumbs a { color: var(--muted); text-decoration: none; transition: color .2s; }
+.crumbs a:hover { color: var(--accent); }
+.crumbs .sep { margin: 0 8px; opacity: 0.5; }
+.crumbs .current { color: var(--dark); font-weight: 600; }
+
+/* === ЭКРАН 1: HERO === */
+.hero {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 40px 40px 80px;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 60px;
+    position: relative;
+}
+
+/* ГАЛЕРЕЯ */
+.gallery {
+    position: relative;
+}
+.gallery-main {
+    aspect-ratio: 4/3;
+    background: linear-gradient(135deg, var(--cream) 0%, var(--cream-dark) 100%);
+    border: 1px solid var(--dark);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.gallery-main::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+        radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.8) 0%, transparent 50%),
+        radial-gradient(circle at 30% 70%, rgba(43, 45, 43, 0.08) 0%, transparent 40%);
+}
+.gallery-main::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: 
+        repeating-linear-gradient(0deg, transparent 0px, transparent 20px, rgba(43, 45, 43, 0.03) 20px, rgba(43, 45, 43, 0.03) 21px),
+        repeating-linear-gradient(90deg, transparent 0px, transparent 20px, rgba(43, 45, 43, 0.03) 20px, rgba(43, 45, 43, 0.03) 21px);
+    pointer-events: none;
+}
+
+/* SVG UFO-светильник */
+.ufo-svg {
+    width: 70%;
+    max-width: 480px;
+    filter: drop-shadow(0 30px 40px rgba(43, 45, 43, 0.25));
+    position: relative;
+    z-index: 2;
+}
+
+.gallery-badge {
+    position: absolute;
+    top: 24px; left: 24px;
+    background: var(--dark);
+    color: var(--cream);
+    padding: 8px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    z-index: 3;
+}
+.gallery-badge.accent { background: var(--accent); color: white; top: 24px; left: auto; right: 24px; }
+
+.gallery-thumbs {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-top: 12px;
+}
+.thumb {
+    aspect-ratio: 1;
+    background: var(--cream);
+    border: 1px solid var(--dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all .2s;
+    position: relative;
+}
+.thumb:hover { transform: translateY(-2px); }
+.thumb.active { outline: 2px solid var(--accent); outline-offset: 2px; }
+.thumb svg { width: 50%; opacity: 0.5; }
+.thumb.active svg { opacity: 1; }
+
+.gallery-docs {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+}
+.doc-link {
+    flex: 1;
+    padding: 14px 18px;
+    border: 1px solid var(--dark);
+    text-decoration: none;
+    color: var(--dark);
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all .2s;
+    background: rgba(255, 255, 255, 0.5);
+}
+.doc-link:hover { background: var(--dark); color: var(--cream); }
+.doc-link .doc-icon {
+    width: 20px; height: 20px;
+    background: var(--accent);
+    color: white;
+    font-size: 9px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 0;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* ПОКУПКА */
+.purchase { display: flex; flex-direction: column; gap: 24px; }
+
+.sku {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+}
+
+.title-block h1 {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2.2rem, 4vw, 3.4rem);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    color: var(--dark);
+    margin: 8px 0 16px;
+}
+.title-block h1 .sub {
+    display: block;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 400;
+    font-size: 1rem;
+    color: var(--muted);
+    letter-spacing: 0;
+    margin-top: 14px;
+    line-height: 1.4;
+}
+
+.hook {
+    background: var(--dark);
+    color: var(--cream);
+    padding: 18px 22px;
+    font-size: 15px;
+    line-height: 1.5;
+    position: relative;
+    border-left: 4px solid var(--accent);
+}
+.hook strong { color: white; font-weight: 700; }
+
+.rating-row {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    font-size: 13px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+}
+.rating-row .stars { color: var(--accent); letter-spacing: 2px; }
+.rating-row .stock { color: var(--success); }
+.rating-row .stock::before { content: '● '; }
+
+/* ПРАЙС */
+.price-box {
+    background: white;
+    border: 1px solid var(--dark);
+    padding: 24px;
+    position: relative;
+}
+.price-box::before {
+    content: 'PRICE';
+    position: absolute;
+    top: -10px; left: 20px;
+    background: var(--bg);
+    padding: 0 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+}
+.price-main {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: var(--dark);
+    letter-spacing: -0.02em;
+    line-height: 1;
+}
+.price-main .currency {
+    font-size: 1.6rem;
+    color: var(--muted);
+    margin-left: 4px;
+    font-weight: 400;
+}
+.price-main .per {
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.9rem;
+    color: var(--muted);
+    font-weight: 400;
+    margin-left: 10px;
+    letter-spacing: 0;
+}
+.price-tiers {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px dashed var(--dark);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+.tier {
+    font-size: 12px;
+    line-height: 1.3;
+}
+.tier .qty {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 2px;
+}
+.tier .t-price {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--dark);
+}
+.tier .t-save {
+    color: var(--accent);
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+}
+
+/* ОПЦИИ */
+.options { display: flex; flex-direction: column; gap: 18px; }
+.option-group { }
+.option-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+.option-label .selected-val { color: var(--dark); font-weight: 700; }
+
+.opt-buttons { display: flex; gap: 8px; flex-wrap: wrap; }
+.opt {
+    padding: 10px 16px;
+    border: 1px solid var(--dark);
+    background: white;
+    font-family: 'Manrope', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .15s;
+    letter-spacing: 0.02em;
+}
+.opt:hover { background: var(--cream); }
+.opt.active {
+    background: var(--dark);
+    color: var(--cream);
+}
+.opt.color-opt {
+    width: 40px; height: 40px;
+    padding: 0;
+    position: relative;
+    border-radius: 50%;
+}
+.opt.color-opt.active {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+}
+.opt.color-opt.black { background: #1a1a1a; border-color: #1a1a1a; }
+.opt.color-opt.gray { background: #7a7a7a; border-color: #7a7a7a; }
+
+.temp-wrap { display: flex; gap: 0; }
+.temp {
+    flex: 1;
+    padding: 14px 8px;
+    border: 1px solid var(--dark);
+    margin-left: -1px;
+    cursor: pointer;
+    text-align: center;
+    background: white;
+    transition: all .15s;
+}
+.temp:first-child { margin-left: 0; }
+.temp:hover { background: var(--cream); }
+.temp.active {
+    background: var(--dark);
+    color: var(--cream);
+    position: relative;
+    z-index: 2;
+}
+.temp-k { font-family: 'Unbounded', sans-serif; font-weight: 700; font-size: 14px; display: block; }
+.temp-name { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.7; margin-top: 2px; font-family: 'JetBrains Mono', monospace; }
+
+/* КОЛИЧЕСТВО И КНОПКИ */
+.qty-cta-row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 12px;
+}
+.qty-box {
+    display: flex;
+    border: 1px solid var(--dark);
+    background: white;
+}
+.qty-btn {
+    flex: 0 0 44px;
+    background: transparent;
+    border: none;
+    border-right: 1px solid var(--dark);
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: 700;
+    transition: background .15s;
+    font-family: 'Unbounded', sans-serif;
+}
+.qty-btn:last-child { border-right: none; border-left: 1px solid var(--dark); }
+.qty-btn:hover { background: var(--cream); }
+.qty-input {
+    flex: 1;
+    border: none;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--dark);
+    background: transparent;
+    width: 100%;
+    outline: none;
+}
+
+.btn-primary {
+    background: var(--accent);
+    color: white;
+    border: 1px solid var(--accent);
+    padding: 16px 24px;
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    transition: all .2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+}
+.btn-primary:hover {
+    background: var(--dark);
+    border-color: var(--dark);
+}
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left .6s;
+}
+.btn-primary:hover::before { left: 100%; }
+
+.btn-secondary {
+    width: 100%;
+    background: transparent;
+    color: var(--dark);
+    border: 1px solid var(--dark);
+    padding: 14px 24px;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: all .2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.btn-secondary:hover { background: var(--dark); color: var(--cream); }
+
+/* ПРЕИМУЩЕСТВА-БЕЙДЖИ */
+.benefits {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding-top: 8px;
+}
+.benefit {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--dark);
+    font-weight: 500;
+}
+.benefit-icon {
+    width: 24px; height: 24px;
+    background: var(--dark);
+    color: var(--cream);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    flex-shrink: 0;
+    font-weight: 700;
+}
+
+/* === БЛОК 2: ЗАЧЕМ ЭТО === */
+.why {
+    background: var(--dark);
+    color: var(--cream);
+    padding: 100px 0;
+    position: relative;
+    overflow: hidden;
+}
+.why::before {
+    content: 'L4U10';
+    position: absolute;
+    right: -40px; top: 20px;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 18rem;
+    font-weight: 800;
+    color: rgba(212, 206, 188, 0.04);
+    line-height: 1;
+    letter-spacing: -0.05em;
+    pointer-events: none;
+}
+
+.why-inner {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 40px;
+    position: relative;
+}
+.section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.section-label::before {
+    content: '';
+    width: 40px; height: 1px;
+    background: var(--accent);
+}
+
+.why h2 {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2rem, 4vw, 3.6rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    max-width: 900px;
+    margin-bottom: 60px;
+}
+.why h2 em {
+    font-style: normal;
+    color: var(--accent);
+    font-weight: 800;
+}
+
+.pain-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    background: rgba(212, 206, 188, 0.15);
+    border: 1px solid rgba(212, 206, 188, 0.15);
+}
+.pain {
+    background: var(--dark);
+    padding: 40px 30px;
+    position: relative;
+}
+.pain-num {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 5rem;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 0.9;
+    letter-spacing: -0.05em;
+    margin-bottom: 8px;
+}
+.pain-num .percent { font-size: 3rem; color: var(--cream); opacity: 0.5; }
+.pain h3 {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 600;
+    font-size: 1.15rem;
+    margin: 16px 0 12px;
+    color: white;
+    letter-spacing: -0.01em;
+}
+.pain p {
+    font-size: 14px;
+    line-height: 1.55;
+    color: rgba(212, 206, 188, 0.8);
+}
+.pain p strong { color: white; font-weight: 600; }
+
+/* === БЛОК 3: КАЛЬКУЛЯТОР === */
+.calculator {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 100px 40px;
+}
+.calc-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: end;
+    margin-bottom: 50px;
+}
+.calc-header h2 {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+}
+.calc-header p {
+    font-size: 16px;
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+.calc-body {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 0;
+    border: 1px solid var(--dark);
+}
+
+.calc-inputs {
+    padding: 40px;
+    background: white;
+    border-right: 1px solid var(--dark);
+}
+.calc-field { margin-bottom: 28px; }
+.calc-field:last-child { margin-bottom: 0; }
+.calc-field label {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+}
+.calc-input-wrap {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    border-bottom: 2px solid var(--dark);
+    padding-bottom: 8px;
+}
+.calc-input-wrap input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 700;
+    font-size: 2rem;
+    color: var(--dark);
+    background: transparent;
+    padding: 0;
+    width: 100%;
+    letter-spacing: -0.02em;
+}
+.calc-input-wrap .unit {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+}
+
+.calc-select {
+    width: 100%;
+    padding: 10px 0 8px;
+    border: none;
+    border-bottom: 2px solid var(--dark);
+    background: transparent;
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 700;
+    font-size: 1.4rem;
+    color: var(--dark);
+    outline: none;
+    cursor: pointer;
+    letter-spacing: -0.01em;
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' stroke='%232B2D2B' stroke-width='2' fill='none'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right center;
+    padding-right: 28px;
+}
+
+.calc-result {
+    padding: 40px;
+    background: var(--dark);
+    color: var(--cream);
+    position: relative;
+    overflow: hidden;
+}
+.calc-result::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 80% 20%, rgba(232, 80, 11, 0.15) 0%, transparent 50%);
+    pointer-events: none;
+}
+.calc-result-inner { position: relative; z-index: 1; }
+
+.result-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    opacity: 0.5;
+    margin-bottom: 6px;
+}
+.result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 14px 0;
+    border-bottom: 1px dashed rgba(212, 206, 188, 0.2);
+}
+.result-row:last-of-type { border-bottom: none; }
+.result-row .r-label {
+    font-size: 13px;
+    opacity: 0.7;
+}
+.result-row .r-value {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: var(--cream);
+}
+
+.result-highlight {
+    background: var(--accent);
+    color: white;
+    padding: 20px 24px;
+    margin: 24px -40px -40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.result-highlight-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.9;
+}
+.result-highlight-value {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 800;
+    font-size: 2rem;
+    letter-spacing: -0.02em;
+    line-height: 1;
+}
+.result-highlight-sub {
+    font-size: 12px;
+    margin-top: 2px;
+    opacity: 0.85;
+}
+
+.payback-row {
+    margin-top: 24px;
+    padding: 16px 20px;
+    background: rgba(212, 206, 188, 0.1);
+    border-left: 3px solid var(--accent);
+    font-size: 14px;
+}
+.payback-row strong {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: white;
+    display: block;
+    margin-top: 4px;
+    line-height: 1;
+}
+
+/* === БЛОК 4: ХАРАКТЕРИСТИКИ === */
+.specs-section {
+    background: var(--cream);
+    padding: 100px 0;
+    border-top: 1px solid var(--dark);
+    border-bottom: 1px solid var(--dark);
+}
+.specs-inner {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 40px;
+}
+.specs-inner h2 {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    max-width: 800px;
+    margin-bottom: 50px;
+}
+.specs-inner h2 em {
+    font-style: normal;
+    color: var(--accent);
+}
+
+.specs-table {
+    background: white;
+    border: 1px solid var(--dark);
+}
+.spec-row {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr 2fr;
+    border-bottom: 1px solid var(--dark);
+    transition: background .15s;
+}
+.spec-row:last-child { border-bottom: none; }
+.spec-row:hover { background: var(--cream); }
+.spec-param {
+    padding: 20px 24px;
+    font-weight: 600;
+    font-size: 14px;
+    border-right: 1px solid var(--dark);
+    color: var(--dark);
+}
+.spec-value {
+    padding: 20px 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    font-size: 14px;
+    border-right: 1px solid var(--dark);
+    color: var(--dark);
+    letter-spacing: 0.02em;
+}
+.spec-value .accent { color: var(--accent); }
+.spec-meaning {
+    padding: 20px 24px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--muted);
+}
+
+/* === БЛОК 5: ГДЕ ИСПОЛЬЗУЮТ === */
+.apps-section {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 100px 40px;
+}
+.apps-section h2 {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-bottom: 50px;
+    max-width: 800px;
+}
+.apps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--dark);
+    border-left: 1px solid var(--dark);
+}
+.app-card {
+    padding: 32px;
+    border-right: 1px solid var(--dark);
+    border-bottom: 1px solid var(--dark);
+    background: white;
+    cursor: pointer;
+    transition: background .2s;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-height: 220px;
+    position: relative;
+}
+.app-card:hover {
+    background: var(--dark);
+    color: var(--cream);
+}
+.app-card:hover .app-icon { background: var(--accent); color: white; }
+.app-card:hover .app-arrow { transform: translateX(6px); color: var(--accent); }
+
+.app-icon {
+    width: 56px; height: 56px;
+    background: var(--cream);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .2s;
+}
+.app-icon svg { width: 28px; height: 28px; }
+.app-card h3 {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 600;
+    font-size: 1.1rem;
+    letter-spacing: -0.01em;
+}
+.app-card p {
+    font-size: 13px;
+    line-height: 1.5;
+    opacity: 0.7;
+    flex: 1;
+}
+.app-arrow {
+    align-self: flex-end;
+    font-size: 24px;
+    color: var(--muted);
+    transition: all .2s;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* === FINAL CTA (закрывающий вопрос) === */
+.final-cta {
+    background: var(--dark);
+    color: var(--cream);
+    padding: 120px 0;
+    position: relative;
+    overflow: hidden;
+}
+.final-cta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+        radial-gradient(circle at 20% 30%, rgba(232, 80, 11, 0.2) 0%, transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(232, 80, 11, 0.1) 0%, transparent 40%);
+    pointer-events: none;
+}
+.final-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 40px;
+    text-align: center;
+    position: relative;
+}
+.final-inner h2 {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2.2rem, 4.5vw, 4.2rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-bottom: 24px;
+}
+.final-inner h2 em {
+    font-style: normal;
+    color: var(--accent);
+}
+.final-inner .lede {
+    font-size: 18px;
+    max-width: 700px;
+    margin: 0 auto 40px;
+    opacity: 0.85;
+    line-height: 1.55;
+}
+.final-buttons {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.btn-big {
+    padding: 22px 44px;
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all .2s;
+    border: 1px solid;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+}
+.btn-big-primary {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+}
+.btn-big-primary:hover { background: white; color: var(--dark); border-color: white; }
+.btn-big-secondary {
+    background: transparent;
+    color: var(--cream);
+    border-color: var(--cream);
+}
+.btn-big-secondary:hover { background: var(--cream); color: var(--dark); }
+
+.trust-row {
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(212, 206, 188, 0.15);
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    flex-wrap: wrap;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.6;
+}
+
+/* === FOOTER === */
+.footer {
+    background: var(--bg);
+    border-top: 1px solid var(--dark);
+    padding: 40px 0;
+}
+.footer-inner {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 40px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.05em;
+}
+
+/* === АНИМАЦИИ === */
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.hero > * { animation: fadeUp 0.8s ease-out backwards; }
+.hero > *:nth-child(1) { animation-delay: 0.1s; }
+.hero > *:nth-child(2) { animation-delay: 0.25s; }
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+.stock::before { animation: pulse 2s infinite; }
+
+/* === РЕСПОНСИВ === */
+@media (max-width: 1024px) {
+    .hero { grid-template-columns: 1fr; gap: 40px; }
+    .calc-body { grid-template-columns: 1fr; }
+    .calc-inputs { border-right: none; border-bottom: 1px solid var(--dark); }
+    .calc-header { grid-template-columns: 1fr; gap: 20px; }
+    .pain-grid { grid-template-columns: 1fr; }
+    .apps-grid { grid-template-columns: repeat(2, 1fr); }
+    .spec-row { grid-template-columns: 1fr 1fr; }
+    .spec-meaning { grid-column: 1 / -1; border-top: 1px solid var(--dark); }
+    .nav { display: none; }
+}
+@media (max-width: 640px) {
+    .header-inner, .hero, .why-inner, .calculator, .specs-inner, .apps-section, .final-inner { padding-left: 20px; padding-right: 20px; }
+    .topbar-inner { padding: 0 20px; font-size: 11px; }
+    .topbar-left { display: none; }
+    .price-tiers { grid-template-columns: 1fr; }
+    .qty-cta-row { grid-template-columns: 1fr; }
+    .apps-grid { grid-template-columns: 1fr; }
+    .benefits { grid-template-columns: 1fr; }
+    .final-buttons { flex-direction: column; align-items: stretch; }
+    .btn-big { justify-content: center; }
+    .trust-row { gap: 20px; font-size: 10px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ТОП-БАР -->
+<div class="topbar">
+    <div class="topbar-inner">
+        <div class="topbar-left">
+            <span>📍 Москва, ул. Сретенка, 4</span>
+            <span>⏱ Отгрузка со склада: завтра</span>
+            <span>🏭 Производство РФ</span>
+        </div>
+        <div class="topbar-right">
+            <a href="tel:+74950000000">+7 (495) 000-00-00</a>
+            <a href="mailto:info@lfour.ru">info@lfour.ru</a>
+        </div>
+    </div>
+</div>
+
+<!-- ХЕДЕР -->
+<header class="header">
+    <div class="header-inner">
+        <a href="/" class="logo">
+            <span class="logo-mark"></span>
+            ЭЛФОР<span class="logo-sub">L4 series</span>
+        </a>
+        <nav class="nav">
+            <a href="/catalog/promyshlennye/" class="active">Промышленные</a>
+            <a href="#">Уличные</a>
+            <a href="#">Парковые</a>
+            <a href="#">Линейные</a>
+            <a href="#">Прожекторы</a>
+            <a href="#">Проекты</a>
+            <a href="#">О компании</a>
+        </nav>
+        <div class="header-actions">
+            <a href="#" class="btn-ghost">Каталог PDF</a>
+        </div>
+    </div>
+</header>
+
+<!-- ХЛЕБНЫЕ КРОШКИ -->
+<div class="crumbs">
+    <a href="/">Главная</a><span class="sep">/</span>
+    <a href="/catalog/">Каталог</a><span class="sep">/</span>
+    <a href="/catalog/promyshlennye/">Промышленные</a><span class="sep">/</span>
+    <a href="/catalog/promyshlennye/ufo/">UFO (хай-бэй)</a><span class="sep">/</span>
+    <span class="current">L4U10 · 100W</span>
+</div>
+
+<!-- ЭКРАН 1: HERO -->
+<section class="hero">
+    <!-- ГАЛЕРЕЯ -->
+    <div class="gallery">
+        <div class="gallery-main">
+            <div class="gallery-badge">Артикул · L4U10</div>
+            <div class="gallery-badge accent">−5 лет гарантии</div>
+            
+            <!-- SVG ИЛЛЮСТРАЦИЯ UFO СВЕТИЛЬНИКА -->
+            <svg class="ufo-svg" viewBox="0 0 500 380" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="metalTop" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="#4a4d4a"/>
+                        <stop offset="50%" stop-color="#2a2d2a"/>
+                        <stop offset="100%" stop-color="#1a1d1a"/>
+                    </linearGradient>
+                    <linearGradient id="metalSide" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="#3a3d3a"/>
+                        <stop offset="100%" stop-color="#1a1d1a"/>
+                    </linearGradient>
+                    <radialGradient id="lensGlow" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
+                        <stop offset="40%" stop-color="#fff8e8" stop-opacity="0.7"/>
+                        <stop offset="100%" stop-color="#f0e8d0" stop-opacity="0.3"/>
+                    </radialGradient>
+                    <filter id="glow">
+                        <feGaussianBlur stdDeviation="8" result="blur"/>
+                        <feMerge>
+                            <feMergeNode in="blur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+                
+                <!-- Световой ореол -->
+                <ellipse cx="250" cy="280" rx="240" ry="40" fill="url(#lensGlow)" opacity="0.3" filter="url(#glow)"/>
+                
+                <!-- Рым-болт -->
+                <rect x="243" y="20" width="14" height="30" fill="url(#metalSide)"/>
+                <circle cx="250" cy="25" r="12" fill="none" stroke="#2a2d2a" stroke-width="6"/>
+                
+                <!-- Верхний радиатор (ребра) -->
+                <ellipse cx="250" cy="95" rx="140" ry="40" fill="url(#metalTop)"/>
+                <g opacity="0.6">
+                    <line x1="130" y1="90" x2="370" y2="90" stroke="#000" stroke-width="1"/>
+                    <line x1="125" y1="100" x2="375" y2="100" stroke="#000" stroke-width="1"/>
+                    <line x1="120" y1="110" x2="380" y2="110" stroke="#000" stroke-width="1"/>
+                </g>
+                
+                <!-- Основной корпус (боковины с ребрами охлаждения) -->
+                <path d="M 110 110 Q 110 180 250 200 Q 390 180 390 110 Z" fill="url(#metalSide)"/>
+                
+                <!-- Ребра охлаждения -->
+                <g stroke="#000" stroke-width="0.8" opacity="0.5" fill="none">
+                    <path d="M 120 120 Q 250 165 380 120"/>
+                    <path d="M 118 135 Q 250 180 382 135"/>
+                    <path d="M 115 150 Q 250 195 385 150"/>
+                    <path d="M 112 170 Q 250 210 388 170"/>
+                </g>
+                
+                <!-- Линза PC (нижняя часть с текстурой) -->
+                <ellipse cx="250" cy="220" rx="175" ry="50" fill="url(#lensGlow)" stroke="#2a2d2a" stroke-width="2"/>
+                
+                <!-- Шестиугольная текстура линз -->
+                <g opacity="0.4" fill="#fff">
+                    <circle cx="180" cy="215" r="14"/>
+                    <circle cx="220" cy="225" r="14"/>
+                    <circle cx="260" cy="218" r="14"/>
+                    <circle cx="300" cy="225" r="14"/>
+                    <circle cx="340" cy="215" r="14"/>
+                    <circle cx="200" cy="240" r="12"/>
+                    <circle cx="240" cy="245" r="12"/>
+                    <circle cx="280" cy="245" r="12"/>
+                    <circle cx="320" cy="240" r="12"/>
+                </g>
+                
+                <!-- Блик -->
+                <ellipse cx="220" cy="210" rx="30" ry="8" fill="#fff" opacity="0.6"/>
+            </svg>
+        </div>
+        
+        <!-- МИНИАТЮРЫ -->
+        <div class="gallery-thumbs">
+            <div class="thumb active" title="Главное фото">
+                <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="20" cy="20" r="14"/>
+                    <circle cx="20" cy="20" r="8"/>
+                </svg>
+            </div>
+            <div class="thumb" title="В работе">
+                <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="4" y="6" width="32" height="28"/>
+                    <path d="M4 20 L20 12 L36 20"/>
+                </svg>
+            </div>
+            <div class="thumb" title="Линза">
+                <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="20" cy="20" r="14"/>
+                    <circle cx="20" cy="20" r="3" fill="currentColor"/>
+                </svg>
+            </div>
+            <div class="thumb" title="Крепление">
+                <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 6 L20 18"/>
+                    <circle cx="20" cy="24" r="6"/>
+                </svg>
+            </div>
+            <div class="thumb" title="Видео">
+                <svg viewBox="0 0 40 40" fill="currentColor">
+                    <circle cx="20" cy="20" r="14" fill="none" stroke="currentColor" stroke-width="2"/>
+                    <path d="M16 14 L28 20 L16 26 Z"/>
+                </svg>
+            </div>
+        </div>
+        
+        <!-- ДОКУМЕНТЫ -->
+        <div class="gallery-docs">
+            <a href="#" class="doc-link">
+                <span class="doc-icon">PDF</span>
+                Скачать техпаспорт
+            </a>
+            <a href="#" class="doc-link">
+                <span class="doc-icon">IES</span>
+                Файл для Dialux
+            </a>
+        </div>
+    </div>
+    
+    <!-- ПОКУПКА -->
+    <div class="purchase">
+        <div class="sku">Артикул: L4U10 · Серия L4U</div>
+        
+        <div class="title-block">
+            <h1>Промышленный<br>светильник UFO<br><span style="color: var(--accent);">100 Вт</span>
+                <span class="sub">Подвесной хай-бэй для цехов, складов и производств. 200 лм/Вт — один из лучших показателей эффективности в РФ.</span>
+            </h1>
+        </div>
+        
+        <div class="hook">
+            <strong>Заменяет ДРЛ-400 / ЖКУ-250 / люминесцентный 4×80 Вт.</strong><br>
+            Окупается за 14 месяцев за счёт экономии на электричестве.
+        </div>
+        
+        <div class="rating-row">
+            <span class="stars">★★★★★ 4.9</span>
+            <span>47 отзывов</span>
+            <span class="stock">В наличии: 342 шт</span>
+        </div>
+        
+        <!-- ЦЕНА -->
+        <div class="price-box">
+            <div class="price-main">
+                10 300<span class="currency">₽</span>
+                <span class="per">за штуку</span>
+            </div>
+            <div class="price-tiers">
+                <div class="tier">
+                    <span class="qty">от 10 шт</span>
+                    <span class="t-price">9 785 ₽</span>
+                    <span class="t-save">−5%</span>
+                </div>
+                <div class="tier">
+                    <span class="qty">от 50 шт</span>
+                    <span class="t-price">9 270 ₽</span>
+                    <span class="t-save">−10%</span>
+                </div>
+                <div class="tier">
+                    <span class="qty">от 100 шт</span>
+                    <span class="t-price">запрос</span>
+                    <span class="t-save">до −18%</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ОПЦИИ -->
+        <div class="options">
+            <div class="option-group">
+                <div class="option-label">
+                    <span>Цветовая температура</span>
+                    <span class="selected-val" id="temp-label">5000K · нейтральный</span>
+                </div>
+                <div class="temp-wrap">
+                    <div class="temp" onclick="selectTemp(this, '3000K · тёплый')">
+                        <span class="temp-k">3000K</span>
+                        <span class="temp-name">тёплый</span>
+                    </div>
+                    <div class="temp" onclick="selectTemp(this, '4000K · белый')">
+                        <span class="temp-k">4000K</span>
+                        <span class="temp-name">белый</span>
+                    </div>
+                    <div class="temp active" onclick="selectTemp(this, '5000K · нейтральный')">
+                        <span class="temp-k">5000K</span>
+                        <span class="temp-name">нейтральный</span>
+                    </div>
+                    <div class="temp" onclick="selectTemp(this, '6000K · холодный')">
+                        <span class="temp-k">6000K</span>
+                        <span class="temp-name">холодный</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="option-group">
+                <div class="option-label">
+                    <span>Угол свечения</span>
+                    <span class="selected-val" id="angle-label">60° · для потолков от 8 м</span>
+                </div>
+                <div class="opt-buttons">
+                    <div class="opt active" onclick="selectOpt(this, 'angle-label', '60° · для потолков от 8 м')">60°</div>
+                    <div class="opt" onclick="selectOpt(this, 'angle-label', '90° · для потолков 4–6 м')">90°</div>
+                </div>
+            </div>
+            
+            <div class="option-group">
+                <div class="option-label">
+                    <span>Цвет корпуса</span>
+                    <span class="selected-val" id="color-label">Чёрный</span>
+                </div>
+                <div class="opt-buttons">
+                    <div class="opt color-opt black active" onclick="selectColor(this, 'Чёрный')"></div>
+                    <div class="opt color-opt gray" onclick="selectColor(this, 'Серый')"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- КОЛИЧЕСТВО + ГЛАВНЫЙ CTA -->
+        <div class="qty-cta-row">
+            <div class="qty-box">
+                <button class="qty-btn" onclick="changeQty(-1)">−</button>
+                <input type="number" class="qty-input" id="qty" value="1" min="1">
+                <button class="qty-btn" onclick="changeQty(1)">+</button>
+            </div>
+            <button class="btn-primary">
+                <span>🛒</span>
+                Купить · <span id="total-price">10 300 ₽</span>
+            </button>
+        </div>
+        
+        <button class="btn-secondary">
+            📞 Получить расчёт на объект
+        </button>
+        
+        <!-- ПРЕИМУЩЕСТВА -->
+        <div class="benefits">
+            <div class="benefit"><span class="benefit-icon">⚡</span> 200 лм/Вт</div>
+            <div class="benefit"><span class="benefit-icon">💧</span> IP65 защита</div>
+            <div class="benefit"><span class="benefit-icon">🛡</span> Гарантия 5 лет</div>
+            <div class="benefit"><span class="benefit-icon">🏭</span> Производство РФ</div>
+        </div>
+    </div>
+</section>
+
+<!-- БЛОК 2: ЗАЧЕМ ЭТО -->
+<section class="why">
+    <div class="why-inner">
+        <div class="section-label">Почему L4U10</div>
+        <h2>Если у вас в цехе висят старые ДРЛ, ЖКУ или люминесцентные — <em>вот сколько денег они съедают</em> каждый месяц.</h2>
+        
+        <div class="pain-grid">
+            <div class="pain">
+                <div class="pain-num">−75<span class="percent">%</span></div>
+                <h3>Переплата за электричество</h3>
+                <p>ДРЛ-400 потребляет <strong>400 Вт</strong> и даёт 15 000 лм. L4U10 потребляет <strong>100 Вт</strong> и даёт 17 000 лм. Экономия — 75% электричества при бо́льшем световом потоке.</p>
+            </div>
+            <div class="pain">
+                <div class="pain-num">×12</div>
+                <h3>Замены ламп каждый год</h3>
+                <p>Ресурс ДРЛ — 8 000 часов. При двухсменной работе это <strong>один год</strong>. L4U10 работает до 100 000 часов — это <strong>12 лет</strong> без замены, без стремянок, без простоев.</p>
+            </div>
+            <div class="pain">
+                <div class="pain-num">−40<span class="percent">%</span></div>
+                <h3>Темнота на рабочих местах</h3>
+                <p>ДРЛ «стареют» и теряют до 40% яркости к концу срока. L4U10 сохраняет <strong>не менее 90%</strong> светового потока до конца гарантии. Сотрудники перестают жаловаться.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- КАЛЬКУЛЯТОР -->
+<section class="calculator">
+    <div class="calc-header">
+        <h2>Посчитайте свою экономию.<br>Прямо сейчас.</h2>
+        <p>Введите параметры своего объекта — покажем годовые расходы на электричество сейчас и после замены на L4U10. Цифры считаются по реальному тарифу.</p>
+    </div>
+    
+    <div class="calc-body">
+        <div class="calc-inputs">
+            <div class="calc-field">
+                <label>Сколько светильников у вас сейчас?</label>
+                <div class="calc-input-wrap">
+                    <input type="number" id="in-count" value="20" min="1">
+                    <span class="unit">шт</span>
+                </div>
+            </div>
+            
+            <div class="calc-field">
+                <label>Какой тип освещения?</label>
+                <select class="calc-select" id="in-type">
+                    <option value="400">ДРЛ-400 (400 Вт)</option>
+                    <option value="250">ЖКУ-250 (250 Вт)</option>
+                    <option value="320">Люминесцентный 4×80Вт (320 Вт)</option>
+                    <option value="150">Старый LED 150 Вт (100 лм/Вт)</option>
+                </select>
+            </div>
+            
+            <div class="calc-field">
+                <label>Сколько часов в день работает объект?</label>
+                <div class="calc-input-wrap">
+                    <input type="number" id="in-hours" value="16" min="1" max="24">
+                    <span class="unit">ч/день</span>
+                </div>
+            </div>
+            
+            <div class="calc-field">
+                <label>Тариф на электричество</label>
+                <div class="calc-input-wrap">
+                    <input type="number" id="in-tariff" value="8.5" step="0.1" min="0">
+                    <span class="unit">₽/кВт·ч</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="calc-result">
+            <div class="calc-result-inner">
+                <div class="result-label">Годовые расходы на электричество</div>
+                
+                <div class="result-row">
+                    <span class="r-label">Ваше освещение сейчас</span>
+                    <span class="r-value" id="r-current">397 120 ₽</span>
+                </div>
+                <div class="result-row">
+                    <span class="r-label">После замены на L4U10</span>
+                    <span class="r-value" id="r-new">99 280 ₽</span>
+                </div>
+                
+                <div class="payback-row">
+                    <span class="result-label" style="opacity: 0.7;">Срок окупаемости</span>
+                    <strong id="r-payback">14 месяцев</strong>
+                </div>
+                
+                <div class="result-highlight">
+                    <div>
+                        <div class="result-highlight-label">Экономия в год</div>
+                        <div class="result-highlight-sub">За 5 лет гарантии — <span id="r-total5">1 489 200 ₽</span></div>
+                    </div>
+                    <div class="result-highlight-value" id="r-save">297 840 ₽</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ХАРАКТЕРИСТИКИ -->
+<section class="specs-section">
+    <div class="specs-inner">
+        <h2>Характеристики. <em>И что они значат для вас.</em></h2>
+        
+        <div class="specs-table">
+            <div class="spec-row">
+                <div class="spec-param">Мощность</div>
+                <div class="spec-value"><span class="accent">100 Вт</span></div>
+                <div class="spec-meaning">Заменяет одну лампу ДРЛ-400 или ЖКУ-250</div>
+            </div>
+            <div class="spec-row">
+                <div class="spec-param">Световой поток</div>
+                <div class="spec-value"><span class="accent">17 000 лм</span></div>
+                <div class="spec-meaning">Освещает 50–70 м² при подвесе 6–8 м</div>
+            </div>
+            <div class="spec-row">
+                <div class="spec-param">Светоотдача</div>
+                <div class="spec-value"><span class="accent">200 лм/Вт</span></div>
+                <div class="spec-meaning">Один из лучших показателей на рынке РФ. У Wolta и Feron — 100–120 лм/Вт</div>
+            </div>
+            <div class="spec-row">
+                <div class="spec-param">Цветовая температура</div>
+                <div class="spec-value">3000 / 4000 / 5000 / 6000K</div>
+                <div class="spec-meaning">5000K — нейтрально-белый, стандарт для производственных цехов</div>
+            </div>
+            <div class="spec-row">
+                <div class="spec-param">Индекс цветопередачи</div>
+                <div class="spec-value">CRI &gt; 80</div>
+                <div class="spec-meaning">Цвета предметов и маркировки видны правильно</div>
+            </div>
+            <div class="spec-row">
+                <div class="spec-param">Угол свечения</div>
+                <div class="spec-value">60° / 90°</div>
+                <div class="spec-meaning">60° — для высоких потолков (от 8 м), 90° — для низких (4–6 м)</div>
+            </div>
+            <div class="spec-row">
+                <div class="spec-param">Степень защиты</div>
+                <div class="spec-value"><span class="accent">IP65</span></div>
+                <div class="spec-meaning">Пыль и струи воды не страшны. Мойка цеха из шланга — без проблем</div>
+            </div>
+            <div class="spec-row">
+                <div class="spec-param">Защита от перенапряжений</div>
+                <div class="spec-value">4–6 кВ</div>
+                <div class="spec-meaning">Выдерживает скачки напряжения в промышленной сети</div>
+            </div>
+            <div class="spec-row">
+                <div class="spec-param">Входное напряжение</div>
+                <div class="spec-value">AC 85–305 В</div>
+                <div class="spec-meaning">Работает при любых просадках в сети</div>
+            </div>
+            <div class="spec-row">
+                <div class="spec-param">Срок службы</div>
+                <div class="spec-value"><span class="accent">до 100 000 ч</span></div>
+                <div class="spec-meaning">До 12 лет непрерывной работы при двухсменном режиме</div>
+            </div>
+            <div class="spec-row">
+                <div class="spec-param">Материал корпуса</div>
+                <div class="spec-value">Литой алюминий + PC</div>
+                <div class="spec-meaning">Ударопрочный, не ржавеет, эффективно отводит тепло</div>
+            </div>
+            <div class="spec-row">
+                <div class="spec-param">Диаметр / вес</div>
+                <div class="spec-value">Ø 250 мм / 2,8 кг</div>
+                <div class="spec-meaning">Крепится за рым-болт к любому перекрытию</div>
+            </div>
+            <div class="spec-row">
+                <div class="spec-param">Гарантия</div>
+                <div class="spec-value"><span class="accent">5 лет</span></div>
+                <div class="spec-meaning">Замена по гарантии — бесплатно, без экспертиз</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ГДЕ ИСПОЛЬЗУЮТ -->
+<section class="apps-section">
+    <h2>Где <em>уже работает</em> L4U10</h2>
+    
+    <div class="apps-grid">
+        <div class="app-card">
+            <div class="app-icon">
+                <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <rect x="4" y="16" width="32" height="20"/>
+                    <path d="M4 16 L20 4 L36 16"/>
+                    <rect x="16" y="24" width="8" height="12"/>
+                </svg>
+            </div>
+            <h3>Производственные цеха</h3>
+            <p>Металлообработка, сборка, мехобработка. Высота потолков 6–10 м. Угол 60° с линзой.</p>
+            <div class="app-arrow">→</div>
+        </div>
+        <div class="app-card">
+            <div class="app-icon">
+                <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <rect x="4" y="8" width="32" height="28"/>
+                    <line x1="4" y1="16" x2="36" y2="16"/>
+                    <line x1="4" y1="24" x2="36" y2="24"/>
+                    <line x1="4" y1="32" x2="36" y2="32"/>
+                    <line x1="14" y1="8" x2="14" y2="36"/>
+                    <line x1="26" y1="8" x2="26" y2="36"/>
+                </svg>
+            </div>
+            <h3>Склады и логистика</h3>
+            <p>Стеллажные, высотные, мультитемпературные. Равномерная освещённость в проходах.</p>
+            <div class="app-arrow">→</div>
+        </div>
+        <div class="app-card">
+            <div class="app-icon">
+                <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <circle cx="12" cy="28" r="4"/>
+                    <circle cx="28" cy="28" r="4"/>
+                    <path d="M4 24 L4 18 L8 12 L24 12 L32 18 L36 18 L36 28 L32 28"/>
+                    <path d="M8 28 L24 28"/>
+                </svg>
+            </div>
+            <h3>Автосервисы и СТО</h3>
+            <p>Включая мойки высокого давления — IP65 справляется. Точная цветопередача для подбора краски.</p>
+            <div class="app-arrow">→</div>
+        </div>
+        <div class="app-card">
+            <div class="app-icon">
+                <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M4 36 L4 14 L20 6 L36 14 L36 36"/>
+                    <rect x="12" y="22" width="6" height="14"/>
+                    <rect x="22" y="22" width="6" height="14"/>
+                </svg>
+            </div>
+            <h3>Сельхозобъекты</h3>
+            <p>Зерносклады, ангары, ремонтные боксы. Защита от пыли IP65 работает в агрессивной среде.</p>
+            <div class="app-arrow">→</div>
+        </div>
+        <div class="app-card">
+            <div class="app-icon">
+                <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <circle cx="20" cy="20" r="14"/>
+                    <circle cx="20" cy="20" r="6"/>
+                    <path d="M6 20 L34 20"/>
+                    <path d="M20 6 L20 34"/>
+                </svg>
+            </div>
+            <h3>Спортзалы и манежи</h3>
+            <p>Подвеска на 6–8 м, угол 90°. Не слепит игроков, не гудит, не мерцает при съёмке на телефон.</p>
+            <div class="app-arrow">→</div>
+        </div>
+        <div class="app-card">
+            <div class="app-icon">
+                <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <rect x="6" y="12" width="28" height="22"/>
+                    <path d="M6 12 L8 6 L32 6 L34 12"/>
+                    <line x1="14" y1="20" x2="14" y2="34"/>
+                    <line x1="26" y1="20" x2="26" y2="34"/>
+                </svg>
+            </div>
+            <h3>Оптовые базы и ТЦ</h3>
+            <p>Строительные рынки, продовольственные склады, крытые парковки. Работа 24/7 без обслуживания.</p>
+            <div class="app-arrow">→</div>
+        </div>
+    </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta">
+    <div class="final-inner">
+        <div class="section-label" style="justify-content: center;">Следующий шаг</div>
+        <h2>Хотите узнать, <em>как быстро</em> L4U10 окупится<br>на вашем объекте?</h2>
+        <p class="lede">Пришлите план помещения или опишите объект — инженер ЭЛФОР сделает светотехнический расчёт в Dialux, подберёт точное количество светильников и пришлёт коммерческое предложение. Всё бесплатно, в течение 1 рабочего дня.</p>
+        
+        <div class="final-buttons">
+            <a href="#" class="btn-big btn-big-primary">
+                Получить расчёт на объект
+                <span>→</span>
+            </a>
+            <a href="tel:+74950000000" class="btn-big btn-big-secondary">
+                📞 +7 (495) 000-00-00
+            </a>
+        </div>
+        
+        <div class="trust-row">
+            <span>✓ Производство в РФ</span>
+            <span>✓ Более 4 000 объектов</span>
+            <span>✓ Гарантия 5 лет</span>
+            <span>✓ Отгрузка со склада</span>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="footer-inner">
+        <div>© 2025 ООО «ЭЛФОР» · ИНН 7708447776</div>
+        <div>107045, Москва, ул. Сретенка, 4 · www.lfour.ru</div>
+    </div>
+</footer>
+
+<script>
+// ПЕРЕКЛЮЧЕНИЕ ТЕМПЕРАТУРЫ
+function selectTemp(el, label) {
+    document.querySelectorAll('.temp').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('temp-label').textContent = label;
+}
+
+// ПЕРЕКЛЮЧЕНИЕ УГЛА
+function selectOpt(el, targetId, label) {
+    el.parentElement.querySelectorAll('.opt').forEach(o => o.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById(targetId).textContent = label;
+}
+
+// ПЕРЕКЛЮЧЕНИЕ ЦВЕТА
+function selectColor(el, label) {
+    document.querySelectorAll('.opt.color-opt').forEach(o => o.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('color-label').textContent = label;
+}
+
+// КОЛИЧЕСТВО
+function changeQty(delta) {
+    const input = document.getElementById('qty');
+    const newVal = Math.max(1, parseInt(input.value || 1) + delta);
+    input.value = newVal;
+    updateTotalPrice();
+}
+document.getElementById('qty').addEventListener('input', updateTotalPrice);
+
+function updateTotalPrice() {
+    const qty = parseInt(document.getElementById('qty').value) || 1;
+    let unit = 10300;
+    if (qty >= 100) unit = 8450;
+    else if (qty >= 50) unit = 9270;
+    else if (qty >= 10) unit = 9785;
+    const total = qty * unit;
+    document.getElementById('total-price').textContent = total.toLocaleString('ru-RU') + ' ₽';
+}
+
+// КАЛЬКУЛЯТОР ЭКОНОМИИ
+function calculate() {
+    const count = parseFloat(document.getElementById('in-count').value) || 0;
+    const oldW = parseFloat(document.getElementById('in-type').value) || 400;
+    const hoursDay = parseFloat(document.getElementById('in-hours').value) || 0;
+    const tariff = parseFloat(document.getElementById('in-tariff').value) || 0;
+    
+    const daysYear = 365;
+    const newW = 100; // L4U10 = 100W
+    
+    // Текущие годовые расходы (кВт·ч × тариф)
+    const currentKwh = (count * oldW * hoursDay * daysYear) / 1000;
+    const currentCost = currentKwh * tariff;
+    
+    // После замены
+    const newKwh = (count * newW * hoursDay * daysYear) / 1000;
+    const newCost = newKwh * tariff;
+    
+    // Экономия
+    const saveYear = currentCost - newCost;
+    const save5Years = saveYear * 5;
+    
+    // Окупаемость: стоимость закупки / экономия в месяц
+    const investment = count * 10300;
+    const saveMonth = saveYear / 12;
+    const paybackMonths = saveMonth > 0 ? Math.ceil(investment / saveMonth) : 0;
+    
+    document.getElementById('r-current').textContent = Math.round(currentCost).toLocaleString('ru-RU') + ' ₽';
+    document.getElementById('r-new').textContent = Math.round(newCost).toLocaleString('ru-RU') + ' ₽';
+    document.getElementById('r-save').textContent = Math.round(saveYear).toLocaleString('ru-RU') + ' ₽';
+    document.getElementById('r-total5').textContent = Math.round(save5Years).toLocaleString('ru-RU') + ' ₽';
+    
+    let paybackLabel = paybackMonths + ' мес.';
+    if (paybackMonths >= 12) {
+        const years = Math.floor(paybackMonths / 12);
+        const months = paybackMonths % 12;
+        paybackLabel = years + ' г. ' + (months > 0 ? months + ' мес.' : '');
+    }
+    if (paybackMonths <= 0) paybackLabel = '—';
+    document.getElementById('r-payback').textContent = paybackLabel;
+}
+
+['in-count', 'in-type', 'in-hours', 'in-tariff'].forEach(id => {
+    document.getElementById(id).addEventListener('input', calculate);
+    document.getElementById(id).addEventListener('change', calculate);
+});
+
+// Начальный расчёт
+calculate();
+updateTotalPrice();
+</script>
+
+</body>
+</html>
