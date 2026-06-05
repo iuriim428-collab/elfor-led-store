@@ -3,6 +3,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { CartProvider } from "@/hooks/use-cart";
+import { AdminAuthProvider, useAdminAuth } from "@/hooks/use-admin-auth";
+import { AdminBar } from "@/components/admin-bar";
 import NotFound from "@/pages/not-found";
 
 import { PublicLayout } from "@/components/layout/public-layout";
@@ -31,6 +33,7 @@ const queryClient = new QueryClient();
 
 function AppContent() {
   const [location] = useLocation();
+  const { isAdmin } = useAdminAuth();
 
   if (location === "/admin" || location.startsWith("/admin/")) {
     return (
@@ -55,34 +58,45 @@ function AppContent() {
   }
 
   return (
-    <PublicLayout>
-      <Switch>
-        <Route path="/" component={Home} />
-        <Route path="/catalog" component={Catalog} />
-        <Route path="/catalog/:id" component={ProductDetail} />
-        <Route path="/categories/:slug" component={Category} />
-        <Route path="/news" component={News} />
-        <Route path="/news/:id" component={Article} />
-        <Route path="/about" component={About} />
-        <Route path="/contacts" component={Contacts} />
-        <Route path="/cart" component={Cart} />
-        <Route component={NotFound} />
-      </Switch>
-    </PublicLayout>
+    <>
+      {/* Floating admin bar when logged in */}
+      {isAdmin && <AdminBar />}
+      {/* Push content down when admin bar is visible */}
+      <div className={isAdmin ? "pt-9" : ""}>
+        <PublicLayout>
+          <Switch>
+            <Route path="/" component={Home} />
+            <Route path="/catalog" component={Catalog} />
+            <Route path="/catalog/:id" component={ProductDetail} />
+            <Route path="/categories/:slug" component={Category} />
+            <Route path="/news" component={News} />
+            <Route path="/news/:id" component={Article} />
+            <Route path="/about" component={About} />
+            <Route path="/contacts" component={Contacts} />
+            <Route path="/cart" component={Cart} />
+            <Route component={NotFound} />
+          </Switch>
+        </PublicLayout>
+      </div>
+      {/* Login trigger when not logged in */}
+      {!isAdmin && <AdminBar />}
+    </>
   );
 }
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <CartProvider>
-        <TooltipProvider>
-          <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-            <AppContent />
-          </WouterRouter>
-          <Toaster />
-        </TooltipProvider>
-      </CartProvider>
+      <AdminAuthProvider>
+        <CartProvider>
+          <TooltipProvider>
+            <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+              <AppContent />
+            </WouterRouter>
+            <Toaster />
+          </TooltipProvider>
+        </CartProvider>
+      </AdminAuthProvider>
     </QueryClientProvider>
   );
 }

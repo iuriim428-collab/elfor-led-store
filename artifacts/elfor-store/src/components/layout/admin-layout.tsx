@@ -1,9 +1,11 @@
 import { Link, useLocation } from "wouter";
-import { LayoutDashboard, Package, FolderTree, ShoppingBag, FileText, LogOut } from "lucide-react";
+import { LayoutDashboard, Package, FolderTree, ShoppingBag, FileText, Store, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAdminAuth } from "@/hooks/use-admin-auth";
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
+  const { isAdmin, logout } = useAdminAuth();
 
   const navigation = [
     { name: "Дашборд", href: "/", icon: LayoutDashboard, exact: true },
@@ -47,14 +49,23 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
           })}
         </nav>
 
-        <div className="p-4 border-t border-primary-foreground/10">
+        <div className="p-4 border-t border-primary-foreground/10 flex flex-col gap-1">
           <a
             href="/"
-            className="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-primary-foreground/70 hover:text-white transition-colors"
+            className="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-primary-foreground/70 hover:text-white hover:bg-primary-foreground/5 transition-colors"
           >
-            <LogOut className="h-5 w-5" />
+            <Store className="h-5 w-5" />
             В магазин
           </a>
+          {isAdmin && (
+            <button
+              onClick={logout}
+              className="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-primary-foreground/50 hover:text-white hover:bg-primary-foreground/5 transition-colors w-full text-left"
+            >
+              <LogOut className="h-5 w-5" />
+              Выйти из сессии
+            </button>
+          )}
         </div>
       </aside>
 
