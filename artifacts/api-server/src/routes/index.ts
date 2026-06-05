@@ -6,6 +6,8 @@ import articlesRouter from "./articles";
 import ordersRouter from "./orders";
 import statsRouter from "./stats";
 import adminAuthRouter from "./admin-auth";
+import storageRouter from "./storage";
+import catalogRouter from "./catalog";
 
 const router: IRouter = Router();
 
@@ -16,5 +18,7 @@ router.use(articlesRouter);
 router.use(ordersRouter);
 router.use(statsRouter);
 router.use(adminAuthRouter);
+router.use(storageRouter);
+router.use(catalogRouter);
 
 export default router;

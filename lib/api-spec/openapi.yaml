@@ -20,6 +20,10 @@ tags:
     description: Customer orders
   - name: stats
     description: Dashboard statistics
+  - name: storage
+    description: Object storage upload and serving endpoints
+  - name: catalog
+    description: Downloadable product catalog management
 
 paths:
   /healthz:
@@ -931,10 +935,55 @@ components:
         comment:
           type: ["string", "null"]
 
+    # ===== STORAGE =====
+    UploadUrlRequest:
+      type: object
+      required: [name, size, contentType]
+      properties:
+        name:
+          type: string
+          minLength: 1
+        size:
+          type: integer
+          minimum: 1
+        contentType:
+          type: string
+          minLength: 1
+    UploadUrlResponse:
+      type: object
+      required: [uploadURL, objectPath]
+      properties:
+        uploadURL:
+          type: string
+          format: uri
+        objectPath:
+          type: string
+        metadata:
+          $ref: '#/components/schemas/UploadUrlRequest'
+    ErrorEnvelope:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+
+    # ===== CATALOG =====
+    CatalogInfo:
+      type: object
+      properties:
+        objectPath:
+          type: ["string", "null"]
+        filename:
+          type: ["string", "null"]
+        updatedAt:
+          type: ["string", "null"]
+          format: date-time
+
     # ===== STATS =====
     DashboardStats:
       type: object
       required: [totalProducts, totalOrders, totalRevenue, newOrdersCount, totalCategories, totalArticles, recentOrders, ordersByStatus]
+
       properties:
         totalProducts:
           type: integer
