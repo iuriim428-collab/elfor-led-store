@@ -28,6 +28,8 @@ import AdminOrders from "@/pages/admin/orders";
 import AdminOrderDetail from "@/pages/admin/order-detail";
 import AdminArticles from "@/pages/admin/articles";
 import AdminArticleForm from "@/pages/admin/article-form";
+import AdminCatalog from "@/pages/admin/catalog";
+import AdminDocuments from "@/pages/admin/documents";
 
 const queryClient = new QueryClient();
 
@@ -50,6 +52,8 @@ function AppContent() {
             <Route path="/articles/new" component={AdminArticleForm} />
             <Route path="/articles/:id" component={AdminArticleForm} />
             <Route path="/articles" component={AdminArticles} />
+            <Route path="/catalog" component={AdminCatalog} />
+            <Route path="/documents" component={AdminDocuments} />
             <Route component={NotFound} />
           </Switch>
         </AdminLayout>

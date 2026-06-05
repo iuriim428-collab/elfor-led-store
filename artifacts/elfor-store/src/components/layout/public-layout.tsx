@@ -5,6 +5,18 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useListCategories } from "@workspace/api-client-react";
+import { useQuery } from "@tanstack/react-query";
+
+interface DocInfo {
+  objectPath: string | null;
+  filename: string | null;
+  updatedAt: string | null;
+}
+
+interface DocumentsData {
+  privacy: DocInfo;
+  offer: DocInfo;
+}
 
 export function PublicLayout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
@@ -12,6 +24,15 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   const { data: categories = [] } = useListCategories();
+
+  const { data: docs } = useQuery<DocumentsData>({
+    queryKey: ["documents"],
+    queryFn: async () => {
+      const res = await fetch("/api/documents");
+      return res.json();
+    },
+    staleTime: 5 * 60 * 1000,
+  });
 
   const navLinks = [
     { href: "/catalog", label: "Каталог" },
@@ -184,8 +205,20 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
           <div className="pt-8 border-t border-primary-foreground/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-mono text-primary-foreground/40">
             <p>© {new Date().getFullYear()} ЭЛФОР. Все права защищены.</p>
             <div className="flex gap-4">
-              <a href="#" className="hover:text-accent">Политика конфиденциальности</a>
-              <a href="#" className="hover:text-accent">Договор оферты</a>
+              {docs?.privacy?.objectPath ? (
+                <a href={`/api/storage${docs.privacy.objectPath}`} target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors">
+                  Политика конфиденциальности
+                </a>
+              ) : (
+                <span className="opacity-40 cursor-not-allowed" title="Документ ещё не загружен">Политика конфиденциальности</span>
+              )}
+              {docs?.offer?.objectPath ? (
+                <a href={`/api/storage${docs.offer.objectPath}`} target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors">
+                  Договор оферты
+                </a>
+              ) : (
+                <span className="opacity-40 cursor-not-allowed" title="Документ ещё не загружен">Договор оферты</span>
+              )}
             </div>
           </div>
         </div>

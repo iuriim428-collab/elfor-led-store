@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { LayoutDashboard, Package, FolderTree, ShoppingBag, FileText, Store, LogOut } from "lucide-react";
+import { LayoutDashboard, Package, FolderTree, ShoppingBag, FileText, Store, LogOut, BookOpen, FileArchive } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAdminAuth } from "@/hooks/use-admin-auth";
 
@@ -13,6 +13,8 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
     { name: "Товары", href: "/products", icon: Package },
     { name: "Категории", href: "/categories", icon: FolderTree },
     { name: "Статьи", href: "/articles", icon: FileText },
+    { name: "Каталог PDF", href: "/catalog", icon: BookOpen },
+    { name: "Документы", href: "/documents", icon: FileArchive },
   ];
 
   return (
@@ -25,7 +27,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
           </Link>
         </div>
         
-        <nav className="flex-1 py-6 px-4 flex flex-col gap-2 overflow-y-auto">
+        <nav className="flex-1 py-6 px-4 flex flex-col gap-1 overflow-y-auto">
           {navigation.map((item) => {
             const isActive = item.exact 
               ? location === item.href 

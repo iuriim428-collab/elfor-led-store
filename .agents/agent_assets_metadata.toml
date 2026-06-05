@@ -1,0 +1,44 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "rOPNeI8LuHUOhrvomuy6U"
+uri = "file://artifacts/elfor-store/public/categories/ulichnoe.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "ioQW9M1Y0w4tv9HoX5sV2"
+uri = "file://artifacts/elfor-store/public/categories/parkovoe.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "zYi9mDuycqccDoBVYSoJB"
+uri = "file://artifacts/elfor-store/public/categories/promyshlennye-ufo.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "2CD6kiD8VG49e_KWE2TBd"
+uri = "file://artifacts/elfor-store/public/categories/promyshlennye-modulnye.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "ILS5uua2zeDU9VAuSu1Qj"
+uri = "file://artifacts/elfor-store/public/categories/lineynye.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "xiiLA-kOtNhHsd6IOJxVh"
+uri = "file://artifacts/elfor-store/public/categories/prozhektory.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "qS4kd6eyQpDPjH6ariATs"
+uri = "file://artifacts/elfor-store/public/categories/podvesnye-panelnye.png"
+type = "image"
+title = "generated_image"
