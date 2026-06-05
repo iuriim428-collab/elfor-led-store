@@ -46,8 +46,8 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
       <header className="sticky top-0 z-50 bg-background border-b border-border">
         <div className="container mx-auto px-4 h-20 flex items-center justify-between">
           <div className="flex items-center gap-8">
-            <Link href="/" className="font-serif font-black text-2xl tracking-tighter text-primary">
-              ЭЛФОР
+            <Link href="/" className="flex items-center">
+              <img src="/logo.png" alt="ЭЛФОР" className="h-10 w-auto" />
             </Link>
             
             <nav className="hidden lg:flex items-center gap-1">
@@ -122,8 +122,8 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
             <div>
-              <Link href="/" className="font-serif font-black text-2xl tracking-tighter mb-6 block">
-                ЭЛФОР
+              <Link href="/" className="mb-6 block">
+                <img src="/logo.png" alt="ЭЛФОР" className="h-9 w-auto brightness-0 invert" />
               </Link>
               <p className="text-sm text-primary-foreground/60 mb-6 font-mono leading-relaxed">
                 Российский производитель промышленных светодиодных светильников. 
