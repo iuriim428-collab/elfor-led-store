@@ -29,6 +29,28 @@ import AdminArticleForm from "@/pages/admin/article-form";
 
 const queryClient = new QueryClient();
 
+function AdminRoutes() {
+  return (
+    <WouterRouter base="/admin">
+      <AdminLayout>
+        <Switch>
+          <Route path="/" component={AdminDashboard} />
+          <Route path="/products/new" component={AdminProductForm} />
+          <Route path="/products/:id" component={AdminProductForm} />
+          <Route path="/products" component={AdminProducts} />
+          <Route path="/categories" component={AdminCategories} />
+          <Route path="/orders/:id" component={AdminOrderDetail} />
+          <Route path="/orders" component={AdminOrders} />
+          <Route path="/articles/new" component={AdminArticleForm} />
+          <Route path="/articles/:id" component={AdminArticleForm} />
+          <Route path="/articles" component={AdminArticles} />
+          <Route component={NotFound} />
+        </Switch>
+      </AdminLayout>
+    </WouterRouter>
+  );
+}
+
 function PublicRoutes() {
   return (
     <PublicLayout>
@@ -48,31 +70,12 @@ function PublicRoutes() {
   );
 }
 
-function AdminRoutes() {
-  return (
-    <AdminLayout>
-      <Switch>
-        <Route path="/admin" component={AdminDashboard} />
-        <Route path="/admin/products" component={AdminProducts} />
-        <Route path="/admin/products/new" component={AdminProductForm} />
-        <Route path="/admin/products/:id" component={AdminProductForm} />
-        <Route path="/admin/categories" component={AdminCategories} />
-        <Route path="/admin/orders" component={AdminOrders} />
-        <Route path="/admin/orders/:id" component={AdminOrderDetail} />
-        <Route path="/admin/articles" component={AdminArticles} />
-        <Route path="/admin/articles/new" component={AdminArticleForm} />
-        <Route path="/admin/articles/:id" component={AdminArticleForm} />
-        <Route component={NotFound} />
-      </Switch>
-    </AdminLayout>
-  );
-}
-
 function Router() {
   return (
     <Switch>
-      <Route path="/admin*" component={AdminRoutes} />
-      <Route path="/*" component={PublicRoutes} />
+      <Route path="/admin" component={AdminRoutes} />
+      <Route path="/admin/:rest*" component={AdminRoutes} />
+      <Route component={PublicRoutes} />
     </Switch>
   );
 }
