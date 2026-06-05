@@ -34,3 +34,4 @@ export * from './product';
 export * from './productInput';
 export * from './productPatch';
 export * from './productSpec';
+export * from './sendInvoice200';

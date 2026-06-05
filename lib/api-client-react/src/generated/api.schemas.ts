@@ -353,3 +353,8 @@ export const ListOrdersStatus = {
   cancelled: 'cancelled',
 } as const;
 
+export type SendInvoice200 = {
+  ok: boolean;
+  message?: string;
+};
+

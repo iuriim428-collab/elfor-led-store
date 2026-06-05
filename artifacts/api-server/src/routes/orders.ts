@@ -11,6 +11,7 @@ import {
   UpdateOrderBody,
   UpdateOrderResponse,
 } from "@workspace/api-zod";
+import { sendStatusEmail, sendInvoiceEmail } from "../services/email.js";
 
 const router: IRouter = Router();
 
@@ -95,7 +96,48 @@ router.patch("/orders/:id", async (req, res): Promise<void> => {
     res.status(404).json({ error: "Order not found" });
     return;
   }
+
+  // Send status change email (non-blocking)
+  if (parsed.data.status && row.customerEmail) {
+    sendStatusEmail({
+      id: row.id,
+      customerName: row.customerName,
+      customerEmail: row.customerEmail,
+      status: row.status,
+      totalAmount: Number(row.totalAmount),
+    }).catch((err) => req.log.warn({ err }, "Status email failed"));
+  }
+
   res.json(UpdateOrderResponse.parse(toOrderJson(row)));
+});
+
+router.post("/orders/:id/send-invoice", async (req, res): Promise<void> => {
+  const idNum = Number(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
+  if (!idNum || isNaN(idNum)) {
+    res.status(400).json({ error: "Invalid id" });
+    return;
+  }
+  const [row] = await db.select().from(ordersTable).where(eq(ordersTable.id, idNum));
+  if (!row) {
+    res.status(404).json({ error: "Order not found" });
+    return;
+  }
+  const order = toOrderJson(row);
+  const result = await sendInvoiceEmail({
+    id: order.id,
+    customerName: order.customerName,
+    customerEmail: order.customerEmail,
+    customerCompany: order.customerCompany,
+    customerPhone: order.customerPhone,
+    deliveryAddress: order.deliveryAddress,
+    totalAmount: order.totalAmount,
+    items: order.items as any[],
+  });
+  if (!result.ok) {
+    res.status(500).json(result);
+    return;
+  }
+  res.json(result);
 });
 
 export default router;

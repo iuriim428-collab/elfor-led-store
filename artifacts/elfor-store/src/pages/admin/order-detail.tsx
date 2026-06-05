@@ -1,20 +1,59 @@
-import { useGetOrder, useUpdateOrder } from "@workspace/api-client-react";
+import { useGetOrder, useUpdateOrder, useSendInvoice } from "@workspace/api-client-react";
 import { useParams, Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Mail, FileText, Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function AdminOrderDetail() {
   const { id } = useParams();
   const orderId = parseInt(id!);
   const { data: order, isLoading } = useGetOrder(orderId, { query: { enabled: !!orderId } });
   const updateOrder = useUpdateOrder();
+  const sendInvoice = useSendInvoice();
   const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  const STATUS_LABELS: Record<string, string> = {
+    new: "Новый",
+    processing: "В работе",
+    shipped: "Отправлен",
+    delivered: "Доставлен",
+    cancelled: "Отменён",
+  };
 
   const handleStatusChange = (status: any) => {
     updateOrder.mutate({ id: orderId, data: { status } }, {
-      onSuccess: () => queryClient.invalidateQueries({ queryKey: ["/api/orders", orderId] })
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["/api/orders", orderId] });
+        toast({
+          title: "Статус обновлён",
+          description: `Клиенту отправлено уведомление на почту`,
+        });
+      },
+      onError: () => {
+        toast({ title: "Ошибка", description: "Не удалось обновить статус", variant: "destructive" });
+      }
+    });
+  };
+
+  const handleSendInvoice = () => {
+    sendInvoice.mutate({ id: orderId }, {
+      onSuccess: (data) => {
+        if (data.ok) {
+          toast({ title: "Счёт отправлен", description: `На почту ${order?.customerEmail}` });
+        } else {
+          toast({
+            title: "Счёт не отправлен",
+            description: data.message ?? "Проверьте настройки SMTP",
+            variant: "destructive",
+          });
+        }
+      },
+      onError: () => {
+        toast({ title: "Ошибка отправки", description: "Проверьте настройки SMTP", variant: "destructive" });
+      }
     });
   };
 
@@ -23,16 +62,37 @@ export default function AdminOrderDetail() {
 
   return (
     <div className="flex flex-col gap-6 max-w-5xl">
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 flex-wrap">
         <Link href="/orders">
           <Button variant="outline" size="icon" className="rounded-none border-border h-9 w-9">
             <ArrowLeft className="h-4 w-4" />
           </Button>
         </Link>
         <h2 className="font-serif font-bold text-lg uppercase">Заказ #{order.id}</h2>
-        <span className="font-mono text-sm text-muted-foreground ml-auto">
+        <span className="font-mono text-sm text-muted-foreground">
           от {new Date(order.createdAt).toLocaleString('ru-RU')}
         </span>
+
+        {/* Action buttons */}
+        <div className="ml-auto flex gap-3">
+          <Button
+            variant="outline"
+            className="rounded-none border-border font-mono text-xs uppercase h-9 gap-2"
+            onClick={handleSendInvoice}
+            disabled={sendInvoice.isPending}
+          >
+            {sendInvoice.isPending
+              ? <Loader2 className="h-4 w-4 animate-spin" />
+              : <FileText className="h-4 w-4" />}
+            Выставить счёт
+          </Button>
+          <a href={`mailto:${order.customerEmail}`}>
+            <Button variant="outline" className="rounded-none border-border font-mono text-xs uppercase h-9 gap-2">
+              <Mail className="h-4 w-4" />
+              Написать
+            </Button>
+          </a>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -82,18 +142,19 @@ export default function AdminOrderDetail() {
         <div className="flex flex-col gap-6">
           <div className="border border-border bg-card p-6">
             <h3 className="font-serif font-bold uppercase text-sm border-b border-border pb-4 mb-4">Статус</h3>
-            <Select value={order.status} onValueChange={handleStatusChange}>
+            <Select value={order.status} onValueChange={handleStatusChange} disabled={updateOrder.isPending}>
               <SelectTrigger className="w-full rounded-none border-border font-mono font-bold uppercase">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="rounded-none border-border font-mono text-sm uppercase">
-                <SelectItem value="new">Новый</SelectItem>
-                <SelectItem value="processing">В работе</SelectItem>
-                <SelectItem value="shipped">Отправлен</SelectItem>
-                <SelectItem value="delivered">Доставлен</SelectItem>
-                <SelectItem value="cancelled">Отменен</SelectItem>
+                {Object.entries(STATUS_LABELS).map(([val, label]) => (
+                  <SelectItem key={val} value={val}>{label}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
+            <p className="text-[10px] font-mono text-muted-foreground mt-2">
+              При смене статуса клиент получит уведомление на email
+            </p>
           </div>
 
           <div className="border border-border bg-card p-6">
@@ -130,6 +191,26 @@ export default function AdminOrderDetail() {
                 </div>
               )}
             </div>
+          </div>
+
+          {/* Invoice action card */}
+          <div className="border border-accent/40 bg-orange-50/30 p-6">
+            <h3 className="font-serif font-bold uppercase text-sm border-b border-border pb-4 mb-4 flex items-center gap-2">
+              <FileText className="h-4 w-4 text-accent" />
+              Счёт на оплату
+            </h3>
+            <p className="font-mono text-xs text-muted-foreground mb-4">
+              Отправить счёт на оплату на почту клиента ({order.customerEmail})
+            </p>
+            <Button
+              className="w-full rounded-none font-bold uppercase tracking-wider h-10 bg-accent hover:bg-accent/90 text-white text-xs gap-2"
+              onClick={handleSendInvoice}
+              disabled={sendInvoice.isPending}
+            >
+              {sendInvoice.isPending
+                ? <><Loader2 className="h-4 w-4 animate-spin" /> Отправка...</>
+                : <><FileText className="h-4 w-4" /> Отправить счёт</>}
+            </Button>
           </div>
         </div>
       </div>

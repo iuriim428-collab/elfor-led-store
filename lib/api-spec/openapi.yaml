@@ -418,6 +418,35 @@ paths:
               schema:
                 $ref: "#/components/schemas/Order"
 
+  /orders/{id}/send-invoice:
+    post:
+      operationId: sendInvoice
+      tags: [orders]
+      summary: Send invoice email to customer (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Invoice sent
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok]
+                properties:
+                  ok:
+                    type: boolean
+                  message:
+                    type: string
+        "404":
+          description: Not found
+        "500":
+          description: Email error
+
   /orders/{id}:
     get:
       operationId: getOrder

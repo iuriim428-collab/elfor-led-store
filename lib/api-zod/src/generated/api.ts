@@ -532,6 +532,19 @@ export const CreateOrderBody = zod.object({
 
 
 /**
+ * @summary Send invoice email to customer (admin)
+ */
+export const SendInvoiceParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const SendInvoiceResponse = zod.object({
+  "ok": zod.boolean(),
+  "message": zod.string().optional()
+})
+
+
+/**
  * @summary Get an order by ID
  */
 export const GetOrderParams = zod.object({

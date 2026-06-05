@@ -36,7 +36,8 @@ import type {
   OrderPatch,
   Product,
   ProductInput,
-  ProductPatch
+  ProductPatch,
+  SendInvoice200
 } from './api.schemas';
 
 import { customFetch } from '../custom-fetch';
@@ -1473,6 +1474,76 @@ export const useCreateOrder = <TError = ErrorType<unknown>,
         TContext
       > => {
       return useMutation(getCreateOrderMutationOptions(options));
+    }
+
+export const getSendInvoiceUrl = (id: number,) => {
+
+
+
+
+  return `/api/orders/${id}/send-invoice`
+}
+
+/**
+ * @summary Send invoice email to customer (admin)
+ */
+export const sendInvoice = async (id: number, options?: RequestInit): Promise<SendInvoice200> => {
+
+  return customFetch<SendInvoice200>(getSendInvoiceUrl(id),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+export const getSendInvoiceMutationOptions = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof sendInvoice>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof sendInvoice>>, TError,{id: number}, TContext> => {
+
+const mutationKey = ['sendInvoice'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof sendInvoice>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
+
+          return  sendInvoice(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SendInvoiceMutationResult = NonNullable<Awaited<ReturnType<typeof sendInvoice>>>
+
+    export type SendInvoiceMutationError = ErrorType<void>
+
+    /**
+ * @summary Send invoice email to customer (admin)
+ */
+export const useSendInvoice = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof sendInvoice>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof sendInvoice>>,
+        TError,
+        {id: number},
+        TContext
+      > => {
+      return useMutation(getSendInvoiceMutationOptions(options));
     }
 
 export const getGetOrderUrl = (id: number,) => {
