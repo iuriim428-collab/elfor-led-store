@@ -11,68 +11,67 @@ export default function Home() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="bg-primary text-primary-foreground py-24 lg:py-32 relative overflow-hidden border-b border-border">
+      <section className="bg-primary text-primary-foreground py-14 sm:py-20 lg:py-32 relative overflow-hidden border-b border-border">
         <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: "url('data:image/svg+xml,%3Csvg width=\\'60\\' height=\\'60\\' viewBox=\\'0 0 60 60\\' xmlns=\\'http://www.w3.org/2000/svg\\'%3E%3Cg fill=\\'none\\' fill-rule=\\'evenodd\\'%3E%3Cg fill=\\'%23ffffff\\' fill-opacity=\\'1\\'%3E%3Cpath d=\\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')" }} />
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl">
-            <h1 className="text-4xl md:text-5xl lg:text-7xl font-serif font-black uppercase tracking-tight mb-6 leading-[1.1]">
+            <h1 className="text-2xl leading-[1.15] sm:text-4xl md:text-5xl lg:text-7xl font-serif font-black uppercase tracking-normal sm:tracking-tight mb-5 sm:mb-6">
               Промышленные<br />
               <span className="text-accent">LED светильники</span><br />
               от производителя
             </h1>
-            <p className="text-lg md:text-xl font-mono text-primary-foreground/80 mb-10 max-w-2xl leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl font-mono text-primary-foreground/80 mb-8 max-w-2xl leading-relaxed">
               Надежные решения для заводов, складов и улиц. Энергоэффективность до 200 лм/Вт. Гарантия 5 лет.
             </p>
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4">
               <Link href="/catalog">
-                <Button size="lg" className="bg-accent text-white hover:bg-accent/90 border border-accent rounded-none font-bold uppercase tracking-wider text-sm h-14 px-8">
+                <Button size="lg" className="w-full sm:w-auto bg-accent text-white hover:bg-accent/90 border border-accent rounded-none font-bold uppercase tracking-wider text-sm h-12 sm:h-14 px-8">
                   Перейти в каталог
                 </Button>
               </Link>
               <Link href="/about">
-                <Button size="lg" variant="outline" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary rounded-none font-bold uppercase tracking-wider text-sm h-14 px-8">
+                <Button size="lg" variant="outline" className="w-full sm:w-auto border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary rounded-none font-bold uppercase tracking-wider text-sm h-12 sm:h-14 px-8">
                   О компании
                 </Button>
               </Link>
-
             </div>
           </div>
         </div>
       </section>
 
       {/* Stats / Why Us */}
-      <section className="py-16 border-b border-border bg-background">
+      <section className="py-10 sm:py-16 border-b border-border bg-background">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="flex flex-col border border-border p-6 hover-elevate bg-card">
-              <Factory className="h-10 w-10 text-accent mb-4" />
-              <h3 className="font-serif font-bold text-xl uppercase mb-2">Собственное производство</h3>
-              <p className="text-sm font-mono text-muted-foreground">Контроль качества на всех этапах изготовления</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8">
+            <div className="flex flex-col border border-border p-4 sm:p-6 hover-elevate bg-card">
+              <Factory className="h-8 w-8 sm:h-10 sm:w-10 text-accent mb-3 sm:mb-4" />
+              <h3 className="font-serif font-bold text-base sm:text-xl uppercase mb-1 sm:mb-2">Собственное производство</h3>
+              <p className="text-xs sm:text-sm font-mono text-muted-foreground">Контроль качества на всех этапах изготовления</p>
             </div>
-            <div className="flex flex-col border border-border p-6 hover-elevate bg-card">
-              <Shield className="h-10 w-10 text-accent mb-4" />
-              <h3 className="font-serif font-bold text-xl uppercase mb-2">Гарантия 5 лет</h3>
-              <p className="text-sm font-mono text-muted-foreground">Безусловная гарантия на всю продукцию ELFOR</p>
+            <div className="flex flex-col border border-border p-4 sm:p-6 hover-elevate bg-card">
+              <Shield className="h-8 w-8 sm:h-10 sm:w-10 text-accent mb-3 sm:mb-4" />
+              <h3 className="font-serif font-bold text-base sm:text-xl uppercase mb-1 sm:mb-2">Гарантия 5 лет</h3>
+              <p className="text-xs sm:text-sm font-mono text-muted-foreground">Безусловная гарантия на всю продукцию ELFOR</p>
             </div>
-            <div className="flex flex-col border border-border p-6 hover-elevate bg-card">
-              <Zap className="h-10 w-10 text-accent mb-4" />
-              <h3 className="font-serif font-bold text-xl uppercase mb-2">До 200 лм/Вт</h3>
-              <p className="text-sm font-mono text-muted-foreground">Максимальная энергоэффективность на рынке</p>
+            <div className="flex flex-col border border-border p-4 sm:p-6 hover-elevate bg-card">
+              <Zap className="h-8 w-8 sm:h-10 sm:w-10 text-accent mb-3 sm:mb-4" />
+              <h3 className="font-serif font-bold text-base sm:text-xl uppercase mb-1 sm:mb-2">До 200 лм/Вт</h3>
+              <p className="text-xs sm:text-sm font-mono text-muted-foreground">Максимальная энергоэффективность на рынке</p>
             </div>
-            <div className="flex flex-col border border-border p-6 hover-elevate bg-card">
-              <Award className="h-10 w-10 text-accent mb-4" />
-              <h3 className="font-serif font-bold text-xl uppercase mb-2">ГОСТ и Сертификаты</h3>
-              <p className="text-sm font-mono text-muted-foreground">Полное соответствие российским стандартам</p>
+            <div className="flex flex-col border border-border p-4 sm:p-6 hover-elevate bg-card">
+              <Award className="h-8 w-8 sm:h-10 sm:w-10 text-accent mb-3 sm:mb-4" />
+              <h3 className="font-serif font-bold text-base sm:text-xl uppercase mb-1 sm:mb-2">ГОСТ и Сертификаты</h3>
+              <p className="text-xs sm:text-sm font-mono text-muted-foreground">Полное соответствие российским стандартам</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* Categories */}
-      <section className="py-24 border-b border-border bg-card">
+      <section className="py-12 sm:py-24 border-b border-border bg-card">
         <div className="container mx-auto px-4">
-          <div className="flex justify-between items-end mb-12">
-            <h2 className="text-3xl md:text-4xl font-serif font-black uppercase">Категории</h2>
+          <div className="flex justify-between items-end mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif font-black uppercase">Категории</h2>
             <Link href="/catalog" className="hidden md:flex items-center gap-2 font-mono text-sm font-bold uppercase tracking-wider text-accent hover:text-primary transition-colors">
               Все категории <ArrowRight className="h-4 w-4" />
             </Link>
@@ -95,10 +94,10 @@ export default function Home() {
       </section>
 
       {/* Featured Products */}
-      <section className="py-24 border-b border-border bg-background">
+      <section className="py-12 sm:py-24 border-b border-border bg-background">
         <div className="container mx-auto px-4">
-          <div className="flex justify-between items-end mb-12">
-            <h2 className="text-3xl md:text-4xl font-serif font-black uppercase">Популярные модели</h2>
+          <div className="flex justify-between items-end mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif font-black uppercase">Популярные модели</h2>
           </div>
 
           {isLoadingProducts ? (
@@ -144,10 +143,10 @@ export default function Home() {
       </section>
 
       {/* News Preview */}
-      <section className="py-24 bg-card">
+      <section className="py-12 sm:py-24 bg-card">
         <div className="container mx-auto px-4">
-          <div className="flex justify-between items-end mb-12">
-            <h2 className="text-3xl md:text-4xl font-serif font-black uppercase">Новости</h2>
+          <div className="flex justify-between items-end mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif font-black uppercase">Новости</h2>
             <Link href="/news" className="hidden md:flex items-center gap-2 font-mono text-sm font-bold uppercase tracking-wider text-accent hover:text-primary transition-colors">
               Все новости <ArrowRight className="h-4 w-4" />
             </Link>

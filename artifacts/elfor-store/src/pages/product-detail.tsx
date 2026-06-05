@@ -68,11 +68,11 @@ export default function ProductDetail() {
         <span className="text-primary truncate max-w-[200px]">{product.name}</span>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-12 mb-10 sm:mb-16">
         {/* Images */}
-        <div className="border border-border bg-white p-8 flex items-center justify-center min-h-[400px]">
+        <div className="border border-border bg-white p-4 sm:p-8 flex items-center justify-center min-h-[240px] sm:min-h-[400px]">
           {product.imageUrl ? (
-            <img src={product.imageUrl} alt={product.name} className="max-w-full max-h-[500px] object-contain mix-blend-multiply" />
+            <img src={product.imageUrl} alt={product.name} className="max-w-full max-h-[300px] sm:max-h-[500px] object-contain mix-blend-multiply" />
           ) : (
             <div className="text-muted-foreground font-mono">Нет фото</div>
           )}
@@ -80,8 +80,8 @@ export default function ProductDetail() {
 
         {/* Info */}
         <div className="flex flex-col">
-          <div className="text-sm font-mono text-muted-foreground mb-4">{product.sku}</div>
-          <h1 className="text-3xl md:text-4xl font-serif font-black uppercase mb-6 leading-tight">{product.name}</h1>
+          <div className="text-sm font-mono text-muted-foreground mb-3">{product.sku}</div>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-black uppercase mb-5 sm:mb-6 leading-tight">{product.name}</h1>
           
           <div className="flex flex-wrap gap-2 mb-6 font-mono text-xs font-bold uppercase tracking-wider">
             {product.stock > 0 ? (
@@ -155,16 +155,16 @@ export default function ProductDetail() {
             </div>
           )}
 
-          <div className="border border-border bg-card p-6 mb-8">
-            <div className="flex items-end gap-4 mb-6">
-              <div className="font-mono font-bold text-4xl">{currentPrice.toLocaleString("ru-RU")} ₽</div>
-              {product.oldPrice && <div className="text-lg font-mono line-through text-muted-foreground mb-1">{product.oldPrice.toLocaleString("ru-RU")} ₽</div>}
+          <div className="border border-border bg-card p-4 sm:p-6 mb-6 sm:mb-8">
+            <div className="flex items-end gap-3 mb-5">
+              <div className="font-mono font-bold text-3xl sm:text-4xl">{currentPrice.toLocaleString("ru-RU")} ₽</div>
+              {product.oldPrice && <div className="text-base sm:text-lg font-mono line-through text-muted-foreground mb-1">{product.oldPrice.toLocaleString("ru-RU")} ₽</div>}
               <div className="text-xs font-mono text-muted-foreground mb-1 ml-auto">за штуку</div>
             </div>
 
             {product.priceTiers && product.priceTiers.length > 0 && (
-              <div className="mb-6 font-mono text-sm border-t border-border pt-4">
-                <div className="flex gap-6 flex-wrap">
+              <div className="mb-5 font-mono text-sm border-t border-border pt-4">
+                <div className="flex gap-4 sm:gap-6 flex-wrap">
                   {product.priceTiers.map(tier => {
                     const disc = Math.round((1 - tier.price / product.price) * 100);
                     return (
@@ -179,8 +179,8 @@ export default function ProductDetail() {
               </div>
             )}
 
-            <div className="flex gap-4">
-              <div className="w-32 flex">
+            <div className="flex gap-3">
+              <div className="w-28 sm:w-32 flex shrink-0">
                 <Button 
                   variant="outline" 
                   className="rounded-none border-border px-3 font-mono"
@@ -199,10 +199,14 @@ export default function ProductDetail() {
                 >+</Button>
               </div>
               <Button 
-                className={`flex-1 rounded-none font-bold uppercase tracking-wider h-10 ${added ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-accent hover:bg-accent/90 text-white'}`}
+                className={`flex-1 rounded-none font-bold uppercase tracking-wider h-10 text-xs sm:text-sm ${added ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-accent hover:bg-accent/90 text-white'}`}
                 onClick={handleAddToCart}
               >
-                {added ? <><Check className="mr-2 h-4 w-4" /> В корзине</> : <><ShoppingCart className="mr-2 h-4 w-4" /> В корзину · {currentPrice.toLocaleString("ru-RU")} ₽</>}
+                {added ? (
+                  <><Check className="mr-1.5 h-4 w-4 shrink-0" /> В корзине</>
+                ) : (
+                  <><ShoppingCart className="mr-1.5 h-4 w-4 shrink-0" /><span className="hidden sm:inline">В корзину · </span>{currentPrice.toLocaleString("ru-RU")} ₽</>
+                )}
               </Button>
             </div>
           </div>

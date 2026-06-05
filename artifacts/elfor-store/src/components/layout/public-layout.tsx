@@ -118,17 +118,32 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="lg:hidden absolute top-20 left-0 w-full bg-background border-b border-border p-4 flex flex-col gap-2">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className="block p-4 border border-border font-serif uppercase text-sm"
-              >
-                {link.label}
-              </Link>
-            ))}
+          <div className="lg:hidden absolute top-20 left-0 w-full bg-background border-b border-border shadow-lg flex flex-col">
+            <nav className="flex flex-col">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={cn(
+                    "px-6 py-4 font-serif font-bold uppercase text-sm border-b border-border last:border-0 transition-colors",
+                    location.startsWith(link.href) ? "text-accent bg-accent/5" : "hover:bg-muted"
+                  )}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+            <div className="px-6 py-4 bg-primary text-primary-foreground flex flex-col gap-2">
+              <a href="tel:+78000000000" className="flex items-center gap-3 font-mono text-sm font-bold hover:text-accent transition-colors">
+                <Phone className="h-4 w-4 text-accent shrink-0" />
+                8 (800) 000-00-00
+              </a>
+              <a href="mailto:info@lfour.ru" className="flex items-center gap-3 font-mono text-xs text-primary-foreground/60 hover:text-accent transition-colors">
+                <Mail className="h-4 w-4 shrink-0" />
+                info@lfour.ru
+              </a>
+            </div>
           </div>
         )}
       </header>
