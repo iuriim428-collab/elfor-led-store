@@ -609,6 +609,14 @@ components:
           type: ["string", "null"]
         warranty:
           type: ["string", "null"]
+        colorTemps:
+          type: array
+          items:
+            type: string
+        beamAngles:
+          type: array
+          items:
+            type: string
         stock:
           type: integer
         featured:
@@ -664,6 +672,14 @@ components:
           type: string
         warranty:
           type: string
+        colorTemps:
+          type: array
+          items:
+            type: string
+        beamAngles:
+          type: array
+          items:
+            type: string
         stock:
           type: integer
         featured:
@@ -714,6 +730,14 @@ components:
           type: ["string", "null"]
         warranty:
           type: ["string", "null"]
+        colorTemps:
+          type: array
+          items:
+            type: string
+        beamAngles:
+          type: array
+          items:
+            type: string
         stock:
           type: integer
         featured:

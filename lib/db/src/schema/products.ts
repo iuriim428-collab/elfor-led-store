@@ -21,6 +21,8 @@ export const productsTable = pgTable("products", {
   colorTemp: text("color_temp"),
   ipRating: text("ip_rating"),
   warranty: text("warranty"),
+  colorTemps: jsonb("color_temps").notNull().default("[]"),
+  beamAngles: jsonb("beam_angles").notNull().default("[]"),
   stock: integer("stock").notNull().default(0),
   featured: boolean("featured").notNull().default(false),
   inStock: boolean("in_stock").notNull().default(true),

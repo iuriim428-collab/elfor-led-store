@@ -28,6 +28,8 @@ export interface ProductInput {
   colorTemp?: string;
   ipRating?: string;
   warranty?: string;
+  colorTemps?: string[];
+  beamAngles?: string[];
   stock: number;
   featured?: boolean;
 }

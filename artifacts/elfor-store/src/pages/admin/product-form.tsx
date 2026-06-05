@@ -30,6 +30,8 @@ const formSchema = z.object({
   ipRating: z.string().optional().nullable(),
   warranty: z.string().optional().nullable(),
   imageUrl: z.string().optional().nullable(),
+  colorTempsRaw: z.string().optional().default(""),
+  beamAnglesRaw: z.string().optional().default(""),
   specs: z.array(z.object({
     key: z.string().min(1),
     value: z.string().min(1),
@@ -85,6 +87,8 @@ export default function AdminProductForm() {
         ipRating: product.ipRating ?? undefined,
         warranty: product.warranty ?? undefined,
         imageUrl: product.imageUrl ?? undefined,
+        colorTempsRaw: (product.colorTemps ?? []).join(", "),
+        beamAnglesRaw: (product.beamAngles ?? []).join(", "),
         specs: product.specs ?? []
       });
       initRef.current = true;
@@ -92,7 +96,9 @@ export default function AdminProductForm() {
   }, [product, isEditing, form]);
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    // Clean up undefined/null values for the API
+    const parseList = (raw: string | undefined) =>
+      (raw || "").split(",").map(s => s.trim()).filter(Boolean);
+
     const data = {
       ...values,
       oldPrice: values.oldPrice || undefined,
@@ -104,6 +110,10 @@ export default function AdminProductForm() {
       ipRating: values.ipRating || undefined,
       warranty: values.warranty || undefined,
       imageUrl: values.imageUrl || undefined,
+      colorTemps: parseList(values.colorTempsRaw),
+      beamAngles: parseList(values.beamAnglesRaw),
+      colorTempsRaw: undefined,
+      beamAnglesRaw: undefined,
       specs: values.specs.length > 0 ? values.specs.map(s => ({
         ...s,
         unit: s.unit || undefined
@@ -228,7 +238,7 @@ export default function AdminProductForm() {
               <FormField control={form.control} name="colorTemp" render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-xs font-bold uppercase">Цветовая температура</FormLabel>
-                  <FormControl><Input {...field} value={field.value || ""} placeholder="Напр: 4000K" className="rounded-none border-border" /></FormControl>
+                  <FormControl><Input {...field} value={field.value || ""} placeholder="Напр: 4000–4500K" className="rounded-none border-border" /></FormControl>
                 </FormItem>
               )} />
               
@@ -236,6 +246,22 @@ export default function AdminProductForm() {
                 <FormItem>
                   <FormLabel className="text-xs font-bold uppercase">Степень защиты (IP)</FormLabel>
                   <FormControl><Input {...field} value={field.value || ""} placeholder="Напр: IP65" className="rounded-none border-border" /></FormControl>
+                </FormItem>
+              )} />
+
+              <FormField control={form.control} name="colorTempsRaw" render={({ field }) => (
+                <FormItem className="md:col-span-2">
+                  <FormLabel className="text-xs font-bold uppercase">Варианты цветовой температуры (Кельвины)</FormLabel>
+                  <FormControl><Input {...field} value={field.value || ""} placeholder="3000K, 4000K, 5000K, 6000K" className="rounded-none border-border" /></FormControl>
+                  <p className="text-[10px] text-muted-foreground">Через запятую. Покупатель выберет нужный вариант на странице товара.</p>
+                </FormItem>
+              )} />
+
+              <FormField control={form.control} name="beamAnglesRaw" render={({ field }) => (
+                <FormItem className="md:col-span-2">
+                  <FormLabel className="text-xs font-bold uppercase">Варианты угла свечения</FormLabel>
+                  <FormControl><Input {...field} value={field.value || ""} placeholder="60°, 90°, 120°" className="rounded-none border-border" /></FormControl>
+                  <p className="text-[10px] text-muted-foreground">Через запятую. Покупатель выберет нужный угол на странице товара.</p>
                 </FormItem>
               )} />
             </div>

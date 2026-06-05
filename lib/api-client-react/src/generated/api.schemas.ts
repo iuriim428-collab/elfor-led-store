@@ -86,6 +86,8 @@ export interface Product {
   ipRating?: string | null;
   /** @nullable */
   warranty?: string | null;
+  colorTemps?: string[];
+  beamAngles?: string[];
   stock: number;
   featured?: boolean;
   inStock?: boolean;
@@ -112,6 +114,8 @@ export interface ProductInput {
   colorTemp?: string;
   ipRating?: string;
   warranty?: string;
+  colorTemps?: string[];
+  beamAngles?: string[];
   stock: number;
   featured?: boolean;
 }
@@ -146,6 +150,8 @@ export interface ProductPatch {
   ipRating?: string | null;
   /** @nullable */
   warranty?: string | null;
+  colorTemps?: string[];
+  beamAngles?: string[];
   stock?: number;
   featured?: boolean;
   inStock?: boolean;
