@@ -6,11 +6,11 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
 
   const navigation = [
-    { name: "Дашборд", href: "/admin", icon: LayoutDashboard, exact: true },
-    { name: "Заказы", href: "/admin/orders", icon: ShoppingBag },
-    { name: "Товары", href: "/admin/products", icon: Package },
-    { name: "Категории", href: "/admin/categories", icon: FolderTree },
-    { name: "Статьи", href: "/admin/articles", icon: FileText },
+    { name: "Дашборд", href: "/", icon: LayoutDashboard, exact: true },
+    { name: "Заказы", href: "/orders", icon: ShoppingBag },
+    { name: "Товары", href: "/products", icon: Package },
+    { name: "Категории", href: "/categories", icon: FolderTree },
+    { name: "Статьи", href: "/articles", icon: FileText },
   ];
 
   return (
@@ -18,7 +18,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
       {/* Sidebar */}
       <aside className="w-64 bg-primary text-primary-foreground border-r border-border flex flex-col fixed h-full z-10">
         <div className="h-20 flex items-center px-6 border-b border-primary-foreground/10">
-          <Link href="/admin" className="font-serif font-black text-xl tracking-tighter text-white">
+          <Link href="/" className="font-serif font-black text-xl tracking-tighter text-white">
             ELFOR ADMIN
           </Link>
         </div>
@@ -48,13 +48,13 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
         </nav>
 
         <div className="p-4 border-t border-primary-foreground/10">
-          <Link
+          <a
             href="/"
             className="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-primary-foreground/70 hover:text-white transition-colors"
           >
             <LogOut className="h-5 w-5" />
             В магазин
-          </Link>
+          </a>
         </div>
       </aside>
 

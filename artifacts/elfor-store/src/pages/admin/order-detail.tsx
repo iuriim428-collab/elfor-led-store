@@ -24,7 +24,7 @@ export default function AdminOrderDetail() {
   return (
     <div className="flex flex-col gap-6 max-w-5xl">
       <div className="flex items-center gap-4">
-        <Link href="/admin/orders">
+        <Link href="/orders">
           <Button variant="outline" size="icon" className="rounded-none border-border h-9 w-9">
             <ArrowLeft className="h-4 w-4" />
           </Button>

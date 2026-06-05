@@ -30,7 +30,7 @@ export default function AdminArticles() {
     <div className="flex flex-col gap-6">
       <div className="flex justify-between items-center">
         <h2 className="font-serif font-bold text-lg uppercase">Статьи и новости ({articles.length})</h2>
-        <Link href="/admin/articles/new">
+        <Link href="/articles/new">
           <Button className="rounded-none bg-accent hover:bg-accent/90 text-white font-bold uppercase tracking-wider text-xs h-9">
             <Plus className="h-4 w-4 mr-2" /> Добавить
           </Button>
@@ -69,7 +69,7 @@ export default function AdminArticles() {
                     />
                   </TableCell>
                   <TableCell className="text-right space-x-2">
-                    <Link href={`/admin/articles/${article.id}`}>
+                    <Link href={`/articles/${article.id}`}>
                       <Button variant="outline" size="icon" className="h-8 w-8 rounded-none border-border">
                         <Edit className="h-4 w-4" />
                       </Button>

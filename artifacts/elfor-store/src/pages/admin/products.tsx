@@ -22,7 +22,7 @@ export default function AdminProducts() {
     <div className="flex flex-col gap-6">
       <div className="flex justify-between items-center">
         <h2 className="font-serif font-bold text-lg uppercase">Товары ({products.length})</h2>
-        <Link href="/admin/products/new">
+        <Link href="/products/new">
           <Button className="rounded-none bg-accent hover:bg-accent/90 text-white font-bold uppercase tracking-wider text-xs h-9">
             <Plus className="h-4 w-4 mr-2" /> Добавить
           </Button>
@@ -59,7 +59,7 @@ export default function AdminProducts() {
                     </span>
                   </TableCell>
                   <TableCell className="text-right space-x-2">
-                    <Link href={`/admin/products/${product.id}`}>
+                    <Link href={`/products/${product.id}`}>
                       <Button variant="outline" size="icon" className="h-8 w-8 rounded-none border-border">
                         <Edit className="h-4 w-4" />
                       </Button>

@@ -77,7 +77,7 @@ export default function AdminArticleForm() {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["/api/articles"] });
           toast({ title: "Сохранено" });
-          setLocation("/admin/articles");
+          setLocation("/articles");
         }
       });
     } else {
@@ -85,7 +85,7 @@ export default function AdminArticleForm() {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["/api/articles"] });
           toast({ title: "Создано" });
-          setLocation("/admin/articles");
+          setLocation("/articles");
         }
       });
     }
@@ -97,7 +97,7 @@ export default function AdminArticleForm() {
     <div className="flex flex-col gap-6 max-w-4xl">
       <div className="flex justify-between items-center">
         <h2 className="font-serif font-bold text-lg uppercase">{isEditing ? "Редактирование статьи" : "Новая статья"}</h2>
-        <Button variant="outline" onClick={() => setLocation("/admin/articles")} className="rounded-none border-border font-mono text-xs">
+        <Button variant="outline" onClick={() => setLocation("/articles")} className="rounded-none border-border font-mono text-xs">
           Отмена
         </Button>
       </div>

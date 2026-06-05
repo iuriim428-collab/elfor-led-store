@@ -115,7 +115,7 @@ export default function AdminProductForm() {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["/api/products"] });
           toast({ title: "Товар обновлен" });
-          setLocation("/admin/products");
+          setLocation("/products");
         }
       });
     } else {
@@ -123,7 +123,7 @@ export default function AdminProductForm() {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["/api/products"] });
           toast({ title: "Товар создан" });
-          setLocation("/admin/products");
+          setLocation("/products");
         }
       });
     }
@@ -135,7 +135,7 @@ export default function AdminProductForm() {
     <div className="flex flex-col gap-6 max-w-4xl">
       <div className="flex justify-between items-center">
         <h2 className="font-serif font-bold text-lg uppercase">{isEditing ? "Редактирование товара" : "Новый товар"}</h2>
-        <Button variant="outline" onClick={() => setLocation("/admin/products")} className="rounded-none border-border font-mono text-xs">
+        <Button variant="outline" onClick={() => setLocation("/products")} className="rounded-none border-border font-mono text-xs">
           Отмена
         </Button>
       </div>
