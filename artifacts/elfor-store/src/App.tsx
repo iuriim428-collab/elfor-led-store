@@ -1,4 +1,4 @@
-import { Switch, Route, Router as WouterRouter } from "wouter";
+import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -29,29 +29,31 @@ import AdminArticleForm from "@/pages/admin/article-form";
 
 const queryClient = new QueryClient();
 
-function AdminRoutes() {
-  return (
-    <WouterRouter base="/admin">
-      <AdminLayout>
-        <Switch>
-          <Route path="/" component={AdminDashboard} />
-          <Route path="/products/new" component={AdminProductForm} />
-          <Route path="/products/:id" component={AdminProductForm} />
-          <Route path="/products" component={AdminProducts} />
-          <Route path="/categories" component={AdminCategories} />
-          <Route path="/orders/:id" component={AdminOrderDetail} />
-          <Route path="/orders" component={AdminOrders} />
-          <Route path="/articles/new" component={AdminArticleForm} />
-          <Route path="/articles/:id" component={AdminArticleForm} />
-          <Route path="/articles" component={AdminArticles} />
-          <Route component={NotFound} />
-        </Switch>
-      </AdminLayout>
-    </WouterRouter>
-  );
-}
+function AppContent() {
+  const [location] = useLocation();
 
-function PublicRoutes() {
+  if (location === "/admin" || location.startsWith("/admin/")) {
+    return (
+      <WouterRouter base="/admin">
+        <AdminLayout>
+          <Switch>
+            <Route path="/" component={AdminDashboard} />
+            <Route path="/products/new" component={AdminProductForm} />
+            <Route path="/products/:id" component={AdminProductForm} />
+            <Route path="/products" component={AdminProducts} />
+            <Route path="/categories" component={AdminCategories} />
+            <Route path="/orders/:id" component={AdminOrderDetail} />
+            <Route path="/orders" component={AdminOrders} />
+            <Route path="/articles/new" component={AdminArticleForm} />
+            <Route path="/articles/:id" component={AdminArticleForm} />
+            <Route path="/articles" component={AdminArticles} />
+            <Route component={NotFound} />
+          </Switch>
+        </AdminLayout>
+      </WouterRouter>
+    );
+  }
+
   return (
     <PublicLayout>
       <Switch>
@@ -70,23 +72,13 @@ function PublicRoutes() {
   );
 }
 
-function Router() {
-  return (
-    <Switch>
-      <Route path="/admin" component={AdminRoutes} />
-      <Route path="/admin/:rest*" component={AdminRoutes} />
-      <Route component={PublicRoutes} />
-    </Switch>
-  );
-}
-
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <CartProvider>
         <TooltipProvider>
           <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-            <Router />
+            <AppContent />
           </WouterRouter>
           <Toaster />
         </TooltipProvider>
