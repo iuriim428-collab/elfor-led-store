@@ -42,3 +42,9 @@ id = "qS4kd6eyQpDPjH6ariATs"
 uri = "file://artifacts/elfor-store/public/categories/podvesnye-panelnye.png"
 type = "image"
 title = "generated_image"
+
+[[generated]]
+id = "Od6EI0D1bRTem7Wamg-Gl"
+uri = "file://artifacts/elfor-store/public/categories/svlenta.png"
+type = "image"
+title = "generated_image"
