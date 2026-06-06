@@ -78,7 +78,7 @@ export default function Home() {
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {categories.slice(0, 6).map((cat) => (
+            {categories.map((cat) => (
               <Link key={cat.id} href={`/categories/${cat.slug}`} className="group block border border-border bg-background overflow-hidden hover-elevate">
                 <div className="aspect-[4/3] bg-muted relative p-6 flex flex-col justify-end">
                   <div className="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent z-10" />
