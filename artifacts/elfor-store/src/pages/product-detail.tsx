@@ -227,35 +227,40 @@ export default function ProductDetail() {
         </div>
         <div className="p-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4 font-mono text-sm">
-            {product.specs?.map((spec, i) => (
-              <div key={i} className="flex justify-between border-b border-border border-dashed pb-2">
-                <span className="text-muted-foreground">{spec.key}</span>
-                <span className="font-bold text-right">{spec.value} {spec.unit || ""}</span>
-              </div>
-            ))}
-            {product.power && (
-              <div className="flex justify-between border-b border-border border-dashed pb-2">
-                <span className="text-muted-foreground">Мощность</span>
-                <span className="font-bold text-right">{product.power} Вт</span>
-              </div>
-            )}
-            {product.lumens && (
-              <div className="flex justify-between border-b border-border border-dashed pb-2">
-                <span className="text-muted-foreground">Световой поток</span>
-                <span className="font-bold text-right">{product.lumens} лм</span>
-              </div>
-            )}
-            {product.colorTemp && (
-              <div className="flex justify-between border-b border-border border-dashed pb-2">
-                <span className="text-muted-foreground">Цветовая температура</span>
-                <span className="font-bold text-right">{product.colorTemp}</span>
-              </div>
-            )}
-            {product.ipRating && (
-              <div className="flex justify-between border-b border-border border-dashed pb-2">
-                <span className="text-muted-foreground">Степень защиты</span>
-                <span className="font-bold text-right">{product.ipRating}</span>
-              </div>
+            {product.specs && product.specs.length > 0 ? (
+              product.specs.map((spec, i) => (
+                <div key={i} className="flex justify-between border-b border-border border-dashed pb-2">
+                  <span className="text-muted-foreground">{spec.key}</span>
+                  <span className="font-bold text-right">{spec.value}{spec.unit ? ` ${spec.unit}` : ""}</span>
+                </div>
+              ))
+            ) : (
+              <>
+                {product.power && (
+                  <div className="flex justify-between border-b border-border border-dashed pb-2">
+                    <span className="text-muted-foreground">Мощность</span>
+                    <span className="font-bold text-right">{product.power}</span>
+                  </div>
+                )}
+                {product.lumens && (
+                  <div className="flex justify-between border-b border-border border-dashed pb-2">
+                    <span className="text-muted-foreground">Световой поток</span>
+                    <span className="font-bold text-right">{product.lumens} лм</span>
+                  </div>
+                )}
+                {product.colorTemp && (
+                  <div className="flex justify-between border-b border-border border-dashed pb-2">
+                    <span className="text-muted-foreground">Цветовая температура</span>
+                    <span className="font-bold text-right">{product.colorTemp}</span>
+                  </div>
+                )}
+                {product.ipRating && (
+                  <div className="flex justify-between border-b border-border border-dashed pb-2">
+                    <span className="text-muted-foreground">Степень защиты</span>
+                    <span className="font-bold text-right">{product.ipRating}</span>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
