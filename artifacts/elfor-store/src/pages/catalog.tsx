@@ -257,7 +257,7 @@ export default function Catalog() {
                     <div className="flex items-end justify-between mt-auto">
                       <div>
                         {product.oldPrice && <div className="text-xs font-mono line-through text-muted-foreground">{product.oldPrice.toLocaleString("ru-RU")} ₽</div>}
-                        <div className="font-mono font-bold text-lg">{product.price.toLocaleString("ru-RU")} ₽</div>
+                        <div className="font-mono font-bold text-lg">{(product.priceTiers && product.priceTiers.length > 0 ? [...product.priceTiers].sort((a, b) => a.minQty - b.minQty)[0].price : product.price).toLocaleString("ru-RU")} ₽</div>
                       </div>
                       <Button size="icon" className="rounded-none border border-border bg-primary text-primary-foreground hover:bg-accent hover:border-accent hover:text-white transition-colors h-10 w-10">
                         <ArrowRight className="h-4 w-4" />
