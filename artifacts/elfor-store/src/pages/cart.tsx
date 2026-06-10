@@ -1,4 +1,4 @@
-import { useCart } from "@/hooks/use-cart";
+import { useCart, getApplicablePrice } from "@/hooks/use-cart";
 import { useCreateOrder } from "@workspace/api-client-react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -36,7 +36,7 @@ export default function Cart() {
           productName: item.product.name,
           productSku: item.product.sku,
           quantity: item.quantity,
-          unitPrice: item.product.price,
+          unitPrice: getApplicablePrice(item.product, item.quantity),
           selectedKelvin: item.selectedKelvin ?? undefined,
           selectedAngle: item.selectedAngle ?? undefined,
         }))
@@ -107,7 +107,38 @@ export default function Cart() {
                         )}
                       </div>
                     )}
-                    <div className="font-mono font-bold">{item.product.price.toLocaleString("ru-RU")} ₽/шт</div>
+                    {(() => {
+                      const unitPrice = getApplicablePrice(item.product, item.quantity);
+                      const isDiscounted = unitPrice < item.product.price;
+                      const nextTier = item.product.priceTiers
+                        ?.filter(t => t.minQty > item.quantity)
+                        .sort((a, b) => a.minQty - b.minQty)[0];
+                      return (
+                        <div className="flex flex-col gap-1">
+                          <div className="flex items-baseline gap-2 flex-wrap">
+                            {isDiscounted && (
+                              <span className="font-mono text-xs line-through text-muted-foreground">{item.product.price.toLocaleString("ru-RU")} ₽</span>
+                            )}
+                            <span className={`font-mono font-bold text-base ${isDiscounted ? "text-accent" : ""}`}>
+                              {unitPrice.toLocaleString("ru-RU")} ₽/шт
+                            </span>
+                            {isDiscounted && (
+                              <span className="font-mono text-[10px] font-bold text-accent bg-accent/10 px-1 py-0.5">
+                                −{Math.round((1 - unitPrice / item.product.price) * 100)}%
+                              </span>
+                            )}
+                          </div>
+                          <div className="font-mono text-xs text-muted-foreground">
+                            Итого: {(unitPrice * item.quantity).toLocaleString("ru-RU")} ₽
+                          </div>
+                          {nextTier && (
+                            <div className="font-mono text-[10px] text-muted-foreground">
+                              Ещё {nextTier.minQty - item.quantity} шт → {nextTier.price.toLocaleString("ru-RU")} ₽/шт
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
                   </div>
 
                   <div className="flex items-center gap-4 sm:flex-col sm:items-end justify-between">
