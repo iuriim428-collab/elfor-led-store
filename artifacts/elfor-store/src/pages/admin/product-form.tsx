@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { Trash2, Plus } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
 const formSchema = z.object({
@@ -36,7 +36,11 @@ const formSchema = z.object({
     key: z.string().min(1),
     value: z.string().min(1),
     unit: z.string().optional().nullable()
-  })).optional().default([])
+  })).optional().default([]),
+  variantStocks: z.array(z.object({
+    kelvin: z.string(),
+    stock: z.coerce.number().min(0).default(0)
+  })).default([])
 });
 
 export default function AdminProductForm() {
@@ -63,7 +67,8 @@ export default function AdminProductForm() {
       price: 0,
       stock: 10,
       featured: false,
-      specs: []
+      specs: [],
+      variantStocks: []
     }
   });
 
@@ -72,10 +77,24 @@ export default function AdminProductForm() {
     name: "specs"
   });
 
+  const { fields: variantFields } = useFieldArray({
+    control: form.control,
+    name: "variantStocks"
+  });
+
+  const colorTempsRaw = form.watch("colorTempsRaw");
+  const variantStocks = form.watch("variantStocks");
+
+  const parsedColorTemps = useMemo(
+    () => (colorTempsRaw || "").split(",").map(s => s.trim()).filter(Boolean),
+    [colorTempsRaw]
+  );
+
   const initRef = useRef(false);
 
   useEffect(() => {
     if (isEditing && product && !initRef.current) {
+      const existingVariantStocks = Array.isArray(product.variantStocks) ? product.variantStocks : [];
       form.reset({
         ...product,
         oldPrice: product.oldPrice ?? undefined,
@@ -89,15 +108,29 @@ export default function AdminProductForm() {
         imageUrl: product.imageUrl ?? undefined,
         colorTempsRaw: (product.colorTemps ?? []).join(", "),
         beamAnglesRaw: (product.beamAngles ?? []).join(", "),
-        specs: product.specs ?? []
+        specs: product.specs ?? [],
+        variantStocks: existingVariantStocks as { kelvin: string; stock: number }[]
       });
       initRef.current = true;
     }
   }, [product, isEditing, form]);
 
+  useEffect(() => {
+    if (!initRef.current) return;
+    const current = form.getValues("variantStocks") as { kelvin: string; stock: number }[];
+    const currentMap = new Map(current.map(v => [v.kelvin, v.stock]));
+    const next = parsedColorTemps.map(k => ({ kelvin: k, stock: currentMap.get(k) ?? 0 }));
+    form.setValue("variantStocks", next, { shouldDirty: true });
+  }, [colorTempsRaw]);
+
+  const totalVariantStock = variantStocks.reduce((sum, v) => sum + (Number(v.stock) || 0), 0);
+
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     const parseList = (raw: string | undefined) =>
       (raw || "").split(",").map(s => s.trim()).filter(Boolean);
+
+    const colorTemps = parseList(values.colorTempsRaw);
+    const hasVariants = colorTemps.length > 0 && values.variantStocks.length > 0;
 
     const data = {
       ...values,
@@ -110,14 +143,16 @@ export default function AdminProductForm() {
       ipRating: values.ipRating || undefined,
       warranty: values.warranty || undefined,
       imageUrl: values.imageUrl || undefined,
-      colorTemps: parseList(values.colorTempsRaw),
+      colorTemps,
       beamAngles: parseList(values.beamAnglesRaw),
       colorTempsRaw: undefined,
       beamAnglesRaw: undefined,
       specs: values.specs.length > 0 ? values.specs.map(s => ({
         ...s,
         unit: s.unit || undefined
-      })) : undefined
+      })) : undefined,
+      variantStocks: hasVariants ? values.variantStocks.map(v => ({ kelvin: v.kelvin, stock: Number(v.stock) })) : undefined,
+      stock: hasVariants ? values.variantStocks.reduce((s, v) => s + Number(v.stock), 0) : values.stock
     };
 
     if (isEditing) {
@@ -198,13 +233,47 @@ export default function AdminProductForm() {
               </FormItem>
             )} />
 
-            <FormField control={form.control} name="stock" render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-xs font-bold uppercase">Остаток</FormLabel>
-                <FormControl><Input type="number" {...field} className="rounded-none border-border" /></FormControl>
-                <FormMessage />
-              </FormItem>
-            )} />
+            {parsedColorTemps.length > 0 ? (
+              <div className="md:col-span-2 flex flex-col gap-2">
+                <label className="text-xs font-bold uppercase font-mono">Остаток по цветовым температурам</label>
+                <div className="border border-border overflow-hidden">
+                  <table className="w-full text-xs font-mono">
+                    <thead>
+                      <tr className="bg-muted border-b border-border">
+                        <th className="text-left px-3 py-2 font-bold uppercase">Цветовая температура</th>
+                        <th className="text-right px-3 py-2 font-bold uppercase">Остаток (шт.)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {variantFields.map((field, index) => (
+                        <tr key={field.id} className="border-b border-border last:border-0">
+                          <td className="px-3 py-2 font-bold">{form.watch(`variantStocks.${index}.kelvin`)}</td>
+                          <td className="px-2 py-1 text-right">
+                            <FormField control={form.control} name={`variantStocks.${index}.stock`} render={({ field }) => (
+                              <Input type="number" {...field} min={0} className="rounded-none border-border h-8 w-24 text-right ml-auto" />
+                            )} />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    <tfoot>
+                      <tr className="bg-muted border-t border-border">
+                        <td className="px-3 py-2 font-bold uppercase text-xs">Итого</td>
+                        <td className="px-3 py-2 text-right font-bold text-accent">{totalVariantStock} шт.</td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </div>
+            ) : (
+              <FormField control={form.control} name="stock" render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs font-bold uppercase">Остаток</FormLabel>
+                  <FormControl><Input type="number" {...field} className="rounded-none border-border" /></FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+            )}
             
             <FormField control={form.control} name="featured" render={({ field }) => (
               <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-none border border-border p-4">

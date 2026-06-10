@@ -7,6 +7,7 @@
  */
 import type { PriceTier } from './priceTier';
 import type { ProductSpec } from './productSpec';
+import type { VariantStock } from './variantStock';
 
 export interface Product {
   id: number;
@@ -41,6 +42,7 @@ export interface Product {
   warranty?: string | null;
   colorTemps?: string[];
   beamAngles?: string[];
+  variantStocks?: VariantStock[];
   stock: number;
   featured?: boolean;
   inStock?: boolean;

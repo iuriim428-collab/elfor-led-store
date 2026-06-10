@@ -39,3 +39,4 @@ export * from './productSpec';
 export * from './sendInvoice200';
 export * from './uploadUrlRequest';
 export * from './uploadUrlResponse';
+export * from './variantStock';

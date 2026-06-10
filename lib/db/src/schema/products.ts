@@ -23,6 +23,7 @@ export const productsTable = pgTable("products", {
   warranty: text("warranty"),
   colorTemps: jsonb("color_temps").notNull().default("[]"),
   beamAngles: jsonb("beam_angles").notNull().default("[]"),
+  variantStocks: jsonb("variant_stocks").notNull().default("[]"),
   stock: integer("stock").notNull().default(0),
   featured: boolean("featured").notNull().default(false),
   inStock: boolean("in_stock").notNull().default(true),

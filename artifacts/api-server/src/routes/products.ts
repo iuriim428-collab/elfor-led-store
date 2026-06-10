@@ -27,6 +27,7 @@ function toProductJson(
     priceTiers: Array.isArray(row.priceTiers) ? row.priceTiers : [],
     specs: Array.isArray(row.specs) ? row.specs : [],
     images: Array.isArray(row.images) ? row.images : [],
+    variantStocks: Array.isArray(row.variantStocks) ? row.variantStocks : [],
     categoryName: categoryName ?? null,
     createdAt: row.createdAt.toISOString(),
   };
@@ -83,16 +84,22 @@ router.post("/products", async (req, res): Promise<void> => {
     res.status(400).json({ error: parsed.error.message });
     return;
   }
-  const { price, oldPrice, priceTiers, specs, images, ...rest } = parsed.data;
+  const { price, oldPrice, priceTiers, specs, images, variantStocks, ...rest } = parsed.data;
+  const resolvedVariantStocks = variantStocks ?? [];
+  const computedStock = resolvedVariantStocks.length > 0
+    ? resolvedVariantStocks.reduce((sum, v) => sum + v.stock, 0)
+    : (rest.stock ?? 0);
   const [row] = await db
     .insert(productsTable)
     .values({
       ...rest,
+      stock: computedStock,
       price: String(price),
       oldPrice: oldPrice != null ? String(oldPrice) : null,
       priceTiers: (priceTiers ?? []) as unknown as string,
       specs: (specs ?? []) as unknown as string,
       images: (images ?? []) as unknown as string,
+      variantStocks: resolvedVariantStocks as unknown as string,
     })
     .returning();
   res.status(201).json(GetProductResponse.parse(toProductJson(row)));
@@ -129,13 +136,19 @@ router.patch("/products/:id", async (req, res): Promise<void> => {
     res.status(400).json({ error: parsed.error.message });
     return;
   }
-  const { price, oldPrice, priceTiers, specs, images, ...rest } = parsed.data;
+  const { price, oldPrice, priceTiers, specs, images, variantStocks, ...rest } = parsed.data;
   const updateData: Partial<typeof productsTable.$inferInsert> = { ...rest };
   if (price !== undefined) updateData.price = String(price);
   if (oldPrice !== undefined) updateData.oldPrice = oldPrice != null ? String(oldPrice) : null;
   if (priceTiers !== undefined) updateData.priceTiers = priceTiers as unknown as string;
   if (specs !== undefined) updateData.specs = specs as unknown as string;
   if (images !== undefined) updateData.images = images as unknown as string;
+  if (variantStocks !== undefined) {
+    updateData.variantStocks = variantStocks as unknown as string;
+    if (variantStocks.length > 0) {
+      updateData.stock = variantStocks.reduce((sum, v) => sum + v.stock, 0);
+    }
+  }
 
   const [row] = await db
     .update(productsTable)

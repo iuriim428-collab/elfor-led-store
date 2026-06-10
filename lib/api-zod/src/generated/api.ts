@@ -143,6 +143,10 @@ export const ListProductsResponseItem = zod.object({
   "warranty": zod.string().nullish(),
   "colorTemps": zod.array(zod.string()).optional(),
   "beamAngles": zod.array(zod.string()).optional(),
+  "variantStocks": zod.array(zod.object({
+  "kelvin": zod.string(),
+  "stock": zod.number()
+})).optional(),
   "stock": zod.number(),
   "featured": zod.boolean().optional(),
   "inStock": zod.boolean().optional(),
@@ -185,6 +189,10 @@ export const CreateProductBody = zod.object({
   "warranty": zod.string().optional(),
   "colorTemps": zod.array(zod.string()).optional(),
   "beamAngles": zod.array(zod.string()).optional(),
+  "variantStocks": zod.array(zod.object({
+  "kelvin": zod.string(),
+  "stock": zod.number()
+})).optional(),
   "stock": zod.number(),
   "featured": zod.boolean().optional()
 })
@@ -222,6 +230,10 @@ export const ListFeaturedProductsResponseItem = zod.object({
   "warranty": zod.string().nullish(),
   "colorTemps": zod.array(zod.string()).optional(),
   "beamAngles": zod.array(zod.string()).optional(),
+  "variantStocks": zod.array(zod.object({
+  "kelvin": zod.string(),
+  "stock": zod.number()
+})).optional(),
   "stock": zod.number(),
   "featured": zod.boolean().optional(),
   "inStock": zod.boolean().optional(),
@@ -266,6 +278,10 @@ export const GetProductResponse = zod.object({
   "warranty": zod.string().nullish(),
   "colorTemps": zod.array(zod.string()).optional(),
   "beamAngles": zod.array(zod.string()).optional(),
+  "variantStocks": zod.array(zod.object({
+  "kelvin": zod.string(),
+  "stock": zod.number()
+})).optional(),
   "stock": zod.number(),
   "featured": zod.boolean().optional(),
   "inStock": zod.boolean().optional(),
@@ -311,6 +327,10 @@ export const UpdateProductBody = zod.object({
   "warranty": zod.string().nullish(),
   "colorTemps": zod.array(zod.string()).optional(),
   "beamAngles": zod.array(zod.string()).optional(),
+  "variantStocks": zod.array(zod.object({
+  "kelvin": zod.string(),
+  "stock": zod.number()
+})).optional(),
   "stock": zod.number().optional(),
   "featured": zod.boolean().optional(),
   "inStock": zod.boolean().optional()
@@ -345,6 +365,10 @@ export const UpdateProductResponse = zod.object({
   "warranty": zod.string().nullish(),
   "colorTemps": zod.array(zod.string()).optional(),
   "beamAngles": zod.array(zod.string()).optional(),
+  "variantStocks": zod.array(zod.object({
+  "kelvin": zod.string(),
+  "stock": zod.number()
+})).optional(),
   "stock": zod.number(),
   "featured": zod.boolean().optional(),
   "inStock": zod.boolean().optional(),

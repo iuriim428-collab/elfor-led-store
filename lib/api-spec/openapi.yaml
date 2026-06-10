@@ -650,6 +650,10 @@ components:
           type: array
           items:
             type: string
+        variantStocks:
+          type: array
+          items:
+            $ref: "#/components/schemas/VariantStock"
         stock:
           type: integer
         featured:
@@ -713,6 +717,10 @@ components:
           type: array
           items:
             type: string
+        variantStocks:
+          type: array
+          items:
+            $ref: "#/components/schemas/VariantStock"
         stock:
           type: integer
         featured:
@@ -771,12 +779,25 @@ components:
           type: array
           items:
             type: string
+        variantStocks:
+          type: array
+          items:
+            $ref: "#/components/schemas/VariantStock"
         stock:
           type: integer
         featured:
           type: boolean
         inStock:
           type: boolean
+
+    VariantStock:
+      type: object
+      required: [kelvin, stock]
+      properties:
+        kelvin:
+          type: string
+        stock:
+          type: integer
 
     # ===== ARTICLE =====
     Article:

@@ -7,6 +7,7 @@
  */
 import type { PriceTier } from './priceTier';
 import type { ProductSpec } from './productSpec';
+import type { VariantStock } from './variantStock';
 
 export interface ProductInput {
   /** @minLength 1 */
@@ -30,6 +31,7 @@ export interface ProductInput {
   warranty?: string;
   colorTemps?: string[];
   beamAngles?: string[];
+  variantStocks?: VariantStock[];
   stock: number;
   featured?: boolean;
 }

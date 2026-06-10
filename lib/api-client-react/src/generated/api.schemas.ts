@@ -55,6 +55,11 @@ export interface ProductSpec {
   unit?: string | null;
 }
 
+export interface VariantStock {
+  kelvin: string;
+  stock: number;
+}
+
 export interface Product {
   id: number;
   name: string;
@@ -88,6 +93,7 @@ export interface Product {
   warranty?: string | null;
   colorTemps?: string[];
   beamAngles?: string[];
+  variantStocks?: VariantStock[];
   stock: number;
   featured?: boolean;
   inStock?: boolean;
@@ -116,6 +122,7 @@ export interface ProductInput {
   warranty?: string;
   colorTemps?: string[];
   beamAngles?: string[];
+  variantStocks?: VariantStock[];
   stock: number;
   featured?: boolean;
 }
@@ -152,6 +159,7 @@ export interface ProductPatch {
   warranty?: string | null;
   colorTemps?: string[];
   beamAngles?: string[];
+  variantStocks?: VariantStock[];
   stock?: number;
   featured?: boolean;
   inStock?: boolean;
