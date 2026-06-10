@@ -1,15 +1,6 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { Product } from "@workspace/api-client-react";
 
-export function getApplicablePrice(product: Product, quantity: number): number {
-  if (!product.priceTiers || product.priceTiers.length === 0) return product.price;
-  const sorted = [...product.priceTiers].sort((a, b) => b.minQty - a.minQty);
-  for (const tier of sorted) {
-    if (quantity >= tier.minQty) return tier.price;
-  }
-  return product.price;
-}
-
 export interface CartItem {
   product: Product;
   quantity: number;
@@ -80,7 +71,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
   const totalPrice = items.reduce((sum, item) => {
-    return sum + getApplicablePrice(item.product, item.quantity) * item.quantity;
+    let applicablePrice = item.product.price;
+    if (item.product.priceTiers && item.product.priceTiers.length > 0) {
+      const sortedTiers = [...item.product.priceTiers].sort((a, b) => b.minQty - a.minQty);
+      for (const tier of sortedTiers) {
+        if (item.quantity >= tier.minQty) {
+          applicablePrice = tier.price;
+          break;
+        }
+      }
+    }
+    return sum + applicablePrice * item.quantity;
   }, 0);
 
   return (

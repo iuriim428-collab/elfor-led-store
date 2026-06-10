@@ -1,4 +1,4 @@
-import { useCart, getApplicablePrice } from "@/hooks/use-cart";
+import { useCart } from "@/hooks/use-cart";
 import { useCreateOrder } from "@workspace/api-client-react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -36,7 +36,7 @@ export default function Cart() {
           productName: item.product.name,
           productSku: item.product.sku,
           quantity: item.quantity,
-          unitPrice: getApplicablePrice(item.product, item.quantity),
+          unitPrice: item.product.price,
           selectedKelvin: item.selectedKelvin ?? undefined,
           selectedAngle: item.selectedAngle ?? undefined,
         }))
@@ -107,19 +107,7 @@ export default function Cart() {
                         )}
                       </div>
                     )}
-                    {(() => {
-                      const unitPrice = getApplicablePrice(item.product, item.quantity);
-                      const isDiscounted = unitPrice < item.product.price;
-                      return (
-                        <div className="flex items-baseline gap-2 flex-wrap">
-                          <span className="font-mono font-bold text-base">{unitPrice.toLocaleString("ru-RU")} ₽/шт</span>
-                          {isDiscounted && (
-                            <span className="font-mono text-xs line-through text-muted-foreground">{item.product.price.toLocaleString("ru-RU")} ₽</span>
-                          )}
-                          <span className="font-mono text-xs text-muted-foreground">= {(unitPrice * item.quantity).toLocaleString("ru-RU")} ₽</span>
-                        </div>
-                      );
-                    })()}
+                    <div className="font-mono font-bold">{item.product.price.toLocaleString("ru-RU")} ₽/шт</div>
                   </div>
 
                   <div className="flex items-center gap-4 sm:flex-col sm:items-end justify-between">
