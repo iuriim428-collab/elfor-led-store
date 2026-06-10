@@ -1,4 +1,4 @@
-import { useListCategories, useCreateProduct, useUpdateProduct, useGetProduct } from "@workspace/api-client-react";
+import { useListCategories, useCreateProduct, useUpdateProduct, useGetProduct, getGetProductQueryKey } from "@workspace/api-client-react";
 import { useParams, useLocation } from "wouter";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -121,9 +121,11 @@ export default function AdminProductForm() {
     };
 
     if (isEditing) {
-      updateProduct.mutate({ id: parseInt(id!), data }, {
+      const productId = parseInt(id!);
+      updateProduct.mutate({ id: productId, data }, {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["/api/products"] });
+          queryClient.invalidateQueries({ queryKey: getGetProductQueryKey(productId) });
           toast({ title: "Товар обновлен" });
           setLocation("/products");
         }
