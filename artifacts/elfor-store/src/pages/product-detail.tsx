@@ -3,7 +3,7 @@ import { useParams, Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCart } from "@/hooks/use-cart";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ShoppingCart, Check, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -31,12 +31,9 @@ export default function ProductDetail() {
   const [selectedAngle, setSelectedAngle] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"specs" | "desc">("specs");
 
-  if (isLoading) return <div className="p-12 text-center font-mono">Загрузка...</div>;
-  if (!product) return <div className="p-12 text-center font-mono text-red-500">Товар не найден</div>;
-
-  const colorTemps = (product.colorTemps ?? []) as string[];
-  const beamAngles = (product.beamAngles ?? []) as string[];
-  const variantStocks = (product.variantStocks ?? []) as { kelvin: string; stock: number }[];
+  const colorTemps = (product?.colorTemps ?? []) as string[];
+  const beamAngles = (product?.beamAngles ?? []) as string[];
+  const variantStocks = (product?.variantStocks ?? []) as { kelvin: string; stock: number }[];
 
   const activeKelvin = selectedKelvin ?? (colorTemps[0] || null);
   const activeAngle = selectedAngle ?? (beamAngles[0] || null);
@@ -44,7 +41,15 @@ export default function ProductDetail() {
   const activeVariantStock = activeKelvin && variantStocks.length > 0
     ? variantStocks.find(v => v.kelvin === activeKelvin)
     : undefined;
-  const displayStock = activeVariantStock !== undefined ? activeVariantStock.stock : product.stock;
+  const displayStock = activeVariantStock !== undefined ? activeVariantStock.stock : (product?.stock ?? 0);
+  const maxQty = displayStock > 0 ? displayStock : 999;
+
+  useEffect(() => {
+    setQuantity(q => Math.min(q, maxQty));
+  }, [activeKelvin, maxQty]);
+
+  if (isLoading) return <div className="p-12 text-center font-mono">Загрузка...</div>;
+  if (!product) return <div className="p-12 text-center font-mono text-red-500">Товар не найден</div>;
 
   const handleAddToCart = () => {
     addItem(product, quantity, activeKelvin, activeAngle);
@@ -192,17 +197,21 @@ export default function ProductDetail() {
                   variant="outline" 
                   className="rounded-none border-border px-3 font-mono"
                   onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                  disabled={quantity <= 1}
                 >-</Button>
                 <Input 
                   type="number" 
                   value={quantity} 
-                  onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                  min={1}
+                  max={maxQty}
+                  onChange={(e) => setQuantity(Math.min(maxQty, Math.max(1, parseInt(e.target.value) || 1)))}
                   className="rounded-none border-x-0 border-border text-center font-mono focus-visible:ring-0"
                 />
                 <Button 
                   variant="outline" 
                   className="rounded-none border-border px-3 font-mono"
-                  onClick={() => setQuantity(q => q + 1)}
+                  onClick={() => setQuantity(q => Math.min(maxQty, q + 1))}
+                  disabled={quantity >= maxQty && displayStock > 0}
                 >+</Button>
               </div>
               <Button 
