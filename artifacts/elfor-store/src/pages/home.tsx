@@ -45,22 +45,22 @@ export default function Home() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8">
             <div className="flex flex-col border border-border p-4 sm:p-6 hover-elevate bg-card">
               <Factory className="h-8 w-8 sm:h-10 sm:w-10 text-accent mb-3 sm:mb-4" />
-              <h3 className="font-serif font-bold text-sm sm:text-base lg:text-lg uppercase mb-1 sm:mb-2 leading-tight break-words">Собственное производство</h3>
+              <h3 className="font-serif font-bold text-xs sm:text-sm lg:text-base uppercase mb-1 sm:mb-2 leading-tight">Собственное производство</h3>
               <p className="text-xs sm:text-sm font-mono text-muted-foreground">Контроль качества на всех этапах изготовления</p>
             </div>
             <div className="flex flex-col border border-border p-4 sm:p-6 hover-elevate bg-card">
               <Shield className="h-8 w-8 sm:h-10 sm:w-10 text-accent mb-3 sm:mb-4" />
-              <h3 className="font-serif font-bold text-sm sm:text-base lg:text-lg uppercase mb-1 sm:mb-2 leading-tight break-words">Гарантия 5 лет</h3>
+              <h3 className="font-serif font-bold text-xs sm:text-sm lg:text-base uppercase mb-1 sm:mb-2 leading-tight">Гарантия 5 лет</h3>
               <p className="text-xs sm:text-sm font-mono text-muted-foreground">Безусловная гарантия на всю продукцию ELFOR</p>
             </div>
             <div className="flex flex-col border border-border p-4 sm:p-6 hover-elevate bg-card">
               <Zap className="h-8 w-8 sm:h-10 sm:w-10 text-accent mb-3 sm:mb-4" />
-              <h3 className="font-serif font-bold text-sm sm:text-base lg:text-lg uppercase mb-1 sm:mb-2 leading-tight break-words">До 200 лм/Вт</h3>
+              <h3 className="font-serif font-bold text-xs sm:text-sm lg:text-base uppercase mb-1 sm:mb-2 leading-tight">До 200 лм/Вт</h3>
               <p className="text-xs sm:text-sm font-mono text-muted-foreground">Максимальная энергоэффективность на рынке</p>
             </div>
             <div className="flex flex-col border border-border p-4 sm:p-6 hover-elevate bg-card">
               <Award className="h-8 w-8 sm:h-10 sm:w-10 text-accent mb-3 sm:mb-4" />
-              <h3 className="font-serif font-bold text-sm sm:text-base lg:text-lg uppercase mb-1 sm:mb-2 leading-tight break-words">ГОСТ и Сертификаты</h3>
+              <h3 className="font-serif font-bold text-xs sm:text-sm lg:text-base uppercase mb-1 sm:mb-2 leading-tight">ГОСТ и Сертификаты</h3>
               <p className="text-xs sm:text-sm font-mono text-muted-foreground">Полное соответствие российским стандартам</p>
             </div>
           </div>
