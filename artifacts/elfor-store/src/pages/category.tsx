@@ -2,9 +2,18 @@ import { useListProducts, useListCategories } from "@workspace/api-client-react"
 import { useParams, Link } from "wouter";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 export default function Category() {
   const { slug } = useParams();
+  const [descProductId, setDescProductId] = useState<number | null>(null);
   
   const { data: categories = [] } = useListCategories();
   const category = categories.find(c => c.slug === slug);
@@ -12,6 +21,8 @@ export default function Category() {
   const { data: products = [], isLoading } = useListProducts({
     categoryId: category?.id,
   }, { query: { enabled: !!category } });
+
+  const descProduct = products.find(p => p.id === descProductId) ?? null;
 
   if (!category) {
     return <div className="p-24 text-center font-mono text-muted-foreground">Категория не найдена</div>;
@@ -54,7 +65,15 @@ export default function Category() {
               </div>
               <div className="p-4 flex-1 flex flex-col">
                 <div className="text-xs font-mono text-muted-foreground mb-2">{product.sku}</div>
-                <h3 className="font-serif font-bold text-sm uppercase leading-tight mb-4 flex-1 group-hover:text-accent transition-colors">{product.name}</h3>
+                <h3 className="font-serif font-bold text-sm uppercase leading-tight mb-2 flex-1 group-hover:text-accent transition-colors">{product.name}</h3>
+                {(product.fullDescription || product.shortDescription) && (
+                  <button
+                    className="text-xs font-mono text-accent underline underline-offset-2 hover:opacity-70 transition-opacity mb-3 text-left w-fit"
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setDescProductId(product.id); }}
+                  >
+                    Описание
+                  </button>
+                )}
                 <div className="flex items-end justify-between mt-auto">
                   <div>
                     {product.oldPrice && <div className="text-xs font-mono line-through text-muted-foreground">{product.oldPrice.toLocaleString("ru-RU")} ₽</div>}
@@ -69,6 +88,18 @@ export default function Category() {
           ))}
         </div>
       )}
+
+      <Dialog open={!!descProductId} onOpenChange={(open) => !open && setDescProductId(null)}>
+        <DialogContent className="max-w-2xl rounded-none border border-border">
+          <DialogHeader>
+            <DialogTitle className="font-serif font-bold uppercase text-lg leading-tight">{descProduct?.name}</DialogTitle>
+            <DialogDescription className="font-mono text-xs text-muted-foreground">{descProduct?.sku}</DialogDescription>
+          </DialogHeader>
+          <div className="font-mono text-sm text-foreground leading-relaxed whitespace-pre-line">
+            {descProduct?.fullDescription || descProduct?.shortDescription || "Описание отсутствует"}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

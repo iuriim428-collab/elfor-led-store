@@ -29,6 +29,7 @@ export default function ProductDetail() {
   const [added, setAdded] = useState(false);
   const [selectedKelvin, setSelectedKelvin] = useState<string | null>(null);
   const [selectedAngle, setSelectedAngle] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<"specs" | "desc">("specs");
 
   if (isLoading) return <div className="p-12 text-center font-mono">Загрузка...</div>;
   if (!product) return <div className="p-12 text-center font-mono text-red-500">Товар не найден</div>;
@@ -222,42 +223,60 @@ export default function ProductDetail() {
       {/* Tabs / Specs */}
       <div className="border border-border bg-card">
         <div className="flex border-b border-border font-serif font-bold uppercase text-sm tracking-wider">
-          <div className="px-6 py-4 bg-primary text-primary-foreground border-r border-border">Характеристики</div>
-          {product.fullDescription && <div className="px-6 py-4 text-muted-foreground cursor-not-allowed">Описание</div>}
+          <button
+            onClick={() => setActiveTab("specs")}
+            className={cn("px-6 py-4 border-r border-border transition-colors", activeTab === "specs" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-primary")}
+          >
+            Характеристики
+          </button>
+          {product.fullDescription && (
+            <button
+              onClick={() => setActiveTab("desc")}
+              className={cn("px-6 py-4 transition-colors", activeTab === "desc" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-primary")}
+            >
+              Описание
+            </button>
+          )}
         </div>
         <div className="p-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4 font-mono text-sm">
-            {product.specs?.map((spec, i) => (
-              <div key={i} className="flex justify-between border-b border-border border-dashed pb-2">
-                <span className="text-muted-foreground">{spec.key}</span>
-                <span className="font-bold text-right">{spec.value} {spec.unit || ""}</span>
-              </div>
-            ))}
-            {product.power && (
-              <div className="flex justify-between border-b border-border border-dashed pb-2">
-                <span className="text-muted-foreground">Мощность</span>
-                <span className="font-bold text-right">{product.power} Вт</span>
-              </div>
-            )}
-            {product.lumens && (
-              <div className="flex justify-between border-b border-border border-dashed pb-2">
-                <span className="text-muted-foreground">Световой поток</span>
-                <span className="font-bold text-right">{product.lumens} лм</span>
-              </div>
-            )}
-            {product.colorTemp && (
-              <div className="flex justify-between border-b border-border border-dashed pb-2">
-                <span className="text-muted-foreground">Цветовая температура</span>
-                <span className="font-bold text-right">{product.colorTemp}</span>
-              </div>
-            )}
-            {product.ipRating && (
-              <div className="flex justify-between border-b border-border border-dashed pb-2">
-                <span className="text-muted-foreground">Степень защиты</span>
-                <span className="font-bold text-right">{product.ipRating}</span>
-              </div>
-            )}
-          </div>
+          {activeTab === "specs" ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4 font-mono text-sm">
+              {product.specs?.map((spec, i) => (
+                <div key={i} className="flex justify-between border-b border-border border-dashed pb-2">
+                  <span className="text-muted-foreground">{spec.key}</span>
+                  <span className="font-bold text-right">{spec.value} {spec.unit || ""}</span>
+                </div>
+              ))}
+              {product.power && (
+                <div className="flex justify-between border-b border-border border-dashed pb-2">
+                  <span className="text-muted-foreground">Мощность</span>
+                  <span className="font-bold text-right">{product.power} Вт</span>
+                </div>
+              )}
+              {product.lumens && (
+                <div className="flex justify-between border-b border-border border-dashed pb-2">
+                  <span className="text-muted-foreground">Световой поток</span>
+                  <span className="font-bold text-right">{product.lumens} лм</span>
+                </div>
+              )}
+              {product.colorTemp && (
+                <div className="flex justify-between border-b border-border border-dashed pb-2">
+                  <span className="text-muted-foreground">Цветовая температура</span>
+                  <span className="font-bold text-right">{product.colorTemp}</span>
+                </div>
+              )}
+              {product.ipRating && (
+                <div className="flex justify-between border-b border-border border-dashed pb-2">
+                  <span className="text-muted-foreground">Степень защиты</span>
+                  <span className="font-bold text-right">{product.ipRating}</span>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="font-mono text-sm text-foreground leading-relaxed whitespace-pre-line max-w-3xl">
+              {product.fullDescription}
+            </div>
+          )}
         </div>
       </div>
     </div>
