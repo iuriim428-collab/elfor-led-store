@@ -36,9 +36,15 @@ export default function ProductDetail() {
 
   const colorTemps = (product.colorTemps ?? []) as string[];
   const beamAngles = (product.beamAngles ?? []) as string[];
+  const variantStocks = (product.variantStocks ?? []) as { kelvin: string; stock: number }[];
 
   const activeKelvin = selectedKelvin ?? (colorTemps[0] || null);
   const activeAngle = selectedAngle ?? (beamAngles[0] || null);
+
+  const activeVariantStock = activeKelvin && variantStocks.length > 0
+    ? variantStocks.find(v => v.kelvin === activeKelvin)
+    : undefined;
+  const displayStock = activeVariantStock !== undefined ? activeVariantStock.stock : product.stock;
 
   const handleAddToCart = () => {
     addItem(product, quantity, activeKelvin, activeAngle);
@@ -85,8 +91,8 @@ export default function ProductDetail() {
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-black uppercase mb-5 sm:mb-6 leading-tight">{product.name}</h1>
           
           <div className="flex flex-wrap gap-2 mb-6 font-mono text-xs font-bold uppercase tracking-wider">
-            {product.stock > 0 ? (
-              <span className="px-3 py-1 bg-green-500/10 text-green-700 border border-green-500/20">В наличии: {product.stock} шт</span>
+            {displayStock > 0 ? (
+              <span className="px-3 py-1 bg-green-500/10 text-green-700 border border-green-500/20">В наличии: {displayStock} шт</span>
             ) : (
               <span className="px-3 py-1 bg-yellow-500/10 text-yellow-700 border border-yellow-500/20">Под заказ</span>
             )}
