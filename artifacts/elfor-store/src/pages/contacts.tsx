@@ -5,9 +5,21 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { MapPin, Phone, Mail } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useSettings } from "@/hooks/use-settings";
 
 export default function Contacts() {
   const { toast } = useToast();
+  const { data: s = {} } = useSettings();
+
+  const phone = s.phone || "8 (800) 000-00-00";
+  const phoneHref = "tel:+" + phone.replace(/\D/g, "");
+  const email = s.email || "info@lfour.ru";
+  const address = s.address || "Россия, г. Москва, ул. Производственная, д. 1, стр. 1";
+  const workHours = s.work_hours || "Пн-Пт с 9:00 до 18:00";
+  const companyName = s.company_name || 'ООО "ЭЛФОР"';
+  const inn = s.inn || "1234567890";
+  const kpp = s.kpp || "123456789";
+  const ogrn = s.ogrn || "1234567890123";
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,14 +48,14 @@ export default function Contacts() {
               <li className="flex gap-4">
                 <Phone className="h-5 w-5 text-accent shrink-0" />
                 <div>
-                  <a href="tel:+78000000000" className="font-bold text-lg hover:text-accent block">8 (800) 000-00-00</a>
+                  <a href={phoneHref} className="font-bold text-lg hover:text-accent block">{phone}</a>
                   <span className="text-muted-foreground text-xs">Бесплатно по всей России</span>
                 </div>
               </li>
               <li className="flex gap-4">
                 <Mail className="h-5 w-5 text-accent shrink-0" />
                 <div>
-                  <a href="mailto:info@lfour.ru" className="font-bold hover:text-accent block">info@lfour.ru</a>
+                  <a href={`mailto:${email}`} className="font-bold hover:text-accent block">{email}</a>
                   <span className="text-muted-foreground text-xs">Общие вопросы и заказы</span>
                 </div>
               </li>
@@ -51,30 +63,32 @@ export default function Contacts() {
                 <MapPin className="h-5 w-5 text-accent shrink-0" />
                 <div>
                   <span className="font-bold block mb-1">Центральный офис и производство</span>
-                  <span className="text-muted-foreground leading-relaxed">
-                    Россия, г. Москва<br />
-                    ул. Производственная, д. 1, стр. 1<br />
-                    Пн-Пт с 9:00 до 18:00
+                  <span className="text-muted-foreground leading-relaxed whitespace-pre-line">
+                    {address}{"\n"}{workHours}
                   </span>
                 </div>
               </li>
             </ul>
           </div>
-          
+
           <div className="border border-border bg-card p-8">
             <h2 className="font-serif font-bold uppercase text-lg mb-4">Реквизиты</h2>
             <div className="font-mono text-sm text-muted-foreground flex flex-col gap-2">
               <div className="flex justify-between border-b border-border border-dashed pb-1">
-                <span>ООО</span> <span className="font-bold text-primary">"ЭЛФОР"</span>
+                <span>Организация</span>
+                <span className="font-bold text-primary">{companyName}</span>
               </div>
               <div className="flex justify-between border-b border-border border-dashed pb-1">
-                <span>ИНН</span> <span className="font-bold text-primary">1234567890</span>
+                <span>ИНН</span>
+                <span className="font-bold text-primary">{inn}</span>
               </div>
               <div className="flex justify-between border-b border-border border-dashed pb-1">
-                <span>КПП</span> <span className="font-bold text-primary">123456789</span>
+                <span>КПП</span>
+                <span className="font-bold text-primary">{kpp}</span>
               </div>
               <div className="flex justify-between border-b border-border border-dashed pb-1">
-                <span>ОГРН</span> <span className="font-bold text-primary">1234567890123</span>
+                <span>ОГРН</span>
+                <span className="font-bold text-primary">{ogrn}</span>
               </div>
             </div>
           </div>

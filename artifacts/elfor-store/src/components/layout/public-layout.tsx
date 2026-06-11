@@ -6,6 +6,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useListCategories } from "@workspace/api-client-react";
 import { useQuery } from "@tanstack/react-query";
+import { useSettings } from "@/hooks/use-settings";
 
 interface DocInfo {
   objectPath: string | null;
@@ -22,8 +23,14 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
   const { totalItems, totalPrice } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  
+
   const { data: categories = [] } = useListCategories();
+  const { data: s = {} } = useSettings();
+
+  const phone = s.phone || "8 (800) 000-00-00";
+  const phoneHref = "tel:+" + phone.replace(/\D/g, "");
+  const email = s.email || "info@lfour.ru";
+  const workHours = s.work_hours || "Пн-Пт 9:00-18:00";
 
   const { data: docs } = useQuery<DocumentsData>({
     queryKey: ["documents"],
@@ -47,17 +54,17 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
       <div className="bg-primary text-primary-foreground py-2 px-4 text-xs font-mono border-b border-border hidden md:block">
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex gap-6">
-            <a href="tel:+78000000000" className="flex items-center gap-2 hover:text-accent transition-colors">
+            <a href={phoneHref} className="flex items-center gap-2 hover:text-accent transition-colors">
               <Phone className="h-3 w-3" />
-              <span>8 (800) 000-00-00</span>
+              <span>{phone}</span>
             </a>
-            <a href="mailto:info@lfour.ru" className="flex items-center gap-2 hover:text-accent transition-colors">
+            <a href={`mailto:${email}`} className="flex items-center gap-2 hover:text-accent transition-colors">
               <Mail className="h-3 w-3" />
-              <span>info@lfour.ru</span>
+              <span>{email}</span>
             </a>
           </div>
           <div className="flex gap-4 opacity-80">
-            <span>Пн-Пт 9:00-18:00</span>
+            <span>{workHours}</span>
             <span>Доставка по всей России</span>
           </div>
         </div>
@@ -135,13 +142,13 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
               ))}
             </nav>
             <div className="px-6 py-4 bg-primary text-primary-foreground flex flex-col gap-2">
-              <a href="tel:+78000000000" className="flex items-center gap-3 font-mono text-sm font-bold hover:text-accent transition-colors">
+              <a href={phoneHref} className="flex items-center gap-3 font-mono text-sm font-bold hover:text-accent transition-colors">
                 <Phone className="h-4 w-4 text-accent shrink-0" />
-                8 (800) 000-00-00
+                {phone}
               </a>
-              <a href="mailto:info@lfour.ru" className="flex items-center gap-3 font-mono text-xs text-primary-foreground/60 hover:text-accent transition-colors">
+              <a href={`mailto:${email}`} className="flex items-center gap-3 font-mono text-xs text-primary-foreground/60 hover:text-accent transition-colors">
                 <Mail className="h-4 w-4 shrink-0" />
-                info@lfour.ru
+                {email}
               </a>
             </div>
           </div>
@@ -205,13 +212,13 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
                 <li className="flex items-start gap-3">
                   <Phone className="h-5 w-5 text-accent shrink-0" />
                   <div>
-                    <a href="tel:+78000000000" className="block hover:text-accent">8 (800) 000-00-00</a>
+                    <a href={phoneHref} className="block hover:text-accent">{phone}</a>
                     <span className="text-xs text-primary-foreground/50 mt-1 block">Бесплатно по РФ</span>
                   </div>
                 </li>
                 <li className="flex items-center gap-3">
                   <Mail className="h-5 w-5 text-accent shrink-0" />
-                  <a href="mailto:info@lfour.ru" className="hover:text-accent">info@lfour.ru</a>
+                  <a href={`mailto:${email}`} className="hover:text-accent">{email}</a>
                 </li>
               </ul>
             </div>
