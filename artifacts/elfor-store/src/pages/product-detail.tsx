@@ -221,7 +221,7 @@ export default function ProductDetail() {
                 {added ? (
                   <><Check className="mr-1.5 h-4 w-4 shrink-0" /> В корзине</>
                 ) : (
-                  <><ShoppingCart className="mr-1.5 h-4 w-4 shrink-0" /><span className="hidden sm:inline">В корзину · </span>{currentPrice.toLocaleString("ru-RU")} ₽</>
+                  <><ShoppingCart className="mr-1.5 h-4 w-4 shrink-0" /><span className="hidden sm:inline">В корзину · </span>{(currentPrice * quantity).toLocaleString("ru-RU")} ₽</>
                 )}
               </Button>
             </div>
