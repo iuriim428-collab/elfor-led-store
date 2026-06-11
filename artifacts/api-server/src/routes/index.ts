@@ -10,6 +10,7 @@ import storageRouter from "./storage";
 import catalogRouter from "./catalog";
 import documentsRouter from "./documents";
 import catalogLeadsRouter from "./catalog-leads";
+import settingsRouter from "./settings";
 
 const router: IRouter = Router();
 
@@ -24,5 +25,6 @@ router.use(storageRouter);
 router.use(catalogRouter);
 router.use(documentsRouter);
 router.use(catalogLeadsRouter);
+router.use(settingsRouter);
 
 export default router;

@@ -30,6 +30,7 @@ import AdminArticles from "@/pages/admin/articles";
 import AdminArticleForm from "@/pages/admin/article-form";
 import AdminCatalog from "@/pages/admin/catalog";
 import AdminDocuments from "@/pages/admin/documents";
+import AdminSettings from "@/pages/admin/settings";
 
 const queryClient = new QueryClient();
 
@@ -54,6 +55,7 @@ function AppContent() {
             <Route path="/articles" component={AdminArticles} />
             <Route path="/catalog" component={AdminCatalog} />
             <Route path="/documents" component={AdminDocuments} />
+            <Route path="/settings" component={AdminSettings} />
             <Route component={NotFound} />
           </Switch>
         </AdminLayout>
