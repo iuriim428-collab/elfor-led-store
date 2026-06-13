@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { useListCategories } from "@workspace/api-client-react";
 import { useQuery } from "@tanstack/react-query";
 import { useSettings } from "@/hooks/use-settings";
+import { ChatWidget } from "@/components/chat-widget";
 
 interface DocInfo {
   objectPath: string | null;
@@ -159,6 +160,8 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
       <main className="flex-1">
         {children}
       </main>
+
+      <ChatWidget />
 
       {/* Footer */}
       <footer className="bg-primary text-primary-foreground border-t border-border pt-16 pb-8">

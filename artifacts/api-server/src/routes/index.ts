@@ -12,6 +12,7 @@ import documentsRouter from "./documents";
 import catalogLeadsRouter from "./catalog-leads";
 import settingsRouter from "./settings";
 import analyticsRouter from "./analytics";
+import chatRouter from "./chat";
 
 const router: IRouter = Router();
 
@@ -28,5 +29,6 @@ router.use(documentsRouter);
 router.use(catalogLeadsRouter);
 router.use(settingsRouter);
 router.use(analyticsRouter);
+router.use(chatRouter);
 
 export default router;

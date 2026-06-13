@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { LayoutDashboard, Package, FolderTree, ShoppingBag, FileText, Store, LogOut, BookOpen, FileArchive, Settings, BarChart2 } from "lucide-react";
+import { LayoutDashboard, Package, FolderTree, ShoppingBag, FileText, Store, LogOut, BookOpen, FileArchive, Settings, BarChart2, MessageCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAdminAuth } from "@/hooks/use-admin-auth";
 
@@ -16,6 +16,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
     { name: "Каталог PDF", href: "/catalog", icon: BookOpen },
     { name: "Документы", href: "/documents", icon: FileArchive },
     { name: "Аналитика", href: "/analytics", icon: BarChart2 },
+    { name: "Чат", href: "/chat", icon: MessageCircle },
     { name: "Настройки", href: "/settings", icon: Settings },
   ];
 
