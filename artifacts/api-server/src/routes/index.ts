@@ -11,6 +11,7 @@ import catalogRouter from "./catalog";
 import documentsRouter from "./documents";
 import catalogLeadsRouter from "./catalog-leads";
 import settingsRouter from "./settings";
+import analyticsRouter from "./analytics";
 
 const router: IRouter = Router();
 
@@ -26,5 +27,6 @@ router.use(catalogRouter);
 router.use(documentsRouter);
 router.use(catalogLeadsRouter);
 router.use(settingsRouter);
+router.use(analyticsRouter);
 
 export default router;
