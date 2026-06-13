@@ -84,6 +84,7 @@ export default function AdminProductForm() {
 
   const colorTempsRaw = form.watch("colorTempsRaw");
   const variantStocks = form.watch("variantStocks");
+  const watchedPrice = form.watch("price");
 
   const parsedColorTemps = useMemo(
     () => (colorTempsRaw || "").split(",").map(s => s.trim()).filter(Boolean),
@@ -132,8 +133,14 @@ export default function AdminProductForm() {
     const colorTemps = parseList(values.colorTempsRaw);
     const hasVariants = colorTemps.length > 0 && values.variantStocks.length > 0;
 
+    const autoTiers = values.price > 0 ? [
+      { minQty: 5,  price: Math.round(values.price * 0.92 / 10) * 10 },
+      { minQty: 20, price: Math.round(values.price * 0.85 / 10) * 10 },
+    ] : undefined;
+
     const data = {
       ...values,
+      priceTiers: autoTiers,
       oldPrice: values.oldPrice || undefined,
       shortDescription: values.shortDescription || undefined,
       fullDescription: values.fullDescription || undefined,
@@ -227,9 +234,15 @@ export default function AdminProductForm() {
 
             <FormField control={form.control} name="price" render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-xs font-bold uppercase">Цена</FormLabel>
+                <FormLabel className="text-xs font-bold uppercase">Цена (₽)</FormLabel>
                 <FormControl><Input type="number" {...field} className="rounded-none border-border" /></FormControl>
                 <FormMessage />
+                {Number(watchedPrice) > 0 && (
+                  <p className="text-[11px] text-muted-foreground font-mono mt-1">
+                    Скидки (авто): от 5 шт → <span className="text-accent font-bold">{(Math.round(Number(watchedPrice) * 0.92 / 10) * 10).toLocaleString("ru-RU")} ₽</span>{" · "}
+                    от 20 шт → <span className="text-accent font-bold">{(Math.round(Number(watchedPrice) * 0.85 / 10) * 10).toLocaleString("ru-RU")} ₽</span>
+                  </p>
+                )}
               </FormItem>
             )} />
 
@@ -317,6 +330,13 @@ export default function AdminProductForm() {
                 <FormItem>
                   <FormLabel className="text-xs font-bold uppercase">Степень защиты (IP)</FormLabel>
                   <FormControl><Input {...field} value={field.value || ""} placeholder="Напр: IP65" className="rounded-none border-border" /></FormControl>
+                </FormItem>
+              )} />
+
+              <FormField control={form.control} name="warranty" render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs font-bold uppercase">Гарантия</FormLabel>
+                  <FormControl><Input {...field} value={field.value || ""} placeholder="Напр: 5 лет" className="rounded-none border-border" /></FormControl>
                 </FormItem>
               )} />
 
