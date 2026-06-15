@@ -150,18 +150,12 @@ export default function ProductDetail() {
               </div>
               <div className="flex gap-2 flex-wrap">
                 {beamAngles.map(a => (
-                  <button
+                  <div
                     key={a}
-                    onClick={() => setSelectedAngle(a)}
-                    className={cn(
-                      "px-4 py-3 border font-mono font-bold text-sm uppercase tracking-wide transition-colors min-w-[60px]",
-                      activeAngle === a
-                        ? "bg-primary text-primary-foreground border-primary"
-                        : "bg-card text-primary border-border hover:border-primary/50"
-                    )}
+                    className="px-4 py-3 border font-mono font-bold text-sm uppercase tracking-wide min-w-[60px] bg-muted text-muted-foreground border-border cursor-default select-none"
                   >
                     {a}
-                  </button>
+                  </div>
                 ))}
               </div>
             </div>
