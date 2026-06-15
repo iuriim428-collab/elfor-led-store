@@ -142,11 +142,8 @@ export default function ProductDetail() {
           {/* Beam angle selector */}
           {beamAngles.length > 0 && (
             <div className="mb-6">
-              <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center mb-2">
                 <span className="font-mono text-xs font-bold uppercase tracking-wider text-muted-foreground">Угол свечения</span>
-                {activeAngle && (
-                  <span className="font-mono text-xs font-bold text-primary">{activeAngle}</span>
-                )}
               </div>
               <div className="flex gap-2 flex-wrap">
                 {beamAngles.map(a => (
