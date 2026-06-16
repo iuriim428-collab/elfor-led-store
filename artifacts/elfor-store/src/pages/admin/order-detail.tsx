@@ -3,8 +3,9 @@ import { useParams, Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Mail, FileText, Loader2 } from "lucide-react";
+import { ArrowLeft, Mail, FileText, Loader2, Upload, Download, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useRef, useState } from "react";
 
 export default function AdminOrderDetail() {
   const { id } = useParams();
@@ -14,6 +15,49 @@ export default function AdminOrderDetail() {
   const sendInvoice = useSendInvoice();
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+
+  const handleInvoiceUpload = async (file: File) => {
+    if (!file) return;
+    setUploading(true);
+    try {
+      // 1. Request presigned URL
+      const urlRes = await fetch("/api/storage/uploads/request-url", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: file.name, size: file.size, contentType: file.type || "application/pdf" }),
+      });
+      if (!urlRes.ok) throw new Error("Ошибка получения URL");
+      const { uploadURL, objectPath } = await urlRes.json();
+
+      // 2. Upload file directly to presigned URL
+      const uploadRes = await fetch(uploadURL, {
+        method: "PUT",
+        headers: { "Content-Type": file.type || "application/pdf" },
+        body: file,
+      });
+      if (!uploadRes.ok) throw new Error("Ошибка загрузки файла");
+
+      // 3. Save objectPath to order
+      await updateOrder.mutateAsync({ id: orderId, data: { invoiceFilePath: objectPath } });
+      queryClient.invalidateQueries({ queryKey: [`/api/orders/${orderId}`] });
+      queryClient.refetchQueries({ queryKey: [`/api/orders/${orderId}`] });
+      toast({ title: "Счёт загружен", description: file.name });
+    } catch (err: any) {
+      toast({ title: "Ошибка загрузки", description: err?.message ?? "Попробуйте ещё раз", variant: "destructive" });
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  const handleRemoveInvoice = async () => {
+    await updateOrder.mutateAsync({ id: orderId, data: { invoiceFilePath: null } });
+    queryClient.invalidateQueries({ queryKey: [`/api/orders/${orderId}`] });
+    queryClient.refetchQueries({ queryKey: [`/api/orders/${orderId}`] });
+    toast({ title: "Счёт удалён" });
+  };
 
   const STATUS_LABELS: Record<string, string> = {
     new: "Новый",
@@ -206,8 +250,55 @@ export default function AdminOrderDetail() {
               <FileText className="h-4 w-4 text-accent" />
               Счёт на оплату
             </h3>
-            <p className="font-mono text-xs text-muted-foreground mb-4">
-              Отправить счёт на оплату на почту клиента ({order.customerEmail})
+
+            {/* Uploaded invoice file */}
+            {order.invoiceFilePath ? (
+              <div className="mb-4 p-3 border border-border bg-background flex items-center gap-3">
+                <FileText className="h-5 w-5 text-accent shrink-0" />
+                <span className="font-mono text-xs flex-1 truncate text-muted-foreground">Счёт загружен</span>
+                <a
+                  href={`/api/storage/objects${order.invoiceFilePath.replace(/^\/objects/, "")}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="p-1.5 hover:text-accent transition-colors"
+                  title="Скачать"
+                >
+                  <Download className="h-4 w-4" />
+                </a>
+                <button
+                  onClick={handleRemoveInvoice}
+                  className="p-1.5 hover:text-destructive transition-colors"
+                  title="Удалить"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            ) : (
+              <p className="font-mono text-xs text-muted-foreground mb-3">Файл счёта не загружен</p>
+            )}
+
+            {/* Upload button */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".pdf,.doc,.docx,.xls,.xlsx"
+              className="hidden"
+              onChange={e => { const f = e.target.files?.[0]; if (f) handleInvoiceUpload(f); }}
+            />
+            <Button
+              variant="outline"
+              className="w-full rounded-none border-dashed border-border font-mono text-xs uppercase h-9 gap-2 mb-3"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading}
+            >
+              {uploading
+                ? <><Loader2 className="h-4 w-4 animate-spin" /> Загрузка...</>
+                : <><Upload className="h-4 w-4" /> {order.invoiceFilePath ? "Заменить файл" : "Загрузить счёт"}</>}
+            </Button>
+
+            {/* Send invoice by email */}
+            <p className="font-mono text-[10px] text-muted-foreground mb-3">
+              Отправить счёт на почту клиента ({order.customerEmail})
             </p>
             <Button
               className="w-full rounded-none font-bold uppercase tracking-wider h-10 bg-accent hover:bg-accent/90 text-white text-xs gap-2"
@@ -216,7 +307,7 @@ export default function AdminOrderDetail() {
             >
               {sendInvoice.isPending
                 ? <><Loader2 className="h-4 w-4 animate-spin" /> Отправка...</>
-                : <><FileText className="h-4 w-4" /> Отправить счёт</>}
+                : <><Mail className="h-4 w-4" /> Отправить счёт клиенту</>}
             </Button>
           </div>
         </div>

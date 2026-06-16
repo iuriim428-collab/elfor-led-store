@@ -11,6 +11,7 @@ export const ordersTable = pgTable("orders", {
   deliveryAddress: text("delivery_address"),
   comment: text("comment"),
   status: text("status").notNull().default("new"),
+  invoiceFilePath: text("invoice_file_path"),
   totalAmount: numeric("total_amount", { precision: 14, scale: 2 }).notNull(),
   items: jsonb("items").notNull().default("[]"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),

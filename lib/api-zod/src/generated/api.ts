@@ -608,7 +608,8 @@ export const UpdateOrderParams = zod.object({
 
 export const UpdateOrderBody = zod.object({
   "status": zod.enum(['new', 'processing', 'shipped', 'delivered', 'cancelled', 'archive']).optional(),
-  "comment": zod.string().nullish()
+  "comment": zod.string().nullish(),
+  "invoiceFilePath": zod.string().nullish()
 })
 
 export const UpdateOrderResponse = zod.object({
@@ -620,6 +621,7 @@ export const UpdateOrderResponse = zod.object({
   "deliveryAddress": zod.string().nullish(),
   "comment": zod.string().nullish(),
   "status": zod.enum(['new', 'processing', 'shipped', 'delivered', 'cancelled', 'archive']),
+  "invoiceFilePath": zod.string().nullish(),
   "totalAmount": zod.number(),
   "items": zod.array(zod.object({
   "productId": zod.number(),

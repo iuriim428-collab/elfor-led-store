@@ -270,6 +270,8 @@ export interface Order {
   /** @nullable */
   comment?: string | null;
   status: OrderStatus;
+  /** @nullable */
+  invoiceFilePath?: string | null;
   totalAmount: number;
   items: OrderItem[];
   createdAt: string;
@@ -305,6 +307,8 @@ export interface OrderPatch {
   status?: OrderPatchStatus;
   /** @nullable */
   comment?: string | null;
+  /** @nullable */
+  invoiceFilePath?: string | null;
 }
 
 export interface UploadUrlRequest {
