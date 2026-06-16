@@ -59,6 +59,9 @@ export async function sendStatusEmail(order: {
   status: string;
   totalAmount: number;
 }): Promise<void> {
+  // Archive status — never notify client
+  if (order.status === "archive") return;
+
   const label = STATUS_LABELS[order.status] ?? order.status;
   const html = `
 <!DOCTYPE html>
