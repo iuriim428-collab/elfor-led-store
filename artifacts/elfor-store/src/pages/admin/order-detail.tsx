@@ -41,9 +41,9 @@ export default function AdminOrderDetail() {
       if (!uploadRes.ok) throw new Error("Ошибка загрузки файла");
 
       // 3. Save objectPath to order
-      await updateOrder.mutateAsync({ id: orderId, data: { invoiceFilePath: objectPath } });
-      queryClient.invalidateQueries({ queryKey: [`/api/orders/${orderId}`] });
-      queryClient.refetchQueries({ queryKey: [`/api/orders/${orderId}`] });
+      const updated = await updateOrder.mutateAsync({ id: orderId, data: { invoiceFilePath: objectPath } });
+      // Directly push updated data into the React Query cache — no refetch needed
+      queryClient.setQueryData([`/api/orders/${orderId}`], updated);
       toast({ title: "Счёт загружен", description: file.name });
     } catch (err: any) {
       toast({ title: "Ошибка загрузки", description: err?.message ?? "Попробуйте ещё раз", variant: "destructive" });
@@ -54,9 +54,8 @@ export default function AdminOrderDetail() {
   };
 
   const handleRemoveInvoice = async () => {
-    await updateOrder.mutateAsync({ id: orderId, data: { invoiceFilePath: null } });
-    queryClient.invalidateQueries({ queryKey: [`/api/orders/${orderId}`] });
-    queryClient.refetchQueries({ queryKey: [`/api/orders/${orderId}`] });
+    const updated = await updateOrder.mutateAsync({ id: orderId, data: { invoiceFilePath: null } });
+    queryClient.setQueryData([`/api/orders/${orderId}`], updated);
     toast({ title: "Счёт удалён" });
   };
 
@@ -301,14 +300,14 @@ export default function AdminOrderDetail() {
               {uploading
                 ? <><Loader2 className="h-3.5 w-3.5 animate-spin shrink-0" /> Загрузка...</>
                 : order.invoiceFilePath
-                  ? <><Upload className="h-3.5 w-3.5 shrink-0" /> Заменить файл</>
+                  ? <><Upload className="h-3.5 w-3.5 shrink-0" /> Счёт загружен</>
                   : <><Upload className="h-3.5 w-3.5 shrink-0" /> Загрузить счёт</>}
             </Button>
 
             {/* Send invoice by email */}
             <p className="font-mono text-[10px] text-muted-foreground mb-3">
               {order.invoiceFilePath
-                ? `Отправить счёт на почту клиента (${order.customerEmail})`
+                ? "Файл счёта готов к отправке"
                 : "Загрузите файл счёта чтобы отправить клиенту"}
             </p>
             <Button
