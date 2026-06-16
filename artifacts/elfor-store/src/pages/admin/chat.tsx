@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { playNotificationSound } from "@/lib/notification-sound";
 
 interface Session {
   id: number;
@@ -45,16 +46,46 @@ export default function AdminChat() {
   const [sending, setSending] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const knownSessionTimestamps = useRef<Map<number, string>>(new Map());
+  const seenMessageIds = useRef<Set<number>>(new Set());
+  const initialLoadDone = useRef(false);
 
   const fetchSessions = useCallback(async () => {
     const r = await fetch("/api/chat/sessions");
-    if (r.ok) setSessions(await r.json());
+    if (!r.ok) return;
+    const data: Session[] = await r.json();
+
+    if (initialLoadDone.current) {
+      for (const s of data) {
+        const prev = knownSessionTimestamps.current.get(s.id);
+        if (prev === undefined) {
+          playNotificationSound();
+          break;
+        } else if (s.lastMessageAt !== prev) {
+          playNotificationSound();
+          break;
+        }
+      }
+    }
+
+    for (const s of data) {
+      knownSessionTimestamps.current.set(s.id, s.lastMessageAt);
+    }
+    initialLoadDone.current = true;
+    setSessions(data);
   }, []);
 
   const fetchMessages = useCallback(async (id: number) => {
     const r = await fetch(`/api/chat/sessions/${id}/messages`);
     if (r.ok) {
       const msgs: Message[] = await r.json();
+      const newVisitorMsg = msgs.find(
+        m => m.sender === "visitor" && !seenMessageIds.current.has(m.id)
+      );
+      if (newVisitorMsg && seenMessageIds.current.size > 0) {
+        playNotificationSound();
+      }
+      msgs.forEach(m => seenMessageIds.current.add(m.id));
       setMessages(msgs);
       setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: "smooth" }), 50);
     }
