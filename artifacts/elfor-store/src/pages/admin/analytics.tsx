@@ -22,12 +22,12 @@ interface Analytics {
 }
 
 const STATUS_LABELS: Record<string, string> = {
-  new: "Новый", confirmed: "Подтверждён", shipped: "Отправлен",
-  delivered: "Доставлен", cancelled: "Отменён",
+  new: "Новый", confirmed: "Подтверждён", processing: "В работе", shipped: "Отправлен",
+  delivered: "Доставлен", cancelled: "Отменён", archive: "Архив",
 };
 const STATUS_COLORS: Record<string, string> = {
-  new: "#E8500B", confirmed: "#f97316", shipped: "#3b82f6",
-  delivered: "#22c55e", cancelled: "#6b7280",
+  new: "#E8500B", confirmed: "#f97316", processing: "#f97316", shipped: "#3b82f6",
+  delivered: "#22c55e", cancelled: "#6b7280", archive: "#06b6d4",
 };
 const CHART_COLORS = ["#E8500B", "#2B2D2B", "#3b82f6", "#f97316", "#22c55e", "#a855f7", "#ec4899"];
 

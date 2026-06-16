@@ -21,6 +21,7 @@ export default function AdminOrderDetail() {
     shipped: "Отправлен",
     delivered: "Доставлен",
     cancelled: "Отменён",
+    archive: "Архив",
   };
 
   const handleStatusChange = (status: any) => {

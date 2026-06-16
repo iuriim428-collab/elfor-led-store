@@ -8,6 +8,7 @@ const STATUS_LABELS: Record<string, string> = {
   shipped: "Отправлен",
   delivered: "Доставлен",
   cancelled: "Отменён",
+  archive: "Архив",
 };
 
 const STATUS_COLORS: Record<string, string> = {
@@ -16,6 +17,7 @@ const STATUS_COLORS: Record<string, string> = {
   shipped: "bg-purple-100 text-purple-800 border-purple-200",
   delivered: "bg-green-100 text-green-800 border-green-200",
   cancelled: "bg-red-100 text-red-800 border-red-200",
+  archive: "bg-cyan-100 text-cyan-800 border-cyan-200",
 };
 
 export default function AdminOrders() {
