@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import { Readable } from "stream";
 import { ObjectStorageService, ObjectNotFoundError } from "../lib/objectStorage.js";
 
 function getTransport() {
@@ -27,7 +28,7 @@ export async function sendMail(opts: {
   to: string;
   subject: string;
   html: string;
-  attachments?: Array<{ filename: string; content: NodeJS.ReadableStream; contentType: string }>;
+  attachments?: Array<{ filename: string; content: Readable; contentType: string }>;
 }): Promise<{ ok: boolean; message: string }> {
   const t = getTransport();
   if (!t) {
@@ -47,6 +48,88 @@ export async function sendMail(opts: {
   } catch (err: any) {
     return { ok: false, message: err?.message ?? "Ошибка отправки" };
   }
+}
+
+// ─── Chat message notification ──────────────────────────────────────────────
+
+export function isOffHoursMoscow(): boolean {
+  const now = new Date();
+  const moscow = new Date(now.getTime() + 3 * 60 * 60 * 1000);
+  const day = moscow.getUTCDay(); // 0=Sun, 6=Sat
+  const hour = moscow.getUTCHours();
+  const isWeekend = day === 0 || day === 6;
+  const isOutside = hour < 9 || hour >= 18;
+  return isWeekend || isOutside;
+}
+
+export async function sendChatNotificationEmail(opts: {
+  to: string;
+  visitorName: string | null;
+  visitorPhone: string | null;
+  messageText: string;
+  sessionId: number;
+  isNewSession: boolean;
+}): Promise<void> {
+  const { to, visitorName, visitorPhone, messageText, sessionId, isNewSession } = opts;
+  const now = new Date().toLocaleString("ru-RU", { timeZone: "Europe/Moscow" });
+  const subject = isNewSession
+    ? `Новый чат от ${visitorName ?? "посетителя"} — ЭЛФОР`
+    : `Новое сообщение в чате от ${visitorName ?? "посетителя"} — ЭЛФОР`;
+
+  const html = `
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta charset="UTF-8"><title>Уведомление чата</title></head>
+<body style="margin:0;padding:0;background:#F4F1EA;font-family:Arial,sans-serif;">
+  <div style="max-width:560px;margin:40px auto;background:#fff;border:1px solid #D5D0C5;">
+    <div style="background:#2B2D2B;padding:20px 28px;display:flex;align-items:center;gap:16px;">
+      <span style="color:#E8500B;font-size:20px;font-weight:900;letter-spacing:2px;">ЭЛФОР</span>
+      <span style="color:#aaa;font-size:12px;margin-left:auto;">Уведомление чата</span>
+    </div>
+    <div style="padding:28px;">
+      <div style="background:#F4F1EA;border-left:4px solid ${isNewSession ? "#22c55e" : "#E8500B"};padding:14px 18px;margin-bottom:24px;">
+        <p style="margin:0;font-size:14px;font-weight:bold;color:#2B2D2B;">
+          ${isNewSession ? "🟢 Новый диалог открыт" : "💬 Новое сообщение"}
+        </p>
+      </div>
+
+      <table style="width:100%;border-collapse:collapse;margin-bottom:20px;">
+        <tr>
+          <td style="padding:6px 0;font-size:12px;color:#888;font-weight:bold;text-transform:uppercase;letter-spacing:1px;width:120px;">Посетитель</td>
+          <td style="padding:6px 0;font-size:14px;color:#2B2D2B;font-weight:bold;">${visitorName ?? "Аноним"}</td>
+        </tr>
+        ${visitorPhone ? `<tr>
+          <td style="padding:6px 0;font-size:12px;color:#888;font-weight:bold;text-transform:uppercase;letter-spacing:1px;">Телефон</td>
+          <td style="padding:6px 0;font-size:14px;color:#2B2D2B;">${visitorPhone}</td>
+        </tr>` : ""}
+        <tr>
+          <td style="padding:6px 0;font-size:12px;color:#888;font-weight:bold;text-transform:uppercase;letter-spacing:1px;">Время</td>
+          <td style="padding:6px 0;font-size:14px;color:#2B2D2B;">${now} МСК</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 0;font-size:12px;color:#888;font-weight:bold;text-transform:uppercase;letter-spacing:1px;">Диалог</td>
+          <td style="padding:6px 0;font-size:14px;color:#2B2D2B;">#${sessionId}</td>
+        </tr>
+      </table>
+
+      <div style="background:#F9F9F9;border:1px solid #E5E5E5;padding:14px 18px;margin-bottom:24px;">
+        <p style="margin:0 0 6px;font-size:11px;color:#888;font-weight:bold;text-transform:uppercase;letter-spacing:1px;">Сообщение</p>
+        <p style="margin:0;font-size:14px;color:#2B2D2B;line-height:1.6;">${messageText}</p>
+      </div>
+
+      <a href="https://lfour.ru/admin/chat"
+         style="display:inline-block;background:#E8500B;color:#fff;text-decoration:none;padding:10px 22px;font-weight:bold;font-size:13px;text-transform:uppercase;letter-spacing:1px;">
+        Открыть чат →
+      </a>
+    </div>
+    <div style="background:#F4F1EA;padding:14px 28px;text-align:center;">
+      <span style="color:#999;font-size:11px;">© ЭЛФОР — промышленные LED светильники. lfour.ru</span>
+    </div>
+  </div>
+</body>
+</html>`;
+
+  await sendMail({ to, subject, html });
 }
 
 // ─── Status change notification ────────────────────────────────────────────
@@ -215,7 +298,7 @@ export async function sendInvoiceEmail(order: {
 </html>`;
 
   // Attach uploaded invoice file if present
-  const attachments: Array<{ filename: string; content: NodeJS.ReadableStream; contentType: string }> = [];
+  const attachments: Array<{ filename: string; content: Readable; contentType: string }> = [];
   if (order.invoiceFilePath) {
     try {
       const storage = new ObjectStorageService();

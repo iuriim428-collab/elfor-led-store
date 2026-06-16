@@ -1,7 +1,8 @@
 import { Router, type IRouter } from "express";
-import { eq, desc, asc } from "drizzle-orm";
-import { db, chatSessionsTable, chatMessagesTable } from "@workspace/db";
+import { eq, desc, asc, count } from "drizzle-orm";
+import { db, chatSessionsTable, chatMessagesTable, siteSettingsTable } from "@workspace/db";
 import { randomUUID } from "crypto";
+import { sendChatNotificationEmail, isOffHoursMoscow } from "../services/email.js";
 
 const router: IRouter = Router();
 
@@ -53,6 +54,12 @@ router.post("/chat/sessions/by-token/:token/messages", async (req, res): Promise
     .where(eq(chatSessionsTable.token, req.params.token))
     .limit(1);
   if (!session) { res.status(404).json({ error: "Not found" }); return; }
+
+  const [{ value: msgCount }] = await db
+    .select({ value: count() })
+    .from(chatMessagesTable)
+    .where(eq(chatMessagesTable.sessionId, session.id));
+
   const [msg] = await db
     .insert(chatMessagesTable)
     .values({ sessionId: session.id, sender: "visitor", text: text.trim() })
@@ -61,7 +68,28 @@ router.post("/chat/sessions/by-token/:token/messages", async (req, res): Promise
     .update(chatSessionsTable)
     .set({ lastMessageAt: new Date() })
     .where(eq(chatSessionsTable.id, session.id));
+
   res.status(201).json(msg);
+
+  // Send email notification during off-hours (fire-and-forget)
+  if (isOffHoursMoscow()) {
+    try {
+      const settings = await db.select().from(siteSettingsTable);
+      const notifyEmail = settings.find(s => s.key === "notify_email")?.value;
+      if (notifyEmail) {
+        await sendChatNotificationEmail({
+          to: notifyEmail,
+          visitorName: session.visitorName,
+          visitorPhone: session.visitorPhone,
+          messageText: text.trim(),
+          sessionId: session.id,
+          isNewSession: Number(msgCount) === 0,
+        });
+      }
+    } catch {
+      // Never crash the request
+    }
+  }
 });
 
 // Admin: list all sessions
