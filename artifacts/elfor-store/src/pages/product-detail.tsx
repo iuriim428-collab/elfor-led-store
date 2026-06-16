@@ -102,6 +102,16 @@ export default function ProductDetail() {
               <span className="px-3 py-1 bg-yellow-500/10 text-yellow-700 border border-yellow-500/20">Под заказ</span>
             )}
             {product.warranty && <span className="px-3 py-1 bg-accent/10 text-accent border border-accent/20">Гарантия {product.warranty}</span>}
+            <a
+              href={`/products/passports/${product.sku}.pdf`}
+              download
+              onClick={e => { e.preventDefault(); alert("Паспорт на данный светильник будет добавлен в ближайшее время."); }}
+              className="flex items-center gap-1.5 px-3 py-1 border border-dashed border-border text-muted-foreground hover:border-accent hover:text-accent transition-colors cursor-pointer"
+              title="Скачать паспорт"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Скачать паспорт
+            </a>
           </div>
 
           {/* Color temperature selector */}
