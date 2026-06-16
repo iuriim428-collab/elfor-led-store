@@ -19,6 +19,34 @@ interface Session {
 
 const TOKEN_KEY = "elfor_chat_token";
 
+function formatPhone(raw: string): string {
+  // Strip everything except digits
+  let digits = raw.replace(/\D/g, "");
+
+  // Normalize leading digit
+  if (digits.startsWith("8")) digits = "7" + digits.slice(1);
+  else if (digits.startsWith("9")) digits = "7" + digits;
+  else if (digits.startsWith("7")) { /* ok */ }
+  else if (digits.length > 0) digits = "7" + digits;
+
+  // Keep only 11 digits max (7 + 10)
+  digits = digits.slice(0, 11);
+
+  // Remove leading 7 for formatting the rest
+  const local = digits.slice(1); // up to 10 digits after 7
+
+  let result = "+7";
+  if (local.length === 0) return result;
+  if (local.length <= 3) return `${result} (${local}`;
+  result += ` (${local.slice(0, 3)})`;
+  if (local.length <= 6) return `${result} ${local.slice(3)}`;
+  result += ` ${local.slice(3, 6)}`;
+  if (local.length <= 8) return `${result}-${local.slice(6)}`;
+  result += `-${local.slice(6, 8)}`;
+  if (local.length <= 10) return `${result}-${local.slice(8)}`;
+  return result;
+}
+
 function formatTime(iso: string) {
   return new Date(iso).toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" });
 }
@@ -164,8 +192,10 @@ export function ChatWidget() {
               <div className="flex flex-col gap-1.5">
                 <label className="text-[11px] font-bold uppercase text-muted-foreground">Телефон</label>
                 <Input
-                  value={phone} onChange={e => setPhone(e.target.value)}
+                  value={phone}
+                  onChange={e => setPhone(formatPhone(e.target.value))}
                   placeholder="+7 (___) ___-__-__"
+                  inputMode="tel"
                   className="rounded-none border-border h-10 text-sm"
                 />
               </div>
