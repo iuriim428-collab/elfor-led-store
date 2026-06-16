@@ -291,12 +291,12 @@ export default function AdminOrderDetail() {
               variant="outline"
               onClick={() => fileInputRef.current?.click()}
               disabled={uploading}
-              className={[
-                "w-full rounded-none border-dashed font-mono text-[10px] uppercase min-h-9 h-auto py-2 gap-1.5 whitespace-normal leading-tight mb-3 transition-colors",
-                order.invoiceFilePath
-                  ? "border-green-600 bg-green-50 text-green-700 hover:bg-green-100 hover:border-green-700"
-                  : "border-border text-foreground hover:bg-muted",
-              ].join(" ")}
+              className="w-full rounded-none border-dashed font-mono text-[10px] uppercase min-h-9 h-auto py-2 gap-1.5 whitespace-normal leading-tight mb-3 transition-colors"
+              style={order.invoiceFilePath ? {
+                borderColor: "#16a34a",
+                backgroundColor: "#f0fdf4",
+                color: "#15803d",
+              } : undefined}
             >
               {uploading
                 ? <><Loader2 className="h-3.5 w-3.5 animate-spin shrink-0" /> Загрузка...</>
