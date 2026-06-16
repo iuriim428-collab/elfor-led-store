@@ -386,7 +386,7 @@ paths:
           in: query
           schema:
             type: string
-            enum: [new, processing, shipped, delivered, cancelled]
+            enum: [new, processing, shipped, delivered, cancelled, archive]
         - name: limit
           in: query
           schema:
@@ -911,7 +911,7 @@ components:
           type: ["string", "null"]
         status:
           type: string
-          enum: [new, processing, shipped, delivered, cancelled]
+          enum: [new, processing, shipped, delivered, cancelled, archive]
         totalAmount:
           type: number
         items:
@@ -952,7 +952,7 @@ components:
       properties:
         status:
           type: string
-          enum: [new, processing, shipped, delivered, cancelled]
+          enum: [new, processing, shipped, delivered, cancelled, archive]
         comment:
           type: ["string", "null"]
 

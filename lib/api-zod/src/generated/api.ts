@@ -498,7 +498,7 @@ export const DeleteArticleParams = zod.object({
  * @summary List orders (admin)
  */
 export const ListOrdersQueryParams = zod.object({
-  "status": zod.enum(['new', 'processing', 'shipped', 'delivered', 'cancelled']).optional(),
+  "status": zod.enum(['new', 'processing', 'shipped', 'delivered', 'cancelled', 'archive']).optional(),
   "limit": zod.coerce.number().optional(),
   "offset": zod.coerce.number().optional()
 })
@@ -511,7 +511,7 @@ export const ListOrdersResponseItem = zod.object({
   "customerCompany": zod.string().nullish(),
   "deliveryAddress": zod.string().nullish(),
   "comment": zod.string().nullish(),
-  "status": zod.enum(['new', 'processing', 'shipped', 'delivered', 'cancelled']),
+  "status": zod.enum(['new', 'processing', 'shipped', 'delivered', 'cancelled', 'archive']),
   "totalAmount": zod.number(),
   "items": zod.array(zod.object({
   "productId": zod.number(),
@@ -583,7 +583,7 @@ export const GetOrderResponse = zod.object({
   "customerCompany": zod.string().nullish(),
   "deliveryAddress": zod.string().nullish(),
   "comment": zod.string().nullish(),
-  "status": zod.enum(['new', 'processing', 'shipped', 'delivered', 'cancelled']),
+  "status": zod.enum(['new', 'processing', 'shipped', 'delivered', 'cancelled', 'archive']),
   "totalAmount": zod.number(),
   "items": zod.array(zod.object({
   "productId": zod.number(),
@@ -607,7 +607,7 @@ export const UpdateOrderParams = zod.object({
 })
 
 export const UpdateOrderBody = zod.object({
-  "status": zod.enum(['new', 'processing', 'shipped', 'delivered', 'cancelled']).optional(),
+  "status": zod.enum(['new', 'processing', 'shipped', 'delivered', 'cancelled', 'archive']).optional(),
   "comment": zod.string().nullish()
 })
 
@@ -619,7 +619,7 @@ export const UpdateOrderResponse = zod.object({
   "customerCompany": zod.string().nullish(),
   "deliveryAddress": zod.string().nullish(),
   "comment": zod.string().nullish(),
-  "status": zod.enum(['new', 'processing', 'shipped', 'delivered', 'cancelled']),
+  "status": zod.enum(['new', 'processing', 'shipped', 'delivered', 'cancelled', 'archive']),
   "totalAmount": zod.number(),
   "items": zod.array(zod.object({
   "productId": zod.number(),
@@ -653,7 +653,7 @@ export const GetDashboardStatsResponse = zod.object({
   "customerCompany": zod.string().nullish(),
   "deliveryAddress": zod.string().nullish(),
   "comment": zod.string().nullish(),
-  "status": zod.enum(['new', 'processing', 'shipped', 'delivered', 'cancelled']),
+  "status": zod.enum(['new', 'processing', 'shipped', 'delivered', 'cancelled', 'archive']),
   "totalAmount": zod.number(),
   "items": zod.array(zod.object({
   "productId": zod.number(),
