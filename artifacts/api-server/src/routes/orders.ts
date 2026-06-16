@@ -97,8 +97,8 @@ router.patch("/orders/:id", async (req, res): Promise<void> => {
     return;
   }
 
-  // Send status change email (non-blocking)
-  if (parsed.data.status && row.customerEmail) {
+  // Send status change email (non-blocking) — skip for archive status
+  if (parsed.data.status && parsed.data.status !== "archive" && row.customerEmail) {
     sendStatusEmail({
       id: row.id,
       customerName: row.customerName,

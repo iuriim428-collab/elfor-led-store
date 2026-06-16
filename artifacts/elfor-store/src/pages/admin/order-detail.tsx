@@ -154,7 +154,9 @@ export default function AdminOrderDetail() {
               </SelectContent>
             </Select>
             <p className="text-[10px] font-mono text-muted-foreground mt-2">
-              При смене статуса клиент получит уведомление на email
+              {order.status === "archive"
+                ? "Статус «Архив» — уведомление клиенту не отправляется"
+                : "При смене статуса клиент получит уведомление на email"}
             </p>
           </div>
 
