@@ -17,6 +17,7 @@ export default function AdminOrderDetail() {
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const [invoiceSentAt, setInvoiceSentAt] = useState<Date | null>(null);
 
   const handleInvoiceUpload = async (file: File) => {
     if (!file) return;
@@ -91,6 +92,7 @@ export default function AdminOrderDetail() {
     sendInvoice.mutate({ id: orderId }, {
       onSuccess: (data) => {
         if (data.ok) {
+          setInvoiceSentAt(new Date());
           toast({ title: "Счёт отправлен", description: `На почту ${order?.customerEmail}` });
         } else {
           toast({
@@ -287,28 +289,42 @@ export default function AdminOrderDetail() {
             />
             <Button
               variant="outline"
-              className="w-full rounded-none border-dashed border-border font-mono text-xs uppercase h-9 gap-2 mb-3"
               onClick={() => fileInputRef.current?.click()}
               disabled={uploading}
+              className={[
+                "w-full rounded-none border-dashed font-mono text-[10px] uppercase min-h-9 h-auto py-2 gap-1.5 whitespace-normal leading-tight mb-3 transition-colors",
+                order.invoiceFilePath
+                  ? "border-green-600 bg-green-50 text-green-700 hover:bg-green-100 hover:border-green-700"
+                  : "border-border text-foreground hover:bg-muted",
+              ].join(" ")}
             >
               {uploading
-                ? <><Loader2 className="h-4 w-4 animate-spin" /> Загрузка...</>
-                : <><Upload className="h-4 w-4" /> {order.invoiceFilePath ? "Заменить файл" : "Загрузить счёт"}</>}
+                ? <><Loader2 className="h-3.5 w-3.5 animate-spin shrink-0" /> Загрузка...</>
+                : order.invoiceFilePath
+                  ? <><Upload className="h-3.5 w-3.5 shrink-0" /> Заменить файл</>
+                  : <><Upload className="h-3.5 w-3.5 shrink-0" /> Загрузить счёт</>}
             </Button>
 
             {/* Send invoice by email */}
             <p className="font-mono text-[10px] text-muted-foreground mb-3">
-              Отправить счёт на почту клиента ({order.customerEmail})
+              {order.invoiceFilePath
+                ? `Отправить счёт на почту клиента (${order.customerEmail})`
+                : "Загрузите файл счёта чтобы отправить клиенту"}
             </p>
             <Button
-              className="w-full rounded-none font-bold uppercase tracking-tight min-h-10 h-auto py-2.5 bg-accent hover:bg-accent/90 text-white text-[10px] gap-1.5 whitespace-normal leading-tight"
+              className="w-full rounded-none font-bold uppercase tracking-tight min-h-10 h-auto py-2.5 bg-accent hover:bg-accent/90 text-white text-[10px] gap-1.5 whitespace-normal leading-tight disabled:opacity-40 disabled:cursor-not-allowed"
               onClick={handleSendInvoice}
-              disabled={sendInvoice.isPending}
+              disabled={sendInvoice.isPending || !order.invoiceFilePath}
             >
               {sendInvoice.isPending
                 ? <><Loader2 className="h-3.5 w-3.5 animate-spin shrink-0" /> Отправка...</>
                 : <><Mail className="h-3.5 w-3.5 shrink-0" /> Отправить счёт клиенту</>}
             </Button>
+            {invoiceSentAt && (
+              <p className="font-mono text-[9px] text-green-600 mt-1.5">
+                ✓ Отправлен {invoiceSentAt.toLocaleString("ru-RU")}
+              </p>
+            )}
           </div>
         </div>
       </div>
