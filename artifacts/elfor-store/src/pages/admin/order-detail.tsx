@@ -27,11 +27,15 @@ export default function AdminOrderDetail() {
   const handleStatusChange = (status: any) => {
     updateOrder.mutate({ id: orderId, data: { status } }, {
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["/api/orders", orderId] });
-        toast({
-          title: "Статус обновлён",
-          description: `Клиенту отправлено уведомление на почту`,
-        });
+        queryClient.invalidateQueries({ queryKey: ["/api/orders"] });
+        queryClient.invalidateQueries({ queryKey: [`/api/orders/${orderId}`] });
+        queryClient.refetchQueries({ queryKey: [`/api/orders/${orderId}`] });
+        if (status !== "archive") {
+          toast({
+            title: "Статус обновлён",
+            description: `Уведомление отправлено клиенту`,
+          });
+        }
       },
       onError: () => {
         toast({ title: "Ошибка", description: "Не удалось обновить статус", variant: "destructive" });
