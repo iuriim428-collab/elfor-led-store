@@ -55,17 +55,20 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
       <div className="bg-primary text-primary-foreground py-2 px-4 text-xs font-mono border-b border-border hidden md:block">
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex gap-6">
-            <a href={phoneHref} className="flex items-center gap-2 hover:text-accent transition-colors">
-              <Phone className="h-3 w-3" />
-              <span>{phone}</span>
-            </a>
-            <button
-              onClick={() => window.dispatchEvent(new CustomEvent("elfor:open-chat"))}
-              className="flex items-center gap-1.5 text-accent hover:text-accent/80 transition-colors border-b border-dashed border-accent/50 hover:border-accent pb-px"
-            >
-              <PhoneCall className="h-3 w-3" />
-              <span>Заказать обратный звонок</span>
-            </button>
+            <div className="flex flex-col gap-0.5">
+              <a href={phoneHref} className="flex items-center gap-2 hover:text-accent transition-colors">
+                <Phone className="h-3 w-3" />
+                <span>{phone}</span>
+              </a>
+              <button
+                onClick={() => window.dispatchEvent(new CustomEvent("elfor:open-chat"))}
+                className="flex items-center gap-1 text-accent hover:text-accent/80 transition-colors border-b border-dashed border-accent/40 hover:border-accent pb-px self-start"
+                style={{ fontSize: "9px" }}
+              >
+                <PhoneCall className="h-2 w-2" />
+                <span>Заказать обратный звонок</span>
+              </button>
+            </div>
             <a href={`mailto:${email}`} className="flex items-center gap-2 hover:text-accent transition-colors">
               <Mail className="h-3 w-3" />
               <span>{email}</span>
