@@ -94,15 +94,23 @@ export default function AdminOrderDetail() {
           setInvoiceSentAt(new Date());
           toast({ title: "Счёт отправлен", description: `На почту ${order?.customerEmail}` });
         } else {
+          const isSmtpMissing = data.message?.toLowerCase().includes("smtp");
           toast({
-            title: "Счёт не отправлен",
-            description: data.message ?? "Проверьте настройки SMTP",
+            title: isSmtpMissing ? "Почта не настроена" : "Счёт не отправлен",
+            description: isSmtpMissing
+              ? "Для отправки писем укажите SMTP_HOST, SMTP_USER, SMTP_PASS и SMTP_PORT в секретах проекта (раздел Secrets в боковой панели Replit)."
+              : (data.message ?? "Проверьте настройки SMTP"),
             variant: "destructive",
+            duration: 8000,
           });
         }
       },
       onError: () => {
-        toast({ title: "Ошибка отправки", description: "Проверьте настройки SMTP", variant: "destructive" });
+        toast({
+          title: "Ошибка отправки",
+          description: "Не удалось выполнить запрос. Проверьте, что сервер запущен.",
+          variant: "destructive",
+        });
       }
     });
   };
