@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { useCart } from "@/hooks/use-cart";
-import { ShoppingCart, Menu, X, Phone, Mail, ChevronRight } from "lucide-react";
+import { ShoppingCart, Menu, X, Phone, Mail, ChevronRight, PhoneCall } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -59,6 +59,13 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
               <Phone className="h-3 w-3" />
               <span>{phone}</span>
             </a>
+            <button
+              onClick={() => window.dispatchEvent(new CustomEvent("elfor:open-chat"))}
+              className="flex items-center gap-1.5 text-accent hover:text-accent/80 transition-colors border-b border-dashed border-accent/50 hover:border-accent pb-px"
+            >
+              <PhoneCall className="h-3 w-3" />
+              <span>Заказать обратный звонок</span>
+            </button>
             <a href={`mailto:${email}`} className="flex items-center gap-2 hover:text-accent transition-colors">
               <Mail className="h-3 w-3" />
               <span>{email}</span>

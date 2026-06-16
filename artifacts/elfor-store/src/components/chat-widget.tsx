@@ -64,6 +64,13 @@ export function ChatWidget() {
   const bottomRef = useRef<HTMLDivElement>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  // Listen for external open trigger (e.g. callback button)
+  useEffect(() => {
+    const handler = () => setOpen(true);
+    window.addEventListener("elfor:open-chat", handler);
+    return () => window.removeEventListener("elfor:open-chat", handler);
+  }, []);
+
   // Restore session from localStorage
   useEffect(() => {
     const token = localStorage.getItem(TOKEN_KEY);
