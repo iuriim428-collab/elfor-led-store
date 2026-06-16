@@ -221,14 +221,18 @@ export async function sendInvoiceEmail(order: {
       const storage = new ObjectStorageService();
       const file = await storage.getObjectEntityFile(order.invoiceFilePath);
       const [meta] = await file.getMetadata();
-      const ext = (meta.contentType as string | undefined)?.includes("pdf") ? ".pdf" : "";
+      const ct = (meta.contentType as string) || "application/octet-stream";
+      const ext = ct.includes("pdf") ? ".pdf"
+        : ct.includes("word") || ct.includes("docx") ? ".docx"
+        : ct.includes("excel") || ct.includes("xlsx") ? ".xlsx"
+        : "";
       attachments.push({
         filename: `Счёт_${invoiceNum}${ext}`,
         content: file.createReadStream(),
-        contentType: (meta.contentType as string) || "application/octet-stream",
+        contentType: ct,
       });
-    } catch (err) {
-      if (!(err instanceof ObjectNotFoundError)) throw err;
+    } catch (_err) {
+      // If file not found or storage error — send email without attachment
     }
   }
 

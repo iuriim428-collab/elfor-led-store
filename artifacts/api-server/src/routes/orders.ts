@@ -123,22 +123,24 @@ router.post("/orders/:id/send-invoice", async (req, res): Promise<void> => {
     return;
   }
   const order = toOrderJson(row);
-  const result = await sendInvoiceEmail({
-    id: order.id,
-    customerName: order.customerName,
-    customerEmail: order.customerEmail,
-    customerCompany: order.customerCompany,
-    customerPhone: order.customerPhone,
-    deliveryAddress: order.deliveryAddress,
-    totalAmount: order.totalAmount,
-    invoiceFilePath: order.invoiceFilePath,
-    items: order.items as any[],
-  });
-  if (!result.ok) {
-    res.status(500).json(result);
-    return;
+  try {
+    const result = await sendInvoiceEmail({
+      id: order.id,
+      customerName: order.customerName,
+      customerEmail: order.customerEmail,
+      customerCompany: order.customerCompany,
+      customerPhone: order.customerPhone,
+      deliveryAddress: order.deliveryAddress,
+      totalAmount: order.totalAmount,
+      invoiceFilePath: order.invoiceFilePath,
+      items: order.items as any[],
+    });
+    // Always return 200 — let the client decide based on {ok, message}
+    res.json(result);
+  } catch (err: any) {
+    req.log.error({ err }, "send-invoice failed");
+    res.json({ ok: false, message: err?.message ?? "Ошибка отправки счёта" });
   }
-  res.json(result);
 });
 
 export default router;
