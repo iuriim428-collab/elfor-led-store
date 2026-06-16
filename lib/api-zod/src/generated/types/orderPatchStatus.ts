@@ -15,4 +15,5 @@ export const OrderPatchStatus = {
   shipped: 'shipped',
   delivered: 'delivered',
   cancelled: 'cancelled',
+  archive: 'archive',
 } as const;

@@ -1003,7 +1003,7 @@ components:
     # ===== STATS =====
     DashboardStats:
       type: object
-      required: [totalProducts, totalOrders, totalRevenue, newOrdersCount, totalCategories, totalArticles, recentOrders, ordersByStatus]
+      required: [totalProducts, totalOrders, totalRevenue, newOrdersCount, totalCategories, totalArticles, recentOrders, ordersByStatus, todayOrders, todayRevenue, openChats, ordersLast7Days]
 
       properties:
         totalProducts:
@@ -1018,6 +1018,26 @@ components:
           type: integer
         totalArticles:
           type: integer
+        todayOrders:
+          type: integer
+        todayRevenue:
+          type: number
+        openChats:
+          type: integer
+        ordersLast7Days:
+          type: array
+          items:
+            type: object
+            required: [date, label, count, revenue]
+            properties:
+              date:
+                type: string
+              label:
+                type: string
+              count:
+                type: integer
+              revenue:
+                type: number
         recentOrders:
           type: array
           items:

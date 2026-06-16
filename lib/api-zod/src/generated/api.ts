@@ -608,8 +608,7 @@ export const UpdateOrderParams = zod.object({
 
 export const UpdateOrderBody = zod.object({
   "status": zod.enum(['new', 'processing', 'shipped', 'delivered', 'cancelled', 'archive']).optional(),
-  "comment": zod.string().nullish(),
-  "invoiceFilePath": zod.string().nullish()
+  "comment": zod.string().nullish()
 })
 
 export const UpdateOrderResponse = zod.object({
@@ -621,7 +620,6 @@ export const UpdateOrderResponse = zod.object({
   "deliveryAddress": zod.string().nullish(),
   "comment": zod.string().nullish(),
   "status": zod.enum(['new', 'processing', 'shipped', 'delivered', 'cancelled', 'archive']),
-  "invoiceFilePath": zod.string().nullish(),
   "totalAmount": zod.number(),
   "items": zod.array(zod.object({
   "productId": zod.number(),
@@ -647,6 +645,15 @@ export const GetDashboardStatsResponse = zod.object({
   "newOrdersCount": zod.number(),
   "totalCategories": zod.number(),
   "totalArticles": zod.number(),
+  "todayOrders": zod.number(),
+  "todayRevenue": zod.number(),
+  "openChats": zod.number(),
+  "ordersLast7Days": zod.array(zod.object({
+  "date": zod.string(),
+  "label": zod.string(),
+  "count": zod.number(),
+  "revenue": zod.number()
+})),
   "recentOrders": zod.array(zod.object({
   "id": zod.number(),
   "customerName": zod.string(),

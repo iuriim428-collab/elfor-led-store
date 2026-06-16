@@ -270,8 +270,6 @@ export interface Order {
   /** @nullable */
   comment?: string | null;
   status: OrderStatus;
-  /** @nullable */
-  invoiceFilePath?: string | null;
   totalAmount: number;
   items: OrderItem[];
   createdAt: string;
@@ -307,8 +305,6 @@ export interface OrderPatch {
   status?: OrderPatchStatus;
   /** @nullable */
   comment?: string | null;
-  /** @nullable */
-  invoiceFilePath?: string | null;
 }
 
 export interface UploadUrlRequest {
@@ -339,6 +335,13 @@ export interface CatalogInfo {
   updatedAt?: string | null;
 }
 
+export type DashboardStatsOrdersLast7DaysItem = {
+  date: string;
+  label: string;
+  count: number;
+  revenue: number;
+};
+
 export type DashboardStatsOrdersByStatusItem = {
   status: string;
   count: number;
@@ -351,6 +354,10 @@ export interface DashboardStats {
   newOrdersCount: number;
   totalCategories: number;
   totalArticles: number;
+  todayOrders: number;
+  todayRevenue: number;
+  openChats: number;
+  ordersLast7Days: DashboardStatsOrdersLast7DaysItem[];
   recentOrders: Order[];
   ordersByStatus: DashboardStatsOrdersByStatusItem[];
 }
@@ -393,6 +400,7 @@ export const ListOrdersStatus = {
   shipped: 'shipped',
   delivered: 'delivered',
   cancelled: 'cancelled',
+  archive: 'archive',
 } as const;
 
 export type SendInvoice200 = {

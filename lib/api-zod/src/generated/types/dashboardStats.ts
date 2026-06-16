@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { DashboardStatsOrdersByStatusItem } from './dashboardStatsOrdersByStatusItem';
+import type { DashboardStatsOrdersLast7DaysItem } from './dashboardStatsOrdersLast7DaysItem';
 import type { Order } from './order';
 
 export interface DashboardStats {
@@ -15,6 +16,10 @@ export interface DashboardStats {
   newOrdersCount: number;
   totalCategories: number;
   totalArticles: number;
+  todayOrders: number;
+  todayRevenue: number;
+  openChats: number;
+  ordersLast7Days: DashboardStatsOrdersLast7DaysItem[];
   recentOrders: Order[];
   ordersByStatus: DashboardStatsOrdersByStatusItem[];
 }

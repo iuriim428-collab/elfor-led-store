@@ -18,6 +18,7 @@ export * from './categoryInput';
 export * from './categoryPatch';
 export * from './dashboardStats';
 export * from './dashboardStatsOrdersByStatusItem';
+export * from './dashboardStatsOrdersLast7DaysItem';
 export * from './errorEnvelope';
 export * from './healthStatus';
 export * from './listArticlesParams';
