@@ -61,7 +61,7 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
                 <span>{phone}</span>
               </a>
               <button
-                onClick={() => window.dispatchEvent(new CustomEvent("elfor:open-chat"))}
+                onClick={() => window.dispatchEvent(new CustomEvent("elfor:open-chat", { detail: { message: "Прошу перезвонить мне" } }))}
                 className="flex items-center gap-1 text-accent hover:text-accent/80 transition-colors border-b border-dashed border-accent/40 hover:border-accent pb-px self-start"
                 style={{ fontSize: "9px" }}
               >

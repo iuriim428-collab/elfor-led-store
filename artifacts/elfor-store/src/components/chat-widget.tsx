@@ -61,12 +61,17 @@ export function ChatWidget() {
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
   const [unread, setUnread] = useState(0);
+  const pendingMessageRef = useRef<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Listen for external open trigger (e.g. callback button)
   useEffect(() => {
-    const handler = () => setOpen(true);
+    const handler = (e: Event) => {
+      const msg = (e as CustomEvent<{ message?: string }>).detail?.message;
+      if (msg) pendingMessageRef.current = msg;
+      setOpen(true);
+    };
     window.addEventListener("elfor:open-chat", handler);
     return () => window.removeEventListener("elfor:open-chat", handler);
   }, []);
@@ -131,10 +136,14 @@ export function ChatWidget() {
       setSession(s);
       setStep("chat");
       // Send greeting message automatically
+      const greeting = pendingMessageRef.current
+        ? `Здравствуйте! Меня зовут ${name.trim()}. Прошу перезвонить мне.`
+        : `Здравствуйте! Меня зовут ${name.trim()}. Хочу задать вопрос.`;
+      pendingMessageRef.current = null;
       await fetch(`/api/chat/sessions/by-token/${s.token}/messages`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: `Здравствуйте! Меня зовут ${name.trim()}. Хочу задать вопрос.` }),
+        body: JSON.stringify({ text: greeting }),
       });
       await fetchMessages(s.token);
     } catch {}
