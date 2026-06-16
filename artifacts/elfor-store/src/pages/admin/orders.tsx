@@ -1,6 +1,7 @@
 import { useListOrders } from "@workspace/api-client-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useLocation } from "wouter";
+import { useState } from "react";
 
 const STATUS_LABELS: Record<string, string> = {
   new: "Новый",
@@ -23,10 +24,48 @@ const STATUS_COLORS: Record<string, string> = {
 export default function AdminOrders() {
   const { data: orders = [], isLoading } = useListOrders();
   const [, setLocation] = useLocation();
+  const [activeFilter, setActiveFilter] = useState<string>("all");
+
+  const filtered = activeFilter === "all" ? orders : orders.filter(o => o.status === activeFilter);
+
+  const countByStatus = (status: string) => orders.filter(o => o.status === status).length;
 
   return (
     <div className="flex flex-col gap-6">
-      <h2 className="font-serif font-bold text-lg uppercase">Заказы ({orders.length})</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="font-serif font-bold text-lg uppercase">Заказы ({filtered.length})</h2>
+      </div>
+
+      {/* Filters */}
+      <div className="flex flex-wrap gap-2">
+        <button
+          onClick={() => setActiveFilter("all")}
+          className={`px-3 py-1 border text-[11px] font-mono font-bold uppercase transition-colors ${
+            activeFilter === "all"
+              ? "bg-primary text-primary-foreground border-primary"
+              : "border-border text-muted-foreground hover:border-primary hover:text-primary"
+          }`}
+        >
+          Все ({orders.length})
+        </button>
+        {Object.entries(STATUS_LABELS).map(([val, label]) => {
+          const count = countByStatus(val);
+          const isActive = activeFilter === val;
+          return (
+            <button
+              key={val}
+              onClick={() => setActiveFilter(val)}
+              className={`px-3 py-1 border text-[11px] font-mono font-bold uppercase transition-colors ${
+                isActive
+                  ? "bg-primary text-primary-foreground border-primary"
+                  : "border-border text-muted-foreground hover:border-primary hover:text-primary"
+              }`}
+            >
+              {label} ({count})
+            </button>
+          );
+        })}
+      </div>
 
       <div className="border border-border bg-card overflow-hidden">
         <Table>
@@ -43,10 +82,10 @@ export default function AdminOrders() {
           <TableBody className="font-mono text-sm">
             {isLoading ? (
               <TableRow><TableCell colSpan={6} className="text-center py-8">Загрузка...</TableCell></TableRow>
-            ) : orders.length === 0 ? (
-              <TableRow><TableCell colSpan={6} className="text-center py-8">Нет заказов</TableCell></TableRow>
+            ) : filtered.length === 0 ? (
+              <TableRow><TableCell colSpan={6} className="text-center py-8 text-muted-foreground">Нет заказов с таким статусом</TableCell></TableRow>
             ) : (
-              orders.map((order) => (
+              filtered.map((order) => (
                 <TableRow
                   key={order.id}
                   className="border-border cursor-pointer hover:bg-muted/40 transition-colors"
