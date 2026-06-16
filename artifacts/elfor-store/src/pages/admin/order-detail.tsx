@@ -147,9 +147,9 @@ export default function AdminOrderDetail() {
               <SelectTrigger className="w-full rounded-none border-border font-mono font-bold uppercase">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="rounded-none border-border font-mono text-sm uppercase">
+              <SelectContent position="popper" className="rounded-none border-border font-mono text-sm uppercase">
                 {Object.entries(STATUS_LABELS).map(([val, label]) => (
-                  <SelectItem key={val} value={val}>{label}</SelectItem>
+                  <SelectItem key={val} value={val} textValue={val}>{label}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
