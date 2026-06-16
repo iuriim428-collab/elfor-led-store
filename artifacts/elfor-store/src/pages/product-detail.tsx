@@ -95,7 +95,7 @@ export default function ProductDetail() {
           <div className="text-sm font-mono text-muted-foreground mb-3">{product.sku}</div>
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-black uppercase mb-5 sm:mb-6 leading-tight">{product.name}</h1>
           
-          <div className="flex flex-wrap gap-2 mb-6 font-mono text-xs font-bold uppercase tracking-wider">
+          <div className="flex flex-wrap items-center gap-2 mb-6 font-mono text-xs font-bold uppercase tracking-wider">
             {displayStock > 0 ? (
               <span className="px-3 py-1 bg-green-500/10 text-green-700 border border-green-500/20">В наличии: {displayStock} шт</span>
             ) : (
@@ -106,7 +106,7 @@ export default function ProductDetail() {
               href={`/products/passports/${product.sku}.pdf`}
               download
               onClick={e => { e.preventDefault(); alert("Паспорт на данный светильник будет добавлен в ближайшее время."); }}
-              className="flex items-center gap-1.5 px-3 py-1 border border-dashed border-border text-muted-foreground hover:border-accent hover:text-accent transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1 border border-dashed border-border text-muted-foreground hover:border-accent hover:text-accent transition-colors cursor-pointer ml-auto"
               title="Скачать паспорт"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
