@@ -2,10 +2,12 @@ import { Link, useLocation } from "wouter";
 import { LayoutDashboard, Package, FolderTree, ShoppingBag, FileText, Store, LogOut, BookOpen, FileArchive, Settings, BarChart2, MessageCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAdminAuth } from "@/hooks/use-admin-auth";
+import { useOpenChats } from "@/hooks/use-open-chats";
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
   const { isAdmin, logout } = useAdminAuth();
+  const openChats = useOpenChats();
 
   const navigation = [
     { name: "Дашборд", href: "/", icon: LayoutDashboard, exact: true },
@@ -16,7 +18,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
     { name: "Каталог PDF", href: "/catalog", icon: BookOpen },
     { name: "Документы", href: "/documents", icon: FileArchive },
     { name: "Аналитика", href: "/analytics", icon: BarChart2 },
-    { name: "Чат", href: "/chat", icon: MessageCircle },
+    { name: "Чат", href: "/chat", icon: MessageCircle, badge: openChats },
     { name: "Настройки", href: "/settings", icon: Settings },
   ];
 
@@ -47,8 +49,13 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
                     : "text-primary-foreground/70 hover:text-white hover:bg-primary-foreground/5"
                 )}
               >
-                <item.icon className="h-5 w-5" />
-                {item.name}
+                <item.icon className="h-5 w-5 shrink-0" />
+                <span className="flex-1">{item.name}</span>
+                {"badge" in item && item.badge > 0 && (
+                  <span className="w-5 h-5 rounded-full bg-green-500 text-white text-[10px] font-bold flex items-center justify-center shrink-0">
+                    {item.badge > 9 ? "9+" : item.badge}
+                  </span>
+                )}
               </Link>
             );
           })}
