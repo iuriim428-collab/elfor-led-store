@@ -131,6 +131,7 @@ router.post("/orders/:id/send-invoice", async (req, res): Promise<void> => {
     customerPhone: order.customerPhone,
     deliveryAddress: order.deliveryAddress,
     totalAmount: order.totalAmount,
+    invoiceFilePath: order.invoiceFilePath,
     items: order.items as any[],
   });
   if (!result.ok) {

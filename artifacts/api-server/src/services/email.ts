@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import { ObjectStorageService, ObjectNotFoundError } from "../lib/objectStorage.js";
 
 function getTransport() {
   const host = process.env.SMTP_HOST;
@@ -26,6 +27,7 @@ export async function sendMail(opts: {
   to: string;
   subject: string;
   html: string;
+  attachments?: Array<{ filename: string; content: NodeJS.ReadableStream; contentType: string }>;
 }): Promise<{ ok: boolean; message: string }> {
   const t = getTransport();
   if (!t) {
@@ -35,7 +37,12 @@ export async function sendMail(opts: {
     };
   }
   try {
-    await t.transport.sendMail({ from: t.from, ...opts });
+    const { attachments, ...rest } = opts;
+    await t.transport.sendMail({
+      from: t.from,
+      ...rest,
+      ...(attachments?.length ? { attachments } : {}),
+    });
     return { ok: true, message: "Письмо отправлено" };
   } catch (err: any) {
     return { ok: false, message: err?.message ?? "Ошибка отправки" };
@@ -106,6 +113,7 @@ export async function sendInvoiceEmail(order: {
   customerPhone: string;
   deliveryAddress?: string | null;
   totalAmount: number;
+  invoiceFilePath?: string | null;
   items: Array<{
     productName: string;
     productSku: string;
@@ -206,9 +214,28 @@ export async function sendInvoiceEmail(order: {
 </body>
 </html>`;
 
+  // Attach uploaded invoice file if present
+  const attachments: Array<{ filename: string; content: NodeJS.ReadableStream; contentType: string }> = [];
+  if (order.invoiceFilePath) {
+    try {
+      const storage = new ObjectStorageService();
+      const file = await storage.getObjectEntityFile(order.invoiceFilePath);
+      const [meta] = await file.getMetadata();
+      const ext = (meta.contentType as string | undefined)?.includes("pdf") ? ".pdf" : "";
+      attachments.push({
+        filename: `Счёт_${invoiceNum}${ext}`,
+        content: file.createReadStream(),
+        contentType: (meta.contentType as string) || "application/octet-stream",
+      });
+    } catch (err) {
+      if (!(err instanceof ObjectNotFoundError)) throw err;
+    }
+  }
+
   return sendMail({
     to: order.customerEmail,
     subject: `Счёт на оплату № ${invoiceNum} — ${order.totalAmount.toLocaleString("ru-RU")} ₽`,
     html,
+    attachments,
   });
 }
