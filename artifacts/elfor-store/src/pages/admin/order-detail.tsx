@@ -301,13 +301,13 @@ export default function AdminOrderDetail() {
               Отправить счёт на почту клиента ({order.customerEmail})
             </p>
             <Button
-              className="w-full rounded-none font-bold uppercase tracking-wider h-10 bg-accent hover:bg-accent/90 text-white text-xs gap-2"
+              className="w-full rounded-none font-bold uppercase tracking-tight h-10 bg-accent hover:bg-accent/90 text-white text-[10px] gap-1.5"
               onClick={handleSendInvoice}
               disabled={sendInvoice.isPending}
             >
               {sendInvoice.isPending
-                ? <><Loader2 className="h-4 w-4 animate-spin" /> Отправка...</>
-                : <><Mail className="h-4 w-4" /> Отправить счёт клиенту</>}
+                ? <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Отправка...</>
+                : <><Mail className="h-3.5 w-3.5 shrink-0" /> Отправить счёт клиенту</>}
             </Button>
           </div>
         </div>
