@@ -559,6 +559,60 @@ paths:
         "404":
           description: Not found
 
+  /calc-requests/{id}/file:
+    patch:
+      operationId: updateCalcRequestFile
+      tags: [calc-requests]
+      summary: Attach or remove a calculation file
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CalcRequestFileUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CalcRequest"
+        "404":
+          description: Not found
+
+  /calc-requests/{id}/send-file:
+    post:
+      operationId: sendCalcFile
+      tags: [calc-requests]
+      summary: Send the calculation file to the client by email
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Result
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, message]
+                properties:
+                  ok:
+                    type: boolean
+                  message:
+                    type: string
+        "404":
+          description: Not found
+
   # ===== STATS =====
   /stats/dashboard:
     get:
@@ -1132,6 +1186,8 @@ components:
           type: ["string", "null"]
         phone:
           type: string
+        email:
+          type: ["string", "null"]
         productId:
           type: ["integer", "null"]
         productSku:
@@ -1140,17 +1196,21 @@ components:
           type: ["string", "null"]
         status:
           type: string
+        calcFileUrl:
+          type: ["string", "null"]
         createdAt:
           type: string
           format: date-time
 
     CalcRequestInput:
       type: object
-      required: [phone]
+      required: [phone, email]
       properties:
         name:
           type: string
         phone:
+          type: string
+        email:
           type: string
         productId:
           type: integer
@@ -1165,3 +1225,9 @@ components:
       properties:
         status:
           type: string
+
+    CalcRequestFileUpdate:
+      type: object
+      properties:
+        calcFileUrl:
+          type: ["string", "null"]

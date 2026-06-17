@@ -9,6 +9,7 @@
 export interface CalcRequestInput {
   name?: string;
   phone: string;
+  email: string;
   productId?: number;
   productSku?: string;
   productName?: string;

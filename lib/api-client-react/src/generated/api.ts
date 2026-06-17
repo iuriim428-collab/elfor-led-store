@@ -24,6 +24,7 @@ import type {
   ArticleInput,
   ArticlePatch,
   CalcRequest,
+  CalcRequestFileUpdate,
   CalcRequestInput,
   CalcRequestStatusUpdate,
   Category,
@@ -40,6 +41,7 @@ import type {
   Product,
   ProductInput,
   ProductPatch,
+  SendCalcFile200,
   SendInvoice200
 } from './api.schemas';
 
@@ -1916,6 +1918,148 @@ export const useUpdateCalcRequestStatus = <TError = ErrorType<void>,
         TContext
       > => {
       return useMutation(getUpdateCalcRequestStatusMutationOptions(options));
+    }
+
+export const getUpdateCalcRequestFileUrl = (id: number,) => {
+
+
+
+
+  return `/api/calc-requests/${id}/file`
+}
+
+/**
+ * @summary Attach or remove a calculation file
+ */
+export const updateCalcRequestFile = async (id: number,
+    calcRequestFileUpdate: CalcRequestFileUpdate, options?: RequestInit): Promise<CalcRequest> => {
+
+  return customFetch<CalcRequest>(getUpdateCalcRequestFileUrl(id),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      calcRequestFileUpdate,)
+  }
+);}
+
+
+
+
+export const getUpdateCalcRequestFileMutationOptions = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateCalcRequestFile>>, TError,{id: number;data: BodyType<CalcRequestFileUpdate>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateCalcRequestFile>>, TError,{id: number;data: BodyType<CalcRequestFileUpdate>}, TContext> => {
+
+const mutationKey = ['updateCalcRequestFile'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateCalcRequestFile>>, {id: number;data: BodyType<CalcRequestFileUpdate>}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  updateCalcRequestFile(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateCalcRequestFileMutationResult = NonNullable<Awaited<ReturnType<typeof updateCalcRequestFile>>>
+    export type UpdateCalcRequestFileMutationBody = BodyType<CalcRequestFileUpdate>
+    export type UpdateCalcRequestFileMutationError = ErrorType<void>
+
+    /**
+ * @summary Attach or remove a calculation file
+ */
+export const useUpdateCalcRequestFile = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateCalcRequestFile>>, TError,{id: number;data: BodyType<CalcRequestFileUpdate>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof updateCalcRequestFile>>,
+        TError,
+        {id: number;data: BodyType<CalcRequestFileUpdate>},
+        TContext
+      > => {
+      return useMutation(getUpdateCalcRequestFileMutationOptions(options));
+    }
+
+export const getSendCalcFileUrl = (id: number,) => {
+
+
+
+
+  return `/api/calc-requests/${id}/send-file`
+}
+
+/**
+ * @summary Send the calculation file to the client by email
+ */
+export const sendCalcFile = async (id: number, options?: RequestInit): Promise<SendCalcFile200> => {
+
+  return customFetch<SendCalcFile200>(getSendCalcFileUrl(id),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+);}
+
+
+
+
+export const getSendCalcFileMutationOptions = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof sendCalcFile>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof sendCalcFile>>, TError,{id: number}, TContext> => {
+
+const mutationKey = ['sendCalcFile'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof sendCalcFile>>, {id: number}> = (props) => {
+          const {id} = props ?? {};
+
+          return  sendCalcFile(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type SendCalcFileMutationResult = NonNullable<Awaited<ReturnType<typeof sendCalcFile>>>
+
+    export type SendCalcFileMutationError = ErrorType<void>
+
+    /**
+ * @summary Send the calculation file to the client by email
+ */
+export const useSendCalcFile = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof sendCalcFile>>, TError,{id: number}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof sendCalcFile>>,
+        TError,
+        {id: number},
+        TContext
+      > => {
+      return useMutation(getSendCalcFileMutationOptions(options));
     }
 
 export const getGetDashboardStatsUrl = () => {

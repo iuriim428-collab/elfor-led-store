@@ -50,6 +50,84 @@ export async function sendMail(opts: {
   }
 }
 
+// ─── Calc file delivery email ────────────────────────────────────────────────
+
+export async function sendCalcEmail(opts: {
+  to: string;
+  name: string | null;
+  phone: string;
+  productName: string | null;
+  calcFileUrl: string;
+  requestId: number;
+}): Promise<{ ok: boolean; message: string }> {
+  const { to, name, phone, productName, calcFileUrl, requestId } = opts;
+  const now = new Date().toLocaleString("ru-RU", { timeZone: "Europe/Moscow" });
+
+  const html = `
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta charset="UTF-8"><title>Расчёт освещения</title></head>
+<body style="margin:0;padding:0;background:#F4F1EA;font-family:Arial,sans-serif;">
+  <div style="max-width:560px;margin:40px auto;background:#fff;border:1px solid #D5D0C5;">
+    <div style="background:#2B2D2B;padding:20px 28px;">
+      <span style="color:#E8500B;font-size:20px;font-weight:900;letter-spacing:2px;">ЭЛФОР</span>
+      <span style="color:#aaa;font-size:12px;margin-left:auto;float:right;">Расчёт освещения</span>
+    </div>
+    <div style="padding:28px;">
+      <h2 style="margin:0 0 16px;font-size:18px;color:#2B2D2B;text-transform:uppercase;letter-spacing:1px;">Ваш расчёт готов</h2>
+      <p style="color:#555;margin:0 0 8px;">Здравствуйте${name ? `, <strong>${name}</strong>` : ""}!</p>
+      <p style="color:#555;margin:0 0 24px;">Мы подготовили расчёт освещения для вашего объекта. Файл расчёта прикреплён к этому письму.</p>
+
+      <table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
+        ${productName ? `<tr>
+          <td style="padding:6px 0;font-size:12px;color:#888;font-weight:bold;text-transform:uppercase;letter-spacing:1px;width:140px;">Светильник</td>
+          <td style="padding:6px 0;font-size:14px;color:#2B2D2B;">${productName}</td>
+        </tr>` : ""}
+        <tr>
+          <td style="padding:6px 0;font-size:12px;color:#888;font-weight:bold;text-transform:uppercase;letter-spacing:1px;">Заявка №</td>
+          <td style="padding:6px 0;font-size:14px;color:#2B2D2B;">${requestId}</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 0;font-size:12px;color:#888;font-weight:bold;text-transform:uppercase;letter-spacing:1px;">Дата</td>
+          <td style="padding:6px 0;font-size:14px;color:#2B2D2B;">${now} МСК</td>
+        </tr>
+      </table>
+
+      <div style="background:#FFF8F5;border:1px solid #F0C4B0;padding:16px 20px;margin-bottom:24px;">
+        <p style="margin:0;font-size:13px;color:#555;">Расчёт включает количество светильников, схему расстановки и итоговую мощность. По вопросам обращайтесь к нашим менеджерам.</p>
+      </div>
+
+      <p style="color:#777;font-size:13px;margin:0;">Телефон: <a href="tel:${phone}" style="color:#E8500B;">${phone}</a> | <a href="mailto:info@lfour.ru" style="color:#E8500B;">info@lfour.ru</a></p>
+    </div>
+    <div style="background:#F4F1EA;padding:14px 28px;text-align:center;">
+      <span style="color:#999;font-size:11px;">© ЭЛФОР — промышленные LED светильники. lfour.ru</span>
+    </div>
+  </div>
+</body>
+</html>`;
+
+  const attachments: Array<{ filename: string; content: import("stream").Readable; contentType: string }> = [];
+  try {
+    const storage = new ObjectStorageService();
+    const file = await storage.getObjectEntityFile(calcFileUrl);
+    const [meta] = await file.getMetadata();
+    const ct = (meta.contentType as string) || "application/octet-stream";
+    const ext = ct.includes("pdf") ? ".pdf"
+      : ct.includes("word") || ct.includes("docx") ? ".docx"
+      : ct.includes("excel") || ct.includes("xlsx") ? ".xlsx"
+      : "";
+    attachments.push({
+      filename: `Расчёт_освещения_№${requestId}${ext}`,
+      content: file.createReadStream(),
+      contentType: ct,
+    });
+  } catch (_err) {
+    // send without attachment if file unavailable
+  }
+
+  return sendMail({ to, subject: `Расчёт освещения №${requestId} — ЭЛФОР`, html, attachments });
+}
+
 // ─── Chat message notification ──────────────────────────────────────────────
 
 export function isOffHoursMoscow(): boolean {

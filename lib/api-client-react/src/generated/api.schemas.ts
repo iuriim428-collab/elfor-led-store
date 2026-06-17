@@ -373,18 +373,23 @@ export interface CalcRequest {
   name?: string | null;
   phone: string;
   /** @nullable */
+  email?: string | null;
+  /** @nullable */
   productId?: number | null;
   /** @nullable */
   productSku?: string | null;
   /** @nullable */
   productName?: string | null;
   status: string;
+  /** @nullable */
+  calcFileUrl?: string | null;
   createdAt: string;
 }
 
 export interface CalcRequestInput {
   name?: string;
   phone: string;
+  email: string;
   productId?: number;
   productSku?: string;
   productName?: string;
@@ -392,6 +397,11 @@ export interface CalcRequestInput {
 
 export interface CalcRequestStatusUpdate {
   status: string;
+}
+
+export interface CalcRequestFileUpdate {
+  /** @nullable */
+  calcFileUrl?: string | null;
 }
 
 export type ListProductsParams = {
@@ -438,5 +448,10 @@ export const ListOrdersStatus = {
 export type SendInvoice200 = {
   ok: boolean;
   message?: string;
+};
+
+export type SendCalcFile200 = {
+  ok: boolean;
+  message: string;
 };
 

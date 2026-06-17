@@ -12,11 +12,15 @@ export interface CalcRequest {
   name?: string | null;
   phone: string;
   /** @nullable */
+  email?: string | null;
+  /** @nullable */
   productId?: number | null;
   /** @nullable */
   productSku?: string | null;
   /** @nullable */
   productName?: string | null;
   status: string;
+  /** @nullable */
+  calcFileUrl?: string | null;
   createdAt: Date;
 }

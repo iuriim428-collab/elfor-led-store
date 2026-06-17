@@ -647,6 +647,7 @@ export const UpdateOrderResponse = zod.object({
 export const CreateCalcRequestBody = zod.object({
   "name": zod.string().optional(),
   "phone": zod.string(),
+  "email": zod.string(),
   "productId": zod.number().optional(),
   "productSku": zod.string().optional(),
   "productName": zod.string().optional()
@@ -660,10 +661,12 @@ export const ListCalcRequestsResponseItem = zod.object({
   "id": zod.number(),
   "name": zod.string().nullish(),
   "phone": zod.string(),
+  "email": zod.string().nullish(),
   "productId": zod.number().nullish(),
   "productSku": zod.string().nullish(),
   "productName": zod.string().nullish(),
   "status": zod.string(),
+  "calcFileUrl": zod.string().nullish(),
   "createdAt": zod.coerce.date()
 })
 export const ListCalcRequestsResponse = zod.array(ListCalcRequestsResponseItem)
@@ -684,11 +687,51 @@ export const UpdateCalcRequestStatusResponse = zod.object({
   "id": zod.number(),
   "name": zod.string().nullish(),
   "phone": zod.string(),
+  "email": zod.string().nullish(),
   "productId": zod.number().nullish(),
   "productSku": zod.string().nullish(),
   "productName": zod.string().nullish(),
   "status": zod.string(),
+  "calcFileUrl": zod.string().nullish(),
   "createdAt": zod.coerce.date()
+})
+
+
+/**
+ * @summary Attach or remove a calculation file
+ */
+export const UpdateCalcRequestFileParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const UpdateCalcRequestFileBody = zod.object({
+  "calcFileUrl": zod.string().nullish()
+})
+
+export const UpdateCalcRequestFileResponse = zod.object({
+  "id": zod.number(),
+  "name": zod.string().nullish(),
+  "phone": zod.string(),
+  "email": zod.string().nullish(),
+  "productId": zod.number().nullish(),
+  "productSku": zod.string().nullish(),
+  "productName": zod.string().nullish(),
+  "status": zod.string(),
+  "calcFileUrl": zod.string().nullish(),
+  "createdAt": zod.coerce.date()
+})
+
+
+/**
+ * @summary Send the calculation file to the client by email
+ */
+export const SendCalcFileParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const SendCalcFileResponse = zod.object({
+  "ok": zod.boolean(),
+  "message": zod.string()
 })
 
 

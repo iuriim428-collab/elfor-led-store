@@ -33,6 +33,7 @@ export default function ProductDetail() {
   const [calcOpen, setCalcOpen] = useState(false);
   const [calcName, setCalcName] = useState("");
   const [calcPhone, setCalcPhone] = useState("");
+  const [calcEmail, setCalcEmail] = useState("");
   const [calcSent, setCalcSent] = useState(false);
   const [selectedKelvin, setSelectedKelvin] = useState<string | null>(null);
   const [selectedAngle, setSelectedAngle] = useState<string | null>(null);
@@ -403,13 +404,21 @@ export default function ProductDetail() {
                     onChange={(e) => setCalcPhone(e.target.value)}
                     className="rounded-none border-white/15 bg-white/[0.06] text-primary-foreground placeholder:text-primary-foreground/30 font-mono text-sm focus-visible:ring-0 focus-visible:border-accent"
                   />
+                  <Input
+                    placeholder="Email *"
+                    type="email"
+                    value={calcEmail}
+                    onChange={(e) => setCalcEmail(e.target.value)}
+                    className="rounded-none border-white/15 bg-white/[0.06] text-primary-foreground placeholder:text-primary-foreground/30 font-mono text-sm focus-visible:ring-0 focus-visible:border-accent"
+                    required
+                  />
                   <Button
                     className="rounded-none bg-accent hover:bg-accent/90 text-white font-mono font-bold text-xs uppercase tracking-wider border-0 mt-1 gap-2"
-                    disabled={!calcPhone.trim() || calcPending}
+                    disabled={!calcPhone.trim() || !calcEmail.trim() || calcPending}
                     onClick={() => {
-                      if (!calcPhone.trim()) return;
+                      if (!calcPhone.trim() || !calcEmail.trim()) return;
                       submitCalcRequest(
-                        { data: { name: calcName.trim() || undefined, phone: calcPhone.trim(), productId: product?.id, productSku: product?.sku ?? undefined, productName: product?.name ?? undefined } },
+                        { data: { name: calcName.trim() || undefined, phone: calcPhone.trim(), email: calcEmail.trim(), productId: product?.id, productSku: product?.sku ?? undefined, productName: product?.name ?? undefined } },
                         { onSuccess: () => setCalcSent(true) }
                       );
                     }}

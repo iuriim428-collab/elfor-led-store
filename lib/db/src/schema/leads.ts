@@ -13,10 +13,12 @@ export const calcRequestsTable = pgTable("calc_requests", {
   id: serial("id").primaryKey(),
   name: text("name"),
   phone: text("phone").notNull(),
+  email: text("email"),
   productId: integer("product_id"),
   productSku: text("product_sku"),
   productName: text("product_name"),
   status: text("status").notNull().default("new"),
+  calcFileUrl: text("calc_file_url"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
