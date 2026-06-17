@@ -3,6 +3,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { CartProvider } from "@/hooks/use-cart";
+import { ComparisonProvider } from "@/hooks/use-comparison";
+import { ComparisonBar } from "@/components/comparison-bar";
 import { AdminAuthProvider, useAdminAuth } from "@/hooks/use-admin-auth";
 import { AdminBar } from "@/components/admin-bar";
 import NotFound from "@/pages/not-found";
@@ -19,6 +21,7 @@ import Article from "@/pages/article";
 import About from "@/pages/about";
 import Contacts from "@/pages/contacts";
 import Cart from "@/pages/cart";
+import Compare from "@/pages/compare";
 
 import AdminDashboard from "@/pages/admin/dashboard";
 import AdminProducts from "@/pages/admin/products";
@@ -69,9 +72,7 @@ function AppContent() {
 
   return (
     <>
-      {/* Floating admin bar when logged in */}
       {isAdmin && <AdminBar />}
-      {/* Push content down when admin bar is visible */}
       <div className={isAdmin ? "pt-9" : ""}>
         <PublicLayout>
           <Switch>
@@ -84,12 +85,13 @@ function AppContent() {
             <Route path="/about" component={About} />
             <Route path="/contacts" component={Contacts} />
             <Route path="/cart" component={Cart} />
+            <Route path="/compare" component={Compare} />
             <Route component={NotFound} />
           </Switch>
         </PublicLayout>
       </div>
-      {/* Login trigger when not logged in */}
       {!isAdmin && <AdminBar />}
+      <ComparisonBar />
     </>
   );
 }
@@ -99,12 +101,14 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AdminAuthProvider>
         <CartProvider>
-          <TooltipProvider>
-            <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-              <AppContent />
-            </WouterRouter>
-            <Toaster />
-          </TooltipProvider>
+          <ComparisonProvider>
+            <TooltipProvider>
+              <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+                <AppContent />
+              </WouterRouter>
+              <Toaster />
+            </TooltipProvider>
+          </ComparisonProvider>
         </CartProvider>
       </AdminAuthProvider>
     </QueryClientProvider>

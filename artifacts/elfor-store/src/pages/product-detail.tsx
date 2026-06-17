@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCart } from "@/hooks/use-cart";
 import { useState, useEffect } from "react";
-import { ShoppingCart, Check, ChevronRight } from "lucide-react";
+import { ShoppingCart, Check, ChevronRight, GitCompareArrows } from "lucide-react";
+import { useComparison } from "@/hooks/use-comparison";
 import { cn } from "@/lib/utils";
 
 const KELVIN_LABELS: Record<string, string> = {
@@ -24,6 +25,7 @@ export default function ProductDetail() {
   
   const { data: product, isLoading } = useGetProduct(productId, { query: { enabled: !!productId } });
   const { addItem } = useCart();
+  const { toggleItem, isInComparison } = useComparison();
   
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
@@ -116,6 +118,18 @@ export default function ProductDetail() {
               <span className="px-3 py-1 bg-yellow-500/10 text-yellow-700 border border-yellow-500/20">Под заказ</span>
             )}
             {product.warranty && <span className="px-3 py-1 bg-accent/10 text-accent border border-accent/20">Гарантия {product.warranty}</span>}
+            <button
+              onClick={() => product && toggleItem(product)}
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-1 border transition-colors font-mono text-xs uppercase",
+                isInComparison(product.id)
+                  ? "bg-accent border-accent text-white"
+                  : "border-border text-muted-foreground hover:text-accent hover:border-accent"
+              )}
+            >
+              <GitCompareArrows className="h-3 w-3" />
+              {isInComparison(product.id) ? "В сравнении" : "Сравнить"}
+            </button>
             {(product as { passportUrl?: string | null }).passportUrl ? (
               <a
                 href={(product as { passportUrl?: string | null }).passportUrl!}

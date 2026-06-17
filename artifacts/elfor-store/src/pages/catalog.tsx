@@ -1,9 +1,10 @@
 import { useListProducts, useListCategories } from "@workspace/api-client-react";
 import { Link, useSearch } from "wouter";
-import { ArrowRight, Search, Download, SlidersHorizontal, Loader2 } from "lucide-react";
+import { ArrowRight, Search, Download, SlidersHorizontal, Loader2, GitCompareArrows } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { useComparison } from "@/hooks/use-comparison";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -37,6 +38,7 @@ export default function Catalog() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [descProductId, setDescProductId] = useState<number | null>(null);
+  const { toggleItem, isInComparison, isFull } = useComparison();
 
   const { data: categories = [] } = useListCategories();
   const { data: products = [], isLoading } = useListProducts({
@@ -269,9 +271,25 @@ export default function Catalog() {
                         {product.oldPrice && <div className="text-xs font-mono line-through text-muted-foreground">{product.oldPrice.toLocaleString("ru-RU")} ₽</div>}
                         <div className="font-mono font-bold text-lg">{product.price.toLocaleString("ru-RU")} ₽</div>
                       </div>
-                      <Button size="icon" className="rounded-none border border-border bg-primary text-primary-foreground hover:bg-accent hover:border-accent hover:text-white transition-colors h-10 w-10">
-                        <ArrowRight className="h-4 w-4" />
-                      </Button>
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleItem(product); }}
+                          title={isInComparison(product.id) ? "Убрать из сравнения" : isFull ? "Максимум 4 товара" : "Добавить к сравнению"}
+                          className={cn(
+                            "h-10 w-10 flex items-center justify-center border transition-colors",
+                            isInComparison(product.id)
+                              ? "bg-accent border-accent text-white"
+                              : isFull
+                              ? "border-border bg-card text-muted-foreground cursor-not-allowed opacity-50"
+                              : "border-border bg-card text-muted-foreground hover:text-accent hover:border-accent"
+                          )}
+                        >
+                          <GitCompareArrows className="h-4 w-4" />
+                        </button>
+                        <Button size="icon" className="rounded-none border border-border bg-primary text-primary-foreground hover:bg-accent hover:border-accent hover:text-white transition-colors h-10 w-10">
+                          <ArrowRight className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </Link>
