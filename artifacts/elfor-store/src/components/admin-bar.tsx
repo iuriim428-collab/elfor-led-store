@@ -60,7 +60,7 @@ export function AdminBar() {
         {/* Trigger — hidden at bottom, only visible on hover */}
         <button
           onClick={() => setOpen(true)}
-          className="fixed bottom-5 right-6 z-50 opacity-20 hover:opacity-100 focus:opacity-100 transition-all duration-300 bg-primary text-primary-foreground px-3 py-2 text-[10px] font-mono uppercase tracking-widest border border-primary-foreground/20 hover:border-accent flex items-center gap-1.5 shadow-lg"
+          className="fixed bottom-3 right-6 z-50 opacity-15 hover:opacity-100 focus:opacity-100 transition-all duration-300 bg-primary text-primary-foreground px-2 py-1 text-[9px] font-mono uppercase tracking-widest border border-primary-foreground/20 hover:border-accent flex items-center gap-1 shadow-lg"
           title="Вход для администратора"
         >
           <Lock className="h-3 w-3" />
