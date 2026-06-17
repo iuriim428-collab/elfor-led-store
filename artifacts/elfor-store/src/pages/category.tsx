@@ -56,13 +56,18 @@ export default function Category() {
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
           {products.map((product) => (
             <Link key={product.id} href={`/catalog/${product.id}`} className="group flex flex-col border border-border bg-card hover-elevate h-full">
-              <div className="aspect-square p-4 flex items-center justify-center border-b border-border bg-white relative">
-                {product.imageUrl ? (
-                  <img src={product.imageUrl} alt={product.name} className="max-w-full max-h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform" />
-                ) : (
-                  <div className="w-full h-full bg-muted flex items-center justify-center text-muted-foreground font-mono text-xs">Нет фото</div>
-                )}
-              </div>
+              {(() => {
+                const isStorageImg = product.imageUrl?.startsWith("/api/storage/");
+                return (
+                  <div className={`aspect-square overflow-hidden flex items-center justify-center border-b border-border relative ${isStorageImg ? "bg-[#1a1a1a]" : "bg-white"}`}>
+                    {product.imageUrl ? (
+                      <img src={product.imageUrl} alt={product.name} className={`w-full h-full object-contain group-hover:scale-105 transition-transform ${isStorageImg ? "" : "mix-blend-multiply"}`} />
+                    ) : (
+                      <div className="w-full h-full bg-muted flex items-center justify-center text-muted-foreground font-mono text-xs">Нет фото</div>
+                    )}
+                  </div>
+                );
+              })()}
               <div className="p-4 flex-1 flex flex-col">
                 <div className="text-xs font-mono text-muted-foreground mb-2">{product.sku}</div>
                 <h3 className="font-serif font-bold text-sm uppercase leading-tight mb-2 flex-1 group-hover:text-accent transition-colors">{product.name}</h3>
