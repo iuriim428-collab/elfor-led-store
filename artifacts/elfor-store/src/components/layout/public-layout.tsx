@@ -239,7 +239,7 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
           
           <div className="pt-8 border-t border-primary-foreground/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-mono text-primary-foreground/40">
             <p>© {new Date().getFullYear()} ЭЛФОР. Все права защищены.</p>
-            <p className="text-right max-w-md leading-relaxed">
+            <p className="text-right max-w-md leading-relaxed text-[10px]">
               Вы принимаете условия{" "}
               {docs?.privacy?.objectPath ? (
                 <a href={`/api/storage${docs.privacy.objectPath}`} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-accent transition-colors">
