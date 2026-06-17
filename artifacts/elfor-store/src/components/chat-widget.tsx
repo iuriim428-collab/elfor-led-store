@@ -95,6 +95,8 @@ export function ChatWidget() {
       if (!r.ok) return;
       const msgs: Message[] = await r.json();
       setMessages(prev => {
+        // Don't count unread on initial load (prev is empty) — only on new incoming messages
+        if (prev.length === 0) return msgs;
         const newAdminMsgs = msgs.filter(
           m => m.sender === "admin" && !prev.some(p => p.id === m.id)
         ).length;
