@@ -5,5 +5,6 @@ export const modules: ModuleMap = {
   "./components/mockups/calc-banner/VariantB.tsx": () => import("../components/mockups/calc-banner/VariantB.tsx"),
   "./components/mockups/calc-banner/VariantC.tsx": () => import("../components/mockups/calc-banner/VariantC.tsx"),
   "./components/mockups/elfor-homepage/VariantA.tsx": () => import("../components/mockups/elfor-homepage/VariantA.tsx"),
-  "./components/mockups/elfor-homepage/VariantB.tsx": () => import("../components/mockups/elfor-homepage/VariantB.tsx")
+  "./components/mockups/elfor-homepage/VariantB.tsx": () => import("../components/mockups/elfor-homepage/VariantB.tsx"),
+  "./components/mockups/email-preview/ElforCalcEmail.tsx": () => import("../components/mockups/email-preview/ElforCalcEmail.tsx")
 };
