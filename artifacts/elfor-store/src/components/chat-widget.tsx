@@ -204,7 +204,7 @@ export function ChatWidget() {
   };
 
   return (
-    <div className="fixed bottom-[60px] right-6 z-50 flex flex-col items-end gap-3">
+    <div className="fixed bottom-[72px] right-6 z-50 flex flex-col items-end gap-3">
       {/* Chat panel */}
       {open && (
         <div className="w-80 sm:w-96 border border-border bg-background shadow-2xl flex flex-col overflow-hidden"
