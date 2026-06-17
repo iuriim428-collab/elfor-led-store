@@ -10,8 +10,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
-import { Trash2, Plus } from "lucide-react";
-import { useEffect, useRef, useMemo } from "react";
+import { Trash2, Plus, Upload, X, FileText, ImageIcon, Loader2 } from "lucide-react";
+import { useEffect, useRef, useMemo, useState, useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
 const formSchema = z.object({
@@ -30,6 +30,7 @@ const formSchema = z.object({
   ipRating: z.string().optional().nullable(),
   warranty: z.string().optional().nullable(),
   imageUrl: z.string().optional().nullable(),
+  passportUrl: z.string().optional().nullable(),
   colorTempsRaw: z.string().optional().default(""),
   beamAnglesRaw: z.string().optional().default(""),
   specs: z.array(z.object({
@@ -42,6 +43,129 @@ const formSchema = z.object({
     stock: z.coerce.number().min(0).default(0)
   })).default([])
 });
+
+type UploadState = "idle" | "uploading" | "done" | "error";
+
+interface FileUploadWidgetProps {
+  label: string;
+  accept: string;
+  value: string | null | undefined;
+  onChange: (url: string | null) => void;
+  icon: React.ReactNode;
+  hint?: string;
+}
+
+function FileUploadWidget({ label, accept, value, onChange, icon, hint }: FileUploadWidgetProps) {
+  const [state, setState] = useState<UploadState>("idle");
+  const [fileName, setFileName] = useState<string>("");
+  const inputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
+
+  const handleFile = useCallback(async (file: File) => {
+    setState("uploading");
+    setFileName(file.name);
+    try {
+      const metaRes = await fetch("/api/storage/uploads/request-url", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: file.name, size: file.size, contentType: file.type }),
+      });
+      if (!metaRes.ok) throw new Error("Не удалось получить URL загрузки");
+      const { uploadURL, objectPath } = await metaRes.json();
+
+      const putRes = await fetch(uploadURL, {
+        method: "PUT",
+        headers: { "Content-Type": file.type },
+        body: file,
+      });
+      if (!putRes.ok) throw new Error("Ошибка загрузки файла");
+
+      onChange(objectPath);
+      setState("done");
+    } catch (err) {
+      setState("error");
+      toast({ title: "Ошибка загрузки", description: String(err), variant: "destructive" });
+    }
+  }, [onChange, toast]);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file) handleFile(file);
+  }, [handleFile]);
+
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) handleFile(file);
+  }, [handleFile]);
+
+  const handleRemove = useCallback(() => {
+    onChange(null);
+    setState("idle");
+    setFileName("");
+    if (inputRef.current) inputRef.current.value = "";
+  }, [onChange]);
+
+  const isImage = accept.includes("image");
+  const displayName = value
+    ? (value.startsWith("/api/storage/") ? (fileName || value.split("/").pop() || "файл") : value.split("/").pop() || value)
+    : "";
+
+  return (
+    <div className="space-y-2">
+      <label className="text-xs font-bold uppercase font-mono">{label}</label>
+
+      {value ? (
+        <div className="border border-border bg-card p-3 flex items-center gap-3">
+          {isImage ? (
+            <img src={value} alt="" className="h-16 w-16 object-contain bg-[#1a1a1a] shrink-0" />
+          ) : (
+            <div className="h-16 w-16 bg-accent/10 border border-accent/20 flex items-center justify-center shrink-0">
+              <FileText className="h-6 w-6 text-accent" />
+            </div>
+          )}
+          <div className="flex-1 min-w-0">
+            <div className="font-mono text-xs font-bold truncate">{displayName}</div>
+            <div className="font-mono text-[10px] text-muted-foreground mt-0.5">загружено</div>
+          </div>
+          <Button type="button" variant="outline" size="icon" onClick={handleRemove}
+            className="rounded-none border-border shrink-0 h-8 w-8 text-destructive hover:bg-destructive/10">
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+      ) : (
+        <div
+          onDrop={handleDrop}
+          onDragOver={e => e.preventDefault()}
+          onClick={() => inputRef.current?.click()}
+          className="border border-dashed border-border hover:border-accent hover:bg-accent/5 transition-colors cursor-pointer p-6 flex flex-col items-center justify-center gap-2 text-center"
+        >
+          {state === "uploading" ? (
+            <>
+              <Loader2 className="h-6 w-6 text-muted-foreground animate-spin" />
+              <span className="font-mono text-xs text-muted-foreground">Загрузка {fileName}...</span>
+            </>
+          ) : state === "error" ? (
+            <>
+              {icon}
+              <span className="font-mono text-xs text-destructive">Ошибка — нажмите чтобы повторить</span>
+            </>
+          ) : (
+            <>
+              <div className="text-muted-foreground">{icon}</div>
+              <span className="font-mono text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                Перетащите или нажмите
+              </span>
+              {hint && <span className="font-mono text-[10px] text-muted-foreground">{hint}</span>}
+            </>
+          )}
+        </div>
+      )}
+
+      <input ref={inputRef} type="file" accept={accept} className="hidden" onChange={handleChange} />
+    </div>
+  );
+}
 
 export default function AdminProductForm() {
   const { id } = useParams();
@@ -107,6 +231,7 @@ export default function AdminProductForm() {
         ipRating: product.ipRating ?? undefined,
         warranty: product.warranty ?? undefined,
         imageUrl: product.imageUrl ?? undefined,
+        passportUrl: (product as { passportUrl?: string | null }).passportUrl ?? undefined,
         colorTempsRaw: (product.colorTemps ?? []).join(", "),
         beamAnglesRaw: (product.beamAngles ?? []).join(", "),
         specs: product.specs ?? [],
@@ -150,6 +275,7 @@ export default function AdminProductForm() {
       ipRating: values.ipRating || undefined,
       warranty: values.warranty || undefined,
       imageUrl: values.imageUrl || undefined,
+      passportUrl: values.passportUrl || undefined,
       colorTemps,
       beamAngles: parseList(values.beamAnglesRaw),
       colorTempsRaw: undefined,
@@ -391,14 +517,37 @@ export default function AdminProductForm() {
           </div>
 
           <div className="p-6 border border-border bg-card space-y-6">
-            <h3 className="font-serif font-bold uppercase text-sm border-b border-border pb-2">Описание и фото</h3>
-            
-            <FormField control={form.control} name="imageUrl" render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-xs font-bold uppercase">URL картинки</FormLabel>
-                <FormControl><Input {...field} value={field.value || ""} className="rounded-none border-border" /></FormControl>
-              </FormItem>
-            )} />
+            <h3 className="font-serif font-bold uppercase text-sm border-b border-border pb-2">Описание и файлы</h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormField control={form.control} name="imageUrl" render={({ field }) => (
+                <FormItem>
+                  <FileUploadWidget
+                    label="Фотография товара"
+                    accept="image/*"
+                    value={field.value}
+                    onChange={field.onChange}
+                    icon={<ImageIcon className="h-6 w-6" />}
+                    hint="JPG, PNG, WebP — до 10 МБ"
+                  />
+                  <FormMessage />
+                </FormItem>
+              )} />
+
+              <FormField control={form.control} name="passportUrl" render={({ field }) => (
+                <FormItem>
+                  <FileUploadWidget
+                    label="Паспорт изделия (PDF)"
+                    accept=".pdf,application/pdf"
+                    value={field.value}
+                    onChange={field.onChange}
+                    icon={<FileText className="h-6 w-6" />}
+                    hint="PDF — технический паспорт светильника"
+                  />
+                  <FormMessage />
+                </FormItem>
+              )} />
+            </div>
             
             <FormField control={form.control} name="shortDescription" render={({ field }) => (
               <FormItem>

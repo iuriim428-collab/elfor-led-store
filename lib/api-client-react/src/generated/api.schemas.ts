@@ -80,6 +80,8 @@ export interface Product {
   specs?: ProductSpec[];
   /** @nullable */
   imageUrl?: string | null;
+  /** @nullable */
+  passportUrl?: string | null;
   images?: string[];
   /** @nullable */
   power?: string | null;
@@ -114,6 +116,7 @@ export interface ProductInput {
   priceTiers?: PriceTier[];
   specs?: ProductSpec[];
   imageUrl?: string;
+  passportUrl?: string;
   images?: string[];
   power?: string;
   lumens?: number;
@@ -146,6 +149,8 @@ export interface ProductPatch {
   specs?: ProductSpec[];
   /** @nullable */
   imageUrl?: string | null;
+  /** @nullable */
+  passportUrl?: string | null;
   images?: string[];
   /** @nullable */
   power?: string | null;

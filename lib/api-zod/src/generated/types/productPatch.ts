@@ -28,6 +28,8 @@ export interface ProductPatch {
   specs?: ProductSpec[];
   /** @nullable */
   imageUrl?: string | null;
+  /** @nullable */
+  passportUrl?: string | null;
   images?: string[];
   /** @nullable */
   power?: string | null;

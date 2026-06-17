@@ -135,6 +135,7 @@ export const ListProductsResponseItem = zod.object({
   "unit": zod.string().nullish()
 })).optional(),
   "imageUrl": zod.string().nullish(),
+  "passportUrl": zod.string().nullish(),
   "images": zod.array(zod.string()).optional(),
   "power": zod.string().nullish(),
   "lumens": zod.number().nullish(),
@@ -181,6 +182,7 @@ export const CreateProductBody = zod.object({
   "unit": zod.string().nullish()
 })).optional(),
   "imageUrl": zod.string().optional(),
+  "passportUrl": zod.string().optional(),
   "images": zod.array(zod.string()).optional(),
   "power": zod.string().optional(),
   "lumens": zod.number().optional(),
@@ -222,6 +224,7 @@ export const ListFeaturedProductsResponseItem = zod.object({
   "unit": zod.string().nullish()
 })).optional(),
   "imageUrl": zod.string().nullish(),
+  "passportUrl": zod.string().nullish(),
   "images": zod.array(zod.string()).optional(),
   "power": zod.string().nullish(),
   "lumens": zod.number().nullish(),
@@ -270,6 +273,7 @@ export const GetProductResponse = zod.object({
   "unit": zod.string().nullish()
 })).optional(),
   "imageUrl": zod.string().nullish(),
+  "passportUrl": zod.string().nullish(),
   "images": zod.array(zod.string()).optional(),
   "power": zod.string().nullish(),
   "lumens": zod.number().nullish(),
@@ -319,6 +323,7 @@ export const UpdateProductBody = zod.object({
   "unit": zod.string().nullish()
 })).optional(),
   "imageUrl": zod.string().nullish(),
+  "passportUrl": zod.string().nullish(),
   "images": zod.array(zod.string()).optional(),
   "power": zod.string().nullish(),
   "lumens": zod.number().nullish(),
@@ -357,6 +362,7 @@ export const UpdateProductResponse = zod.object({
   "unit": zod.string().nullish()
 })).optional(),
   "imageUrl": zod.string().nullish(),
+  "passportUrl": zod.string().nullish(),
   "images": zod.array(zod.string()).optional(),
   "power": zod.string().nullish(),
   "lumens": zod.number().nullish(),

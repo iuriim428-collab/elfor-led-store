@@ -15,6 +15,7 @@ export const productsTable = pgTable("products", {
   priceTiers: jsonb("price_tiers").notNull().default("[]"),
   specs: jsonb("specs").notNull().default("[]"),
   imageUrl: text("image_url"),
+  passportUrl: text("passport_url"),
   images: jsonb("images").notNull().default("[]"),
   power: text("power"),
   lumens: integer("lumens"),

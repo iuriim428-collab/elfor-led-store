@@ -23,6 +23,7 @@ export interface ProductInput {
   priceTiers?: PriceTier[];
   specs?: ProductSpec[];
   imageUrl?: string;
+  passportUrl?: string;
   images?: string[];
   power?: string;
   lumens?: number;
