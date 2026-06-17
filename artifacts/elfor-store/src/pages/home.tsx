@@ -12,7 +12,32 @@ export default function Home() {
     <div className="flex flex-col">
       {/* Hero Section */}
       <section className="bg-primary text-primary-foreground py-14 sm:py-20 lg:py-32 relative overflow-hidden border-b border-border">
-        <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: "url('data:image/svg+xml,%3Csvg width=\\'60\\' height=\\'60\\' viewBox=\\'0 0 60 60\\' xmlns=\\'http://www.w3.org/2000/svg\\'%3E%3Cg fill=\\'none\\' fill-rule=\\'evenodd\\'%3E%3Cg fill=\\'%23ffffff\\' fill-opacity=\\'1\\'%3E%3Cpath d=\\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')" }} />
+        {/* Grid pattern */}
+        <div className="absolute inset-0 pointer-events-none" style={{
+          backgroundImage: "linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)",
+          backgroundSize: "60px 60px"
+        }} />
+        {/* Orange LED glow — bottom right */}
+        <div className="absolute pointer-events-none" style={{
+          right: "-10%", bottom: "-20%",
+          width: "70%", height: "120%",
+          background: "radial-gradient(ellipse at center, rgba(232,80,11,0.22) 0%, rgba(232,80,11,0.08) 40%, transparent 70%)",
+        }} />
+        {/* Secondary glow — top right */}
+        <div className="absolute pointer-events-none" style={{
+          right: "5%", top: "-10%",
+          width: "40%", height: "60%",
+          background: "radial-gradient(ellipse at center, rgba(232,80,11,0.10) 0%, transparent 65%)",
+        }} />
+        {/* Diagonal light beam */}
+        <div className="absolute inset-0 pointer-events-none" style={{
+          background: "linear-gradient(118deg, transparent 30%, rgba(232,80,11,0.06) 50%, transparent 65%)",
+        }} />
+        {/* Horizontal scanline accent */}
+        <div className="absolute pointer-events-none" style={{
+          left: 0, right: 0, bottom: 0, height: "2px",
+          background: "linear-gradient(90deg, transparent, rgba(232,80,11,0.6) 40%, rgba(232,80,11,0.6) 60%, transparent)",
+        }} />
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl">
             <h1 className="text-2xl leading-[1.15] sm:text-4xl md:text-5xl lg:text-7xl font-serif font-black uppercase tracking-normal sm:tracking-tight mb-5 sm:mb-6">
