@@ -299,9 +299,9 @@ export function ChatWidget() {
       {/* Bubble button */}
       <button
         onClick={() => setOpen(o => !o)}
-        className="w-14 h-14 bg-accent hover:bg-accent/90 text-white shadow-lg flex items-center justify-center transition-all relative"
+        className="w-11 h-11 bg-accent hover:bg-accent/90 text-white shadow-lg flex items-center justify-center transition-all relative"
       >
-        {open ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
+        {open ? <X className="h-5 w-5" /> : <MessageCircle className="h-5 w-5" />}
         {!open && unread > 0 && (
           <span className="absolute -top-1 -right-1 bg-green-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full">
             {unread}
