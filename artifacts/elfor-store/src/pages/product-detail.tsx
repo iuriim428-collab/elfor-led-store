@@ -278,96 +278,6 @@ export default function ProductDetail() {
         </div>
       </div>
 
-      {/* Free lighting calculation CTA */}
-      <div className="mb-8">
-        {/* Trigger button */}
-        {!calcOpen && (
-          <button
-            onClick={() => setCalcOpen(true)}
-            className="w-full flex items-center gap-3 border border-border bg-card hover:border-accent hover:bg-accent/5 px-6 py-4 transition-colors group"
-          >
-            <div className="w-8 h-8 bg-primary flex items-center justify-center shrink-0">
-              <Calculator className="h-4 w-4 text-accent" />
-            </div>
-            <div className="flex-1 text-left">
-              <div className="font-mono font-bold text-sm uppercase tracking-wide group-hover:text-accent transition-colors">Бесплатный расчёт освещения</div>
-              <div className="font-mono text-xs text-muted-foreground">Количество светильников, схема расстановки, итоговая мощность</div>
-            </div>
-            <div className="font-mono text-xs text-accent font-bold uppercase tracking-wider shrink-0">Заказать →</div>
-          </button>
-        )}
-
-        {/* Expanded panel */}
-        {calcOpen && (
-          <div className="border border-border bg-primary grid grid-cols-1 md:grid-cols-2">
-            {/* Left: description */}
-            <div className="p-8 md:border-r border-border">
-              <div className="font-mono text-[10px] tracking-[0.15em] text-accent uppercase mb-3">Бесплатная услуга</div>
-              <h3 className="font-serif font-black text-xl uppercase leading-tight text-primary-foreground mb-4">
-                Сделаем расчёт<br />освещения для<br />вашего объекта
-              </h3>
-              <ul className="space-y-2">
-                {["Количество светильников", "Схема расстановки", "Итоговая мощность"].map((item) => (
-                  <li key={item} className="flex items-center gap-2 font-mono text-xs text-primary-foreground/55 border-b border-white/[0.06] pb-2">
-                    <Check className="h-3 w-3 text-accent shrink-0" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-              <button
-                onClick={() => setCalcOpen(false)}
-                className="mt-6 font-mono text-[10px] text-primary-foreground/30 hover:text-primary-foreground/60 transition-colors uppercase tracking-wider"
-              >
-                ← Свернуть
-              </button>
-            </div>
-
-            {/* Right: form */}
-            <div className="p-8 flex flex-col gap-3">
-              {calcSent ? (
-                <div className="flex-1 flex flex-col items-center justify-center text-center gap-3">
-                  <div className="w-12 h-12 bg-accent/20 flex items-center justify-center">
-                    <Check className="h-6 w-6 text-accent" />
-                  </div>
-                  <p className="font-serif font-bold text-primary-foreground uppercase">Заявка принята!</p>
-                  <p className="font-mono text-xs text-primary-foreground/55">Перезвоним в течение 1 рабочего дня</p>
-                </div>
-              ) : (
-                <>
-                  <div className="font-mono text-[10px] text-primary-foreground/45 mb-1">Оставьте контакт — перезвоним</div>
-                  <Input
-                    placeholder="Ваше имя"
-                    value={calcName}
-                    onChange={(e) => setCalcName(e.target.value)}
-                    className="rounded-none border-white/15 bg-white/[0.06] text-primary-foreground placeholder:text-primary-foreground/30 font-mono text-sm focus-visible:ring-0 focus-visible:border-accent"
-                  />
-                  <Input
-                    placeholder="+7 (___) ___-__-__"
-                    value={calcPhone}
-                    onChange={(e) => setCalcPhone(e.target.value)}
-                    className="rounded-none border-white/15 bg-white/[0.06] text-primary-foreground placeholder:text-primary-foreground/30 font-mono text-sm focus-visible:ring-0 focus-visible:border-accent"
-                  />
-                  <Button
-                    className="rounded-none bg-accent hover:bg-accent/90 text-white font-mono font-bold text-xs uppercase tracking-wider border-0 mt-1 gap-2"
-                    disabled={!calcPhone.trim() || calcPending}
-                    onClick={() => {
-                      if (!calcPhone.trim()) return;
-                      submitCalcRequest(
-                        { data: { name: calcName.trim() || undefined, phone: calcPhone.trim(), productId: product?.id, productSku: product?.sku ?? undefined, productName: product?.name ?? undefined } },
-                        { onSuccess: () => setCalcSent(true) }
-                      );
-                    }}
-                  >
-                    <Calculator className="h-3.5 w-3.5" />
-                    Получить расчёт →
-                  </Button>
-                </>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
-
       {/* Tabs / Specs */}
       <div className="border border-border bg-card">
         <div className="flex border-b border-border font-serif font-bold uppercase text-sm tracking-wider">
@@ -426,6 +336,92 @@ export default function ProductDetail() {
             </div>
           )}
         </div>
+      </div>
+
+      {/* Free lighting calculation CTA */}
+      <div className="mt-8">
+        {!calcOpen && (
+          <button
+            onClick={() => setCalcOpen(true)}
+            className="w-full flex items-center gap-3 border border-border bg-card hover:border-accent hover:bg-accent/5 px-6 py-4 transition-colors group"
+          >
+            <div className="w-8 h-8 bg-primary flex items-center justify-center shrink-0">
+              <Calculator className="h-4 w-4 text-accent" />
+            </div>
+            <div className="flex-1 text-left">
+              <div className="font-mono font-bold text-sm uppercase tracking-wide group-hover:text-accent transition-colors">Бесплатный расчёт освещения</div>
+              <div className="font-mono text-xs text-muted-foreground">Количество светильников, схема расстановки, итоговая мощность</div>
+            </div>
+            <div className="font-mono text-xs text-accent font-bold uppercase tracking-wider shrink-0">Заказать →</div>
+          </button>
+        )}
+
+        {calcOpen && (
+          <div className="border border-border bg-primary grid grid-cols-1 md:grid-cols-2">
+            <div className="p-8 md:border-r border-border">
+              <div className="font-mono text-[10px] tracking-[0.15em] text-accent uppercase mb-3">Бесплатная услуга</div>
+              <h3 className="font-serif font-black text-xl uppercase leading-tight text-primary-foreground mb-4">
+                Сделаем расчёт<br />освещения для<br />вашего объекта
+              </h3>
+              <ul className="space-y-2">
+                {["Количество светильников", "Схема расстановки", "Итоговая мощность"].map((item) => (
+                  <li key={item} className="flex items-center gap-2 font-mono text-xs text-primary-foreground/55 border-b border-white/[0.06] pb-2">
+                    <Check className="h-3 w-3 text-accent shrink-0" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <button
+                onClick={() => setCalcOpen(false)}
+                className="mt-6 font-mono text-[10px] text-primary-foreground/30 hover:text-primary-foreground/60 transition-colors uppercase tracking-wider"
+              >
+                ← Свернуть
+              </button>
+            </div>
+
+            <div className="p-8 flex flex-col gap-3">
+              {calcSent ? (
+                <div className="flex-1 flex flex-col items-center justify-center text-center gap-3">
+                  <div className="w-12 h-12 bg-accent/20 flex items-center justify-center">
+                    <Check className="h-6 w-6 text-accent" />
+                  </div>
+                  <p className="font-serif font-bold text-primary-foreground uppercase">Заявка принята!</p>
+                  <p className="font-mono text-xs text-primary-foreground/55">Перезвоним в течение 1 рабочего дня</p>
+                </div>
+              ) : (
+                <>
+                  <div className="font-mono text-[10px] text-primary-foreground/45 mb-1">Оставьте контакт — перезвоним</div>
+                  <Input
+                    placeholder="Ваше имя"
+                    value={calcName}
+                    onChange={(e) => setCalcName(e.target.value)}
+                    className="rounded-none border-white/15 bg-white/[0.06] text-primary-foreground placeholder:text-primary-foreground/30 font-mono text-sm focus-visible:ring-0 focus-visible:border-accent"
+                  />
+                  <Input
+                    placeholder="+7 (___) ___-__-__"
+                    value={calcPhone}
+                    onChange={(e) => setCalcPhone(e.target.value)}
+                    className="rounded-none border-white/15 bg-white/[0.06] text-primary-foreground placeholder:text-primary-foreground/30 font-mono text-sm focus-visible:ring-0 focus-visible:border-accent"
+                  />
+                  <Button
+                    className="rounded-none bg-accent hover:bg-accent/90 text-white font-mono font-bold text-xs uppercase tracking-wider border-0 mt-1 gap-2"
+                    disabled={!calcPhone.trim() || calcPending}
+                    onClick={() => {
+                      if (!calcPhone.trim()) return;
+                      submitCalcRequest(
+                        { data: { name: calcName.trim() || undefined, phone: calcPhone.trim(), productId: product?.id, productSku: product?.sku ?? undefined, productName: product?.name ?? undefined } },
+                        { onSuccess: () => setCalcSent(true) }
+                      );
+                    }}
+                  >
+                    <Calculator className="h-3.5 w-3.5" />
+                    Получить расчёт →
+                  </Button>
+                </>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
