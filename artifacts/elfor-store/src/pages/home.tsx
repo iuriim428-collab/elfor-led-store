@@ -28,6 +28,13 @@ export default function Home() {
         <div className="absolute inset-0 pointer-events-none" style={{
           background: "linear-gradient(118deg, transparent 30%, rgba(232,80,11,0.06) 50%, transparent 65%)",
         }} />
+        {/* Logo watermark */}
+        <div className="absolute pointer-events-none select-none hidden lg:flex items-center justify-center" style={{
+          right: "4%", top: "50%", transform: "translateY(-50%)",
+          width: "38%", opacity: 0.07,
+        }}>
+          <img src="/logo.png" alt="" className="w-full h-auto brightness-0 invert" draggable={false} />
+        </div>
         {/* Horizontal scanline accent */}
         <div className="absolute pointer-events-none" style={{
           left: 0, right: 0, bottom: 0, height: "2px",
