@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCart } from "@/hooks/use-cart";
 import { useState, useEffect } from "react";
-import { ShoppingCart, Check, ChevronRight, GitCompareArrows } from "lucide-react";
+import { ShoppingCart, Check, ChevronRight, GitCompareArrows, Calculator } from "lucide-react";
 import { useComparison } from "@/hooks/use-comparison";
 import { cn } from "@/lib/utils";
 
@@ -29,6 +29,9 @@ export default function ProductDetail() {
   
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
+  const [calcName, setCalcName] = useState("");
+  const [calcPhone, setCalcPhone] = useState("");
+  const [calcSent, setCalcSent] = useState(false);
   const [selectedKelvin, setSelectedKelvin] = useState<string | null>(null);
   const [selectedAngle, setSelectedAngle] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"specs" | "desc">("specs");
@@ -269,6 +272,62 @@ export default function ProductDetail() {
             <div className="font-mono text-sm leading-relaxed text-muted-foreground">
               {product.shortDescription}
             </div>
+          )}
+        </div>
+      </div>
+
+      {/* Free lighting calculation CTA */}
+      <div className="border border-border bg-primary grid grid-cols-1 md:grid-cols-2 mb-8">
+        {/* Left: description */}
+        <div className="p-8 md:border-r border-border">
+          <div className="font-mono text-[10px] tracking-[0.15em] text-accent uppercase mb-3">Бесплатная услуга</div>
+          <h3 className="font-serif font-black text-xl uppercase leading-tight text-primary-foreground mb-4">
+            Сделаем расчёт<br />освещения для<br />вашего объекта
+          </h3>
+          <ul className="space-y-2">
+            {["Количество светильников", "Схема расстановки", "Итоговая мощность"].map((item) => (
+              <li key={item} className="flex items-center gap-2 font-mono text-xs text-primary-foreground/55 border-b border-white/[0.06] pb-2">
+                <Check className="h-3 w-3 text-accent shrink-0" />
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Right: form */}
+        <div className="p-8 flex flex-col gap-3">
+          {calcSent ? (
+            <div className="flex-1 flex flex-col items-center justify-center text-center gap-3">
+              <div className="w-12 h-12 bg-accent/20 flex items-center justify-center">
+                <Check className="h-6 w-6 text-accent" />
+              </div>
+              <p className="font-serif font-bold text-primary-foreground uppercase">Заявка принята!</p>
+              <p className="font-mono text-xs text-primary-foreground/55">Перезвоним в течение 1 рабочего дня</p>
+            </div>
+          ) : (
+            <>
+              <div className="font-mono text-[10px] text-primary-foreground/45 mb-1">Оставьте контакт — перезвоним</div>
+              <Input
+                placeholder="Ваше имя"
+                value={calcName}
+                onChange={(e) => setCalcName(e.target.value)}
+                className="rounded-none border-white/15 bg-white/[0.06] text-primary-foreground placeholder:text-primary-foreground/30 font-mono text-sm focus-visible:ring-0 focus-visible:border-accent"
+              />
+              <Input
+                placeholder="+7 (___) ___-__-__"
+                value={calcPhone}
+                onChange={(e) => setCalcPhone(e.target.value)}
+                className="rounded-none border-white/15 bg-white/[0.06] text-primary-foreground placeholder:text-primary-foreground/30 font-mono text-sm focus-visible:ring-0 focus-visible:border-accent"
+              />
+              <Button
+                className="rounded-none bg-accent hover:bg-accent/90 text-white font-mono font-bold text-xs uppercase tracking-wider border-0 mt-1 gap-2"
+                disabled={!calcPhone.trim()}
+                onClick={() => { if (calcPhone.trim()) setCalcSent(true); }}
+              >
+                <Calculator className="h-3.5 w-3.5" />
+                Получить расчёт →
+              </Button>
+            </>
           )}
         </div>
       </div>
