@@ -89,6 +89,28 @@ export function ChatWidget() {
     }
   }, []);
 
+  const playNotification = useCallback(() => {
+    try {
+      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      // Two-tone soft chime: high then slightly lower
+      const tones = [880, 660];
+      tones.forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = "sine";
+        osc.frequency.value = freq;
+        const start = ctx.currentTime + i * 0.15;
+        gain.gain.setValueAtTime(0, start);
+        gain.gain.linearRampToValueAtTime(0.18, start + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.35);
+        osc.start(start);
+        osc.stop(start + 0.35);
+      });
+    } catch {}
+  }, []);
+
   const fetchMessages = useCallback(async (token: string) => {
     try {
       const r = await fetch(`/api/chat/sessions/by-token/${token}/messages`);
@@ -100,11 +122,14 @@ export function ChatWidget() {
         const newAdminMsgs = msgs.filter(
           m => m.sender === "admin" && !prev.some(p => p.id === m.id)
         ).length;
-        if (!open && newAdminMsgs > 0) setUnread(u => u + newAdminMsgs);
+        if (!open && newAdminMsgs > 0) {
+          setUnread(u => u + newAdminMsgs);
+          playNotification();
+        }
         return msgs;
       });
     } catch {}
-  }, [open]);
+  }, [open, playNotification]);
 
   // Start polling when session exists
   useEffect(() => {
