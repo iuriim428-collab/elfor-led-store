@@ -53,46 +53,44 @@ export default function Category() {
           <h3 className="font-serif font-bold text-xl uppercase mb-2">В этой категории пока нет товаров</h3>
         </div>
       ) : (
-        <div className="flex flex-col gap-4">
-          {products.map((product) => {
-            const isStorageImg = product.imageUrl?.startsWith("/api/storage/");
-            return (
-              <Link key={product.id} href={`/catalog/${product.id}`} className="group flex flex-row border border-border bg-card hover-elevate">
-                {/* Photo — fixed square */}
-                <div className={`shrink-0 w-40 h-40 sm:w-52 sm:h-52 overflow-hidden flex items-center justify-center border-r border-border ${isStorageImg ? "bg-[#1a1a1a]" : "bg-white"}`}>
-                  {product.imageUrl ? (
-                    <img src={product.imageUrl} alt={product.name} className={`w-full h-full object-contain group-hover:scale-105 transition-transform ${isStorageImg ? "" : "mix-blend-multiply"}`} />
-                  ) : (
-                    <div className="w-full h-full bg-muted flex items-center justify-center text-muted-foreground font-mono text-xs">Нет фото</div>
-                  )}
-                </div>
-                {/* Info — same height as photo */}
-                <div className="flex flex-col flex-1 p-4 sm:p-6 justify-between min-w-0">
-                  <div>
-                    <div className="text-xs font-mono text-muted-foreground mb-1">{product.sku}</div>
-                    <h3 className="font-serif font-bold text-base sm:text-lg uppercase leading-tight mb-2 group-hover:text-accent transition-colors">{product.name}</h3>
-                    {(product.fullDescription || product.shortDescription) && (
-                      <button
-                        className="text-xs font-mono text-accent underline underline-offset-2 hover:opacity-70 transition-opacity text-left w-fit"
-                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); setDescProductId(product.id); }}
-                      >
-                        Описание
-                      </button>
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+          {products.map((product) => (
+            <Link key={product.id} href={`/catalog/${product.id}`} className="group flex flex-col border border-border bg-card hover-elevate h-full">
+              {(() => {
+                const isStorageImg = product.imageUrl?.startsWith("/api/storage/");
+                return (
+                  <div className={`aspect-square overflow-hidden flex items-center justify-center border-b border-border relative ${isStorageImg ? "bg-[#1a1a1a]" : "bg-white"}`}>
+                    {product.imageUrl ? (
+                      <img src={product.imageUrl} alt={product.name} className={`w-full h-full object-contain group-hover:scale-105 transition-transform ${isStorageImg ? "" : "mix-blend-multiply"}`} />
+                    ) : (
+                      <div className="w-full h-full bg-muted flex items-center justify-center text-muted-foreground font-mono text-xs">Нет фото</div>
                     )}
                   </div>
-                  <div className="flex items-end justify-between mt-3">
-                    <div>
-                      {product.oldPrice && <div className="text-xs font-mono line-through text-muted-foreground">{product.oldPrice.toLocaleString("ru-RU")} ₽</div>}
-                      <div className="font-mono font-bold text-xl">{product.price.toLocaleString("ru-RU")} ₽</div>
-                    </div>
-                    <Button size="icon" className="rounded-none border border-border bg-primary text-primary-foreground hover:bg-accent hover:border-accent hover:text-white transition-colors h-10 w-10 shrink-0">
-                      <ArrowRight className="h-4 w-4" />
-                    </Button>
+                );
+              })()}
+              <div className="p-4 flex-1 flex flex-col">
+                <div className="text-xs font-mono text-muted-foreground mb-2">{product.sku}</div>
+                <h3 className="font-serif font-bold text-sm uppercase leading-tight mb-2 flex-1 group-hover:text-accent transition-colors">{product.name}</h3>
+                {(product.fullDescription || product.shortDescription) && (
+                  <button
+                    className="text-xs font-mono text-accent underline underline-offset-2 hover:opacity-70 transition-opacity mb-3 text-left w-fit"
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setDescProductId(product.id); }}
+                  >
+                    Описание
+                  </button>
+                )}
+                <div className="flex items-end justify-between mt-auto">
+                  <div>
+                    {product.oldPrice && <div className="text-xs font-mono line-through text-muted-foreground">{product.oldPrice.toLocaleString("ru-RU")} ₽</div>}
+                    <div className="font-mono font-bold text-lg">{product.price.toLocaleString("ru-RU")} ₽</div>
                   </div>
+                  <Button size="icon" className="rounded-none border border-border bg-primary text-primary-foreground hover:bg-accent hover:border-accent hover:text-white transition-colors h-10 w-10">
+                    <ArrowRight className="h-4 w-4" />
+                  </Button>
                 </div>
-              </Link>
-            );
-          })}
+              </div>
+            </Link>
+          ))}
         </div>
       )}
 
