@@ -85,16 +85,21 @@ export default function ProductDetail() {
         {(() => {
           const isStorageImg = product.imageUrl?.startsWith("/api/storage/");
           return (
-            <div className={`border border-border overflow-hidden aspect-square flex items-center justify-center ${isStorageImg ? "bg-[#1a1a1a]" : "bg-white"}`}>
-              {product.imageUrl ? (
-                <img
-                  src={product.imageUrl}
-                  alt={product.name}
-                  className={`w-full h-full object-contain ${isStorageImg ? "" : "mix-blend-multiply"}`}
-                />
-              ) : (
-                <div className="text-muted-foreground font-mono text-sm">Нет фото</div>
-              )}
+            <div className="flex justify-center items-start">
+              <div
+                className={`border border-border overflow-hidden w-fit ${isStorageImg ? "bg-[#1a1a1a]" : "bg-white"}`}
+                style={{ minWidth: 160, minHeight: 160 }}
+              >
+                {product.imageUrl ? (
+                  <img
+                    src={product.imageUrl}
+                    alt={product.name}
+                    className={`block max-h-[520px] max-w-full w-auto h-auto ${isStorageImg ? "" : "mix-blend-multiply"}`}
+                  />
+                ) : (
+                  <div className="px-16 py-12 text-muted-foreground font-mono text-sm">Нет фото</div>
+                )}
+              </div>
             </div>
           );
         })()}
