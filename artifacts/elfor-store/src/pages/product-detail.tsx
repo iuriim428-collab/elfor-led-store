@@ -80,12 +80,12 @@ export default function ProductDetail() {
         <span className="text-primary truncate max-w-[200px]">{product.name}</span>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-12 mb-10 sm:mb-16">
+      <div className="flex flex-col lg:flex-row gap-6 sm:gap-12 mb-10 sm:mb-16 items-start">
         {/* Images */}
         {(() => {
           const isStorageImg = product.imageUrl?.startsWith("/api/storage/");
           return (
-            <div className="flex justify-center items-start">
+            <div className="shrink-0 flex justify-center lg:justify-start">
               <div
                 className={`border border-border overflow-hidden w-fit ${isStorageImg ? "bg-[#1a1a1a]" : "bg-white"}`}
                 style={{ minWidth: 160, minHeight: 160 }}
@@ -105,7 +105,7 @@ export default function ProductDetail() {
         })()}
 
         {/* Info */}
-        <div className="flex flex-col">
+        <div className="flex flex-col w-full max-w-lg">
           <div className="text-sm font-mono text-muted-foreground mb-3">{product.sku}</div>
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-black uppercase mb-5 sm:mb-6 leading-tight">{product.name}</h1>
           
