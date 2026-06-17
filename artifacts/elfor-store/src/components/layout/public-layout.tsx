@@ -239,22 +239,24 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
           
           <div className="pt-8 border-t border-primary-foreground/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-mono text-primary-foreground/40">
             <p>© {new Date().getFullYear()} ЭЛФОР. Все права защищены.</p>
-            <div className="flex gap-4">
+            <p className="text-right max-w-md leading-relaxed">
+              Вы принимаете условия{" "}
               {docs?.privacy?.objectPath ? (
-                <a href={`/api/storage${docs.privacy.objectPath}`} target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors">
-                  Политика конфиденциальности
+                <a href={`/api/storage${docs.privacy.objectPath}`} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-accent transition-colors">
+                  политики в отношении обработки персональных данных
                 </a>
               ) : (
-                <span className="opacity-40 cursor-not-allowed" title="Документ ещё не загружен">Политика конфиденциальности</span>
-              )}
+                <span className="underline underline-offset-2 opacity-60">политики в отношении обработки персональных данных</span>
+              )}{" "}и{" "}
               {docs?.offer?.objectPath ? (
-                <a href={`/api/storage${docs.offer.objectPath}`} target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors">
-                  Договор оферты
+                <a href={`/api/storage${docs.offer.objectPath}`} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-accent transition-colors">
+                  пользовательского соглашения
                 </a>
               ) : (
-                <span className="opacity-40 cursor-not-allowed" title="Документ ещё не загружен">Договор оферты</span>
-              )}
-            </div>
+                <span className="underline underline-offset-2 opacity-60">пользовательского соглашения</span>
+              )}{" "}
+              каждый раз, когда оставляете свои данные в любой форме обратной связи на сайте.
+            </p>
           </div>
         </div>
       </footer>
