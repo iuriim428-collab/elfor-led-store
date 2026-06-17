@@ -1,4 +1,4 @@
-import { useGetProduct } from "@workspace/api-client-react";
+import { useGetProduct, useCreateCalcRequest } from "@workspace/api-client-react";
 import { useParams, Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,6 +26,7 @@ export default function ProductDetail() {
   const { data: product, isLoading } = useGetProduct(productId, { query: { enabled: !!productId } });
   const { addItem } = useCart();
   const { toggleItem, isInComparison } = useComparison();
+  const { mutate: submitCalcRequest, isPending: calcPending } = useCreateCalcRequest();
   
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
@@ -321,8 +322,14 @@ export default function ProductDetail() {
               />
               <Button
                 className="rounded-none bg-accent hover:bg-accent/90 text-white font-mono font-bold text-xs uppercase tracking-wider border-0 mt-1 gap-2"
-                disabled={!calcPhone.trim()}
-                onClick={() => { if (calcPhone.trim()) setCalcSent(true); }}
+                disabled={!calcPhone.trim() || calcPending}
+                onClick={() => {
+                  if (!calcPhone.trim()) return;
+                  submitCalcRequest(
+                    { data: { name: calcName.trim() || undefined, phone: calcPhone.trim(), productId: product?.id, productSku: product?.sku ?? undefined, productName: product?.name ?? undefined } },
+                    { onSuccess: () => setCalcSent(true) }
+                  );
+                }}
               >
                 <Calculator className="h-3.5 w-3.5" />
                 Получить расчёт →

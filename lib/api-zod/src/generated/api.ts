@@ -642,6 +642,57 @@ export const UpdateOrderResponse = zod.object({
 
 
 /**
+ * @summary Submit a free lighting calculation request
+ */
+export const CreateCalcRequestBody = zod.object({
+  "name": zod.string().optional(),
+  "phone": zod.string(),
+  "productId": zod.number().optional(),
+  "productSku": zod.string().optional(),
+  "productName": zod.string().optional()
+})
+
+
+/**
+ * @summary List all calculation requests (admin)
+ */
+export const ListCalcRequestsResponseItem = zod.object({
+  "id": zod.number(),
+  "name": zod.string().nullish(),
+  "phone": zod.string(),
+  "productId": zod.number().nullish(),
+  "productSku": zod.string().nullish(),
+  "productName": zod.string().nullish(),
+  "status": zod.string(),
+  "createdAt": zod.coerce.date()
+})
+export const ListCalcRequestsResponse = zod.array(ListCalcRequestsResponseItem)
+
+
+/**
+ * @summary Update status of a calc request
+ */
+export const UpdateCalcRequestStatusParams = zod.object({
+  "id": zod.coerce.number()
+})
+
+export const UpdateCalcRequestStatusBody = zod.object({
+  "status": zod.string()
+})
+
+export const UpdateCalcRequestStatusResponse = zod.object({
+  "id": zod.number(),
+  "name": zod.string().nullish(),
+  "phone": zod.string(),
+  "productId": zod.number().nullish(),
+  "productSku": zod.string().nullish(),
+  "productName": zod.string().nullish(),
+  "status": zod.string(),
+  "createdAt": zod.coerce.date()
+})
+
+
+/**
  * @summary Get admin dashboard statistics
  */
 export const GetDashboardStatsResponse = zod.object({

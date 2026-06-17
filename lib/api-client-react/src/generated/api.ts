@@ -23,6 +23,9 @@ import type {
   Article,
   ArticleInput,
   ArticlePatch,
+  CalcRequest,
+  CalcRequestInput,
+  CalcRequestStatusUpdate,
   Category,
   CategoryInput,
   CategoryPatch,
@@ -1693,6 +1696,226 @@ export const useUpdateOrder = <TError = ErrorType<void>,
         TContext
       > => {
       return useMutation(getUpdateOrderMutationOptions(options));
+    }
+
+export const getCreateCalcRequestUrl = () => {
+
+
+
+
+  return `/api/calc-requests`
+}
+
+/**
+ * @summary Submit a free lighting calculation request
+ */
+export const createCalcRequest = async (calcRequestInput: CalcRequestInput, options?: RequestInit): Promise<CalcRequest> => {
+
+  return customFetch<CalcRequest>(getCreateCalcRequestUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      calcRequestInput,)
+  }
+);}
+
+
+
+
+export const getCreateCalcRequestMutationOptions = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCalcRequest>>, TError,{data: BodyType<CalcRequestInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof createCalcRequest>>, TError,{data: BodyType<CalcRequestInput>}, TContext> => {
+
+const mutationKey = ['createCalcRequest'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createCalcRequest>>, {data: BodyType<CalcRequestInput>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  createCalcRequest(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateCalcRequestMutationResult = NonNullable<Awaited<ReturnType<typeof createCalcRequest>>>
+    export type CreateCalcRequestMutationBody = BodyType<CalcRequestInput>
+    export type CreateCalcRequestMutationError = ErrorType<void>
+
+    /**
+ * @summary Submit a free lighting calculation request
+ */
+export const useCreateCalcRequest = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCalcRequest>>, TError,{data: BodyType<CalcRequestInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof createCalcRequest>>,
+        TError,
+        {data: BodyType<CalcRequestInput>},
+        TContext
+      > => {
+      return useMutation(getCreateCalcRequestMutationOptions(options));
+    }
+
+export const getListCalcRequestsUrl = () => {
+
+
+
+
+  return `/api/calc-requests`
+}
+
+/**
+ * @summary List all calculation requests (admin)
+ */
+export const listCalcRequests = async ( options?: RequestInit): Promise<CalcRequest[]> => {
+
+  return customFetch<CalcRequest[]>(getListCalcRequestsUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListCalcRequestsQueryKey = () => {
+    return [
+    `/api/calc-requests`
+    ] as const;
+    }
+
+
+export const getListCalcRequestsQueryOptions = <TData = Awaited<ReturnType<typeof listCalcRequests>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listCalcRequests>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListCalcRequestsQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listCalcRequests>>> = ({ signal }) => listCalcRequests({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listCalcRequests>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ListCalcRequestsQueryResult = NonNullable<Awaited<ReturnType<typeof listCalcRequests>>>
+export type ListCalcRequestsQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary List all calculation requests (admin)
+ */
+
+export function useListCalcRequests<TData = Awaited<ReturnType<typeof listCalcRequests>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listCalcRequests>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getListCalcRequestsQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+
+
+export const getUpdateCalcRequestStatusUrl = (id: number,) => {
+
+
+
+
+  return `/api/calc-requests/${id}/status`
+}
+
+/**
+ * @summary Update status of a calc request
+ */
+export const updateCalcRequestStatus = async (id: number,
+    calcRequestStatusUpdate: CalcRequestStatusUpdate, options?: RequestInit): Promise<CalcRequest> => {
+
+  return customFetch<CalcRequest>(getUpdateCalcRequestStatusUrl(id),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      calcRequestStatusUpdate,)
+  }
+);}
+
+
+
+
+export const getUpdateCalcRequestStatusMutationOptions = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateCalcRequestStatus>>, TError,{id: number;data: BodyType<CalcRequestStatusUpdate>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateCalcRequestStatus>>, TError,{id: number;data: BodyType<CalcRequestStatusUpdate>}, TContext> => {
+
+const mutationKey = ['updateCalcRequestStatus'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateCalcRequestStatus>>, {id: number;data: BodyType<CalcRequestStatusUpdate>}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  updateCalcRequestStatus(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateCalcRequestStatusMutationResult = NonNullable<Awaited<ReturnType<typeof updateCalcRequestStatus>>>
+    export type UpdateCalcRequestStatusMutationBody = BodyType<CalcRequestStatusUpdate>
+    export type UpdateCalcRequestStatusMutationError = ErrorType<void>
+
+    /**
+ * @summary Update status of a calc request
+ */
+export const useUpdateCalcRequestStatus = <TError = ErrorType<void>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateCalcRequestStatus>>, TError,{id: number;data: BodyType<CalcRequestStatusUpdate>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof updateCalcRequestStatus>>,
+        TError,
+        {id: number;data: BodyType<CalcRequestStatusUpdate>},
+        TContext
+      > => {
+      return useMutation(getUpdateCalcRequestStatusMutationOptions(options));
     }
 
 export const getGetDashboardStatsUrl = () => {

@@ -36,6 +36,7 @@ import AdminDocuments from "@/pages/admin/documents";
 import AdminSettings from "@/pages/admin/settings";
 import AdminAnalytics from "@/pages/admin/analytics";
 import AdminChat from "@/pages/admin/chat";
+import AdminCalcRequests from "@/pages/admin/calc-requests";
 
 const queryClient = new QueryClient();
 
@@ -63,6 +64,7 @@ function AppContent() {
             <Route path="/settings" component={AdminSettings} />
             <Route path="/analytics" component={AdminAnalytics} />
             <Route path="/chat" component={AdminChat} />
+            <Route path="/calc-requests" component={AdminCalcRequests} />
             <Route component={NotFound} />
           </Switch>
         </AdminLayout>

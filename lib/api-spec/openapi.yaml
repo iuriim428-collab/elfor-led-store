@@ -497,6 +497,68 @@ paths:
         "404":
           description: Not found
 
+  # ===== CALC REQUESTS =====
+  /calc-requests:
+    post:
+      operationId: createCalcRequest
+      tags: [calc-requests]
+      summary: Submit a free lighting calculation request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CalcRequestInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CalcRequest"
+        "400":
+          description: Bad request
+    get:
+      operationId: listCalcRequests
+      tags: [calc-requests]
+      summary: List all calculation requests (admin)
+      responses:
+        "200":
+          description: List of calc requests
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CalcRequest"
+
+  /calc-requests/{id}/status:
+    patch:
+      operationId: updateCalcRequestStatus
+      tags: [calc-requests]
+      summary: Update status of a calc request
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CalcRequestStatusUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CalcRequest"
+        "404":
+          description: Not found
+
   # ===== STATS =====
   /stats/dashboard:
     get:
@@ -1058,3 +1120,48 @@ components:
                 type: string
               count:
                 type: integer
+
+    # ===== CALC REQUESTS =====
+    CalcRequest:
+      type: object
+      required: [id, phone, status, createdAt]
+      properties:
+        id:
+          type: integer
+        name:
+          type: ["string", "null"]
+        phone:
+          type: string
+        productId:
+          type: ["integer", "null"]
+        productSku:
+          type: ["string", "null"]
+        productName:
+          type: ["string", "null"]
+        status:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    CalcRequestInput:
+      type: object
+      required: [phone]
+      properties:
+        name:
+          type: string
+        phone:
+          type: string
+        productId:
+          type: integer
+        productSku:
+          type: string
+        productName:
+          type: string
+
+    CalcRequestStatusUpdate:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string

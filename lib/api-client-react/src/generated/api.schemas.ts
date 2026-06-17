@@ -367,6 +367,33 @@ export interface DashboardStats {
   ordersByStatus: DashboardStatsOrdersByStatusItem[];
 }
 
+export interface CalcRequest {
+  id: number;
+  /** @nullable */
+  name?: string | null;
+  phone: string;
+  /** @nullable */
+  productId?: number | null;
+  /** @nullable */
+  productSku?: string | null;
+  /** @nullable */
+  productName?: string | null;
+  status: string;
+  createdAt: string;
+}
+
+export interface CalcRequestInput {
+  name?: string;
+  phone: string;
+  productId?: number;
+  productSku?: string;
+  productName?: string;
+}
+
+export interface CalcRequestStatusUpdate {
+  status: string;
+}
+
 export type ListProductsParams = {
 categoryId?: number;
 featured?: boolean;
