@@ -283,7 +283,7 @@ export default function ProductDetail() {
               {product.specs?.map((spec, i) => (
                 <div key={i} className="flex justify-between border-b border-border border-dashed pb-2">
                   <span className="text-muted-foreground">{spec.key}</span>
-                  <span className="font-bold text-right">{spec.value} {spec.unit || ""}</span>
+                  <span className="font-bold text-right whitespace-nowrap">{spec.value}{spec.unit ? `\u00a0${spec.unit}` : ""}</span>
                 </div>
               ))}
               {product.power && (
