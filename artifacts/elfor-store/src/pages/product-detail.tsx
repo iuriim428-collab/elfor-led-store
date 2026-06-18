@@ -3,8 +3,8 @@ import { useParams, Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCart } from "@/hooks/use-cart";
-import { useState, useEffect } from "react";
-import { ShoppingCart, Check, ChevronRight, GitCompareArrows, Calculator } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { ShoppingCart, Check, ChevronRight, GitCompareArrows, Calculator, X, ZoomIn } from "lucide-react";
 import { useComparison } from "@/hooks/use-comparison";
 import { cn } from "@/lib/utils";
 
@@ -38,6 +38,15 @@ export default function ProductDetail() {
   const [selectedKelvin, setSelectedKelvin] = useState<string | null>(null);
   const [selectedAngle, setSelectedAngle] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"specs" | "desc">("specs");
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+
+  const closeLightbox = useCallback(() => setLightboxOpen(false), []);
+  useEffect(() => {
+    if (!lightboxOpen) return;
+    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") closeLightbox(); };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [lightboxOpen, closeLightbox]);
 
   const colorTemps = (product?.colorTemps ?? []) as string[];
   const beamAngles = (product?.beamAngles ?? []) as string[];
@@ -95,19 +104,48 @@ export default function ProductDetail() {
           return (
             <div className="flex justify-center items-start">
               <div
-                className={`border border-border overflow-hidden w-fit ${isStorageImg ? "bg-[#1a1a1a]" : "bg-white"}`}
+                className={`border border-border overflow-hidden w-fit relative group ${isStorageImg ? "bg-[#1a1a1a]" : "bg-white"} ${product.imageUrl ? "cursor-zoom-in" : ""}`}
                 style={{ minWidth: 160, minHeight: 160 }}
+                onClick={() => product.imageUrl && setLightboxOpen(true)}
               >
                 {product.imageUrl ? (
-                  <img
-                    src={product.imageUrl}
-                    alt={product.name}
-                    className={`block max-h-[520px] max-w-full w-auto h-auto ${isStorageImg ? "" : "mix-blend-multiply"}`}
-                  />
+                  <>
+                    <img
+                      src={product.imageUrl}
+                      alt={product.name}
+                      className={`block max-h-[520px] max-w-full w-auto h-auto transition-transform duration-300 group-hover:scale-[1.02] ${isStorageImg ? "" : "mix-blend-multiply"}`}
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200 flex items-center justify-center">
+                      <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black/50 rounded-full p-2">
+                        <ZoomIn className="h-5 w-5 text-white" />
+                      </div>
+                    </div>
+                  </>
                 ) : (
                   <div className="px-16 py-12 text-muted-foreground font-mono text-sm">Нет фото</div>
                 )}
               </div>
+
+              {/* Lightbox */}
+              {lightboxOpen && product.imageUrl && (
+                <div
+                  className="fixed inset-0 z-[200] bg-black/90 flex items-center justify-center p-4"
+                  onClick={closeLightbox}
+                >
+                  <button
+                    className="absolute top-4 right-4 text-white/70 hover:text-white transition-colors bg-black/40 rounded-full p-2"
+                    onClick={closeLightbox}
+                  >
+                    <X className="h-6 w-6" />
+                  </button>
+                  <img
+                    src={product.imageUrl}
+                    alt={product.name}
+                    className="max-h-[90vh] max-w-[90vw] w-auto h-auto object-contain shadow-2xl"
+                    onClick={e => e.stopPropagation()}
+                  />
+                </div>
+              )}
             </div>
           );
         })()}
