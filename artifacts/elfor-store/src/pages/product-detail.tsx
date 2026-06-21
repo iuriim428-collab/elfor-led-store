@@ -39,11 +39,14 @@ export default function ProductDetail() {
   const [selectedAngle, setSelectedAngle] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"specs" | "desc">("specs");
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [activeImageIdx, setActiveImageIdx] = useState(0);
 
   const closeLightbox = useCallback(() => setLightboxOpen(false), []);
   useEffect(() => {
     if (!lightboxOpen) return;
-    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") closeLightbox(); };
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeLightbox();
+    };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [lightboxOpen, closeLightbox]);
@@ -98,36 +101,68 @@ export default function ProductDetail() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-12 mb-10 sm:mb-16">
-        {/* Images */}
+        {/* Images Gallery */}
         {(() => {
-          const isStorageImg = product.imageUrl?.startsWith("/api/storage/");
+          const extraImages = (product.images ?? []) as string[];
+          const allImages = [
+            ...(product.imageUrl ? [product.imageUrl] : []),
+            ...extraImages,
+          ];
+          const activeImg = allImages[activeImageIdx] ?? null;
+          const isStorageImg = activeImg?.startsWith("/api/storage/");
+
           return (
-            <div className="flex justify-center items-start">
-              <div
-                className={`border border-border overflow-hidden w-fit relative group ${isStorageImg ? "bg-[#1a1a1a]" : "bg-white"} ${product.imageUrl ? "cursor-zoom-in" : ""}`}
-                style={{ minWidth: 160, minHeight: 160 }}
-                onClick={() => product.imageUrl && setLightboxOpen(true)}
-              >
-                {product.imageUrl ? (
-                  <>
-                    <img
-                      src={product.imageUrl}
-                      alt={product.name}
-                      className={`block max-h-[520px] max-w-full w-auto h-auto transition-transform duration-300 group-hover:scale-[1.02] ${isStorageImg ? "" : "mix-blend-multiply"}`}
-                    />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200 flex items-center justify-center">
-                      <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black/50 rounded-full p-2">
-                        <ZoomIn className="h-5 w-5 text-white" />
+            <div className="flex flex-col gap-3">
+              {/* Main image */}
+              <div className="flex justify-center items-start">
+                <div
+                  className={`border border-border overflow-hidden w-fit relative group ${isStorageImg ? "bg-[#1a1a1a]" : "bg-white"} ${activeImg ? "cursor-zoom-in" : ""}`}
+                  style={{ minWidth: 160, minHeight: 160 }}
+                  onClick={() => activeImg && setLightboxOpen(true)}
+                >
+                  {activeImg ? (
+                    <>
+                      <img
+                        src={activeImg}
+                        alt={product.name}
+                        className={`block max-h-[480px] max-w-full w-auto h-auto transition-transform duration-300 group-hover:scale-[1.02] ${isStorageImg ? "" : "mix-blend-multiply"}`}
+                      />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200 flex items-center justify-center">
+                        <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black/50 rounded-full p-2">
+                          <ZoomIn className="h-5 w-5 text-white" />
+                        </div>
                       </div>
-                    </div>
-                  </>
-                ) : (
-                  <div className="px-16 py-12 text-muted-foreground font-mono text-sm">Нет фото</div>
-                )}
+                    </>
+                  ) : (
+                    <div className="px-16 py-12 text-muted-foreground font-mono text-sm">Нет фото</div>
+                  )}
+                </div>
               </div>
 
+              {/* Thumbnails */}
+              {allImages.length > 1 && (
+                <div className="flex gap-2 flex-wrap justify-center">
+                  {allImages.map((url, idx) => {
+                    const isStorage = url.startsWith("/api/storage/");
+                    return (
+                      <button
+                        key={idx}
+                        onClick={() => setActiveImageIdx(idx)}
+                        className={`border-2 transition-colors overflow-hidden shrink-0 ${activeImageIdx === idx ? "border-accent" : "border-border hover:border-accent/50"} ${isStorage ? "bg-[#1a1a1a]" : "bg-white"}`}
+                      >
+                        <img
+                          src={url}
+                          alt={`${product.name} ${idx + 1}`}
+                          className={`h-16 w-16 object-contain ${isStorage ? "" : "mix-blend-multiply"}`}
+                        />
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
               {/* Lightbox */}
-              {lightboxOpen && product.imageUrl && (
+              {lightboxOpen && activeImg && (
                 <div
                   className="fixed inset-0 z-[200] bg-black/90 flex items-center justify-center p-4"
                   onClick={closeLightbox}
@@ -138,12 +173,36 @@ export default function ProductDetail() {
                   >
                     <X className="h-6 w-6" />
                   </button>
+                  {/* Prev/Next in lightbox */}
+                  {allImages.length > 1 && (
+                    <>
+                      <button
+                        className="absolute left-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white bg-black/40 rounded-full p-2 disabled:opacity-20"
+                        disabled={activeImageIdx === 0}
+                        onClick={e => { e.stopPropagation(); setActiveImageIdx(i => Math.max(0, i - 1)); }}
+                      >
+                        <ChevronRight className="h-6 w-6 rotate-180" />
+                      </button>
+                      <button
+                        className="absolute right-14 top-1/2 -translate-y-1/2 text-white/70 hover:text-white bg-black/40 rounded-full p-2 disabled:opacity-20"
+                        disabled={activeImageIdx === allImages.length - 1}
+                        onClick={e => { e.stopPropagation(); setActiveImageIdx(i => Math.min(allImages.length - 1, i + 1)); }}
+                      >
+                        <ChevronRight className="h-6 w-6" />
+                      </button>
+                    </>
+                  )}
                   <img
-                    src={product.imageUrl}
+                    src={activeImg}
                     alt={product.name}
                     className="max-h-[90vh] max-w-[90vw] w-auto h-auto object-contain shadow-2xl"
                     onClick={e => e.stopPropagation()}
                   />
+                  {allImages.length > 1 && (
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 font-mono text-xs text-white/50">
+                      {activeImageIdx + 1} / {allImages.length}
+                    </div>
+                  )}
                 </div>
               )}
             </div>

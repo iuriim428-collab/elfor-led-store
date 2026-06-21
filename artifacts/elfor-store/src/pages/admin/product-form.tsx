@@ -31,6 +31,7 @@ const formSchema = z.object({
   warranty: z.string().optional().nullable(),
   imageUrl: z.string().optional().nullable(),
   passportUrl: z.string().optional().nullable(),
+  images: z.array(z.string()).default([]),
   colorTempsRaw: z.string().optional().default(""),
   beamAnglesRaw: z.string().optional().default(""),
   specs: z.array(z.object({
@@ -167,6 +168,69 @@ function FileUploadWidget({ label, accept, value, onChange, icon, hint }: FileUp
   );
 }
 
+function GalleryAddButton({ onAdd }: { onAdd: (url: string) => void }) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const { toast } = useToast();
+
+  const handleFile = useCallback(async (file: File) => {
+    setUploading(true);
+    try {
+      const metaRes = await fetch("/api/storage/uploads/request-url", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: file.name, size: file.size, contentType: file.type }),
+      });
+      if (!metaRes.ok) throw new Error("Не удалось получить URL загрузки");
+      const { uploadURL, objectPath } = await metaRes.json();
+      const putRes = await fetch(uploadURL, { method: "PUT", headers: { "Content-Type": file.type }, body: file });
+      if (!putRes.ok) throw new Error("Ошибка загрузки");
+      onAdd(objectPath);
+    } catch (err) {
+      toast({ title: "Ошибка загрузки", description: String(err), variant: "destructive" });
+    } finally {
+      setUploading(false);
+      if (inputRef.current) inputRef.current.value = "";
+    }
+  }, [onAdd, toast]);
+
+  return (
+    <>
+      <Button type="button" variant="outline" size="sm" disabled={uploading}
+        onClick={() => inputRef.current?.click()}
+        className="rounded-none border-border h-8 text-xs">
+        {uploading ? <Loader2 className="h-3 w-3 mr-1 animate-spin" /> : <Plus className="h-3 w-3 mr-1" />}
+        Добавить фото
+      </Button>
+      <input ref={inputRef} type="file" accept="image/*" className="hidden"
+        onChange={e => { const f = e.target.files?.[0]; if (f) handleFile(f); }} />
+    </>
+  );
+}
+
+function GalleryGrid({ images, onRemove }: { images: string[]; onRemove: (idx: number) => void }) {
+  if (images.length === 0) {
+    return (
+      <div className="border border-dashed border-border p-4 text-center font-mono text-xs text-muted-foreground">
+        Нет дополнительных фотографий
+      </div>
+    );
+  }
+  return (
+    <div className="flex flex-wrap gap-3">
+      {images.map((url, idx) => (
+        <div key={idx} className="relative group border border-border bg-[#1a1a1a]">
+          <img src={url} alt="" className="h-20 w-20 object-contain" />
+          <button type="button" onClick={() => onRemove(idx)}
+            className="absolute top-0.5 right-0.5 opacity-0 group-hover:opacity-100 transition-opacity bg-black/70 rounded-full p-0.5 text-white hover:bg-destructive">
+            <X className="h-3 w-3" />
+          </button>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function AdminProductForm() {
   const { id } = useParams();
   const isEditing = !!id && id !== "new";
@@ -192,7 +256,8 @@ export default function AdminProductForm() {
       stock: 10,
       featured: false,
       specs: [],
-      variantStocks: []
+      variantStocks: [],
+      images: []
     }
   });
 
@@ -235,7 +300,8 @@ export default function AdminProductForm() {
         colorTempsRaw: (product.colorTemps ?? []).join(", "),
         beamAnglesRaw: (product.beamAngles ?? []).join(", "),
         specs: product.specs ?? [],
-        variantStocks: existingVariantStocks as { kelvin: string; stock: number }[]
+        variantStocks: existingVariantStocks as { kelvin: string; stock: number }[],
+        images: (product.images ?? []) as string[]
       });
       initRef.current = true;
     }
@@ -276,6 +342,7 @@ export default function AdminProductForm() {
       warranty: values.warranty || undefined,
       imageUrl: values.imageUrl || undefined,
       passportUrl: values.passportUrl || undefined,
+      images: values.images ?? [],
       colorTemps,
       beamAngles: parseList(values.beamAnglesRaw),
       colorTempsRaw: undefined,
@@ -523,7 +590,7 @@ export default function AdminProductForm() {
               <FormField control={form.control} name="imageUrl" render={({ field }) => (
                 <FormItem>
                   <FileUploadWidget
-                    label="Фотография товара"
+                    label="Главная фотография"
                     accept="image/*"
                     value={field.value}
                     onChange={field.onChange}
@@ -547,6 +614,29 @@ export default function AdminProductForm() {
                   <FormMessage />
                 </FormItem>
               )} />
+            </div>
+
+            {/* Extra gallery images */}
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <label className="text-xs font-bold uppercase font-mono">Дополнительные фотографии</label>
+                <GalleryAddButton
+                  onAdd={(url) => {
+                    const cur = form.getValues("images") ?? [];
+                    form.setValue("images", [...cur, url], { shouldDirty: true });
+                  }}
+                />
+              </div>
+              <GalleryGrid
+                images={form.watch("images") ?? []}
+                onRemove={(idx) => {
+                  const cur = form.getValues("images") ?? [];
+                  form.setValue("images", cur.filter((_, i) => i !== idx), { shouldDirty: true });
+                }}
+              />
+              <p className="font-mono text-[10px] text-muted-foreground">
+                Первая фотография выше — главная. Здесь добавьте все остальные ракурсы.
+              </p>
             </div>
             
             <FormField control={form.control} name="shortDescription" render={({ field }) => (
