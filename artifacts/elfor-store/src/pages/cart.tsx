@@ -9,6 +9,7 @@ import { Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Cart() {
   const { items, updateQuantity, removeItem, totalPrice, clearCart } = useCart();
@@ -17,6 +18,18 @@ export default function Cart() {
   const { toast } = useToast();
 
   const [agreed, setAgreed] = useState(false);
+
+  const { data: docs } = useQuery<{
+    offer: { objectPath: string | null };
+    privacy: { objectPath: string | null };
+  }>({
+    queryKey: ["documents"],
+    queryFn: () => fetch("/api/documents").then(r => r.json()),
+  });
+
+  const offerUrl = docs?.offer?.objectPath ? `/api/storage${docs.offer.objectPath}` : "#";
+  const privacyUrl = docs?.privacy?.objectPath ? `/api/storage${docs.privacy.objectPath}` : "#";
+
   const [formData, setFormData] = useState({
     customerName: "",
     customerPhone: "",
@@ -204,13 +217,13 @@ export default function Cart() {
                   />
                   <span className="font-mono text-[11px] text-muted-foreground leading-[1.5] group-hover:text-foreground transition-colors">
                     Я ознакомлен(а) и согласен(на) с условиями{" "}
-                    <a href="/docs/public-offer.pdf" target="_blank" rel="noopener noreferrer"
+                    <a href={offerUrl} target="_blank" rel="noopener noreferrer"
                       className="text-accent underline hover:no-underline"
                       onClick={e => e.stopPropagation()}>
                       публичной оферты
                     </a>{" "}
                     и{" "}
-                    <a href="/docs/privacy-policy.pdf" target="_blank" rel="noopener noreferrer"
+                    <a href={privacyUrl} target="_blank" rel="noopener noreferrer"
                       className="text-accent underline hover:no-underline"
                       onClick={e => e.stopPropagation()}>
                       Политикой обработки персональных данных
