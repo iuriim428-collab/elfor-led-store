@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function Cart() {
   const { items, updateQuantity, removeItem, totalPrice, clearCart } = useCart();
@@ -15,6 +16,7 @@ export default function Cart() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
 
+  const [agreed, setAgreed] = useState(false);
   const [formData, setFormData] = useState({
     customerName: "",
     customerPhone: "",
@@ -192,13 +194,37 @@ export default function Cart() {
                   <span className="font-mono text-sm text-muted-foreground">Итого к оплате</span>
                   <span className="font-mono font-bold text-2xl">{totalPrice.toLocaleString("ru-RU")} ₽</span>
                 </div>
-                
-                <Button type="submit" disabled={createOrder.isPending} className="w-full rounded-none font-bold uppercase tracking-wider h-12 bg-accent hover:bg-accent/90 text-white">
+
+                <label className="flex items-start gap-3 cursor-pointer group">
+                  <Checkbox
+                    id="consent"
+                    checked={agreed}
+                    onCheckedChange={(v) => setAgreed(!!v)}
+                    className="mt-0.5 rounded-none border-border data-[state=checked]:bg-accent data-[state=checked]:border-accent shrink-0"
+                  />
+                  <span className="font-mono text-[11px] text-muted-foreground leading-[1.5] group-hover:text-foreground transition-colors">
+                    Я ознакомлен(а) и согласен(на) с условиями{" "}
+                    <a href="/docs/public-offer.pdf" target="_blank" rel="noopener noreferrer"
+                      className="text-accent underline hover:no-underline"
+                      onClick={e => e.stopPropagation()}>
+                      публичной оферты
+                    </a>{" "}
+                    и{" "}
+                    <a href="/docs/privacy-policy.pdf" target="_blank" rel="noopener noreferrer"
+                      className="text-accent underline hover:no-underline"
+                      onClick={e => e.stopPropagation()}>
+                      Политикой обработки персональных данных
+                    </a>
+                  </span>
+                </label>
+
+                <Button
+                  type="submit"
+                  disabled={createOrder.isPending || !agreed}
+                  className="w-full rounded-none font-bold uppercase tracking-wider h-12 bg-accent hover:bg-accent/90 text-white disabled:opacity-40 disabled:cursor-not-allowed"
+                >
                   {createOrder.isPending ? "Оформление..." : "Подтвердить заказ"}
                 </Button>
-                <p className="text-[10px] font-mono text-muted-foreground text-center">
-                  Нажимая кнопку, вы соглашаетесь с обработкой персональных данных.
-                </p>
               </div>
             </form>
           </div>
