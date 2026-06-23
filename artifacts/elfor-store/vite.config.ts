@@ -19,6 +19,7 @@ if (Number.isNaN(port) || port <= 0) {
 }
 
 const basePath = process.env.BASE_PATH;
+const isProduction = process.env.NODE_ENV === "production";
 
 if (!basePath) {
   throw new Error(
@@ -31,7 +32,7 @@ export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
-    runtimeErrorOverlay(),
+    ...(!isProduction ? [runtimeErrorOverlay()] : []),
     ...(process.env.NODE_ENV !== "production" &&
     process.env.REPL_ID !== undefined
       ? [
@@ -57,6 +58,61 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    rollupOptions: {
+      onwarn(warning, warn) {
+        if (
+          warning.message.includes(
+            "Error when using sourcemap for reporting an error",
+          )
+        ) {
+          return;
+        }
+
+        warn(warning);
+      },
+      output: {
+        manualChunks(id) {
+          if (!id.includes("node_modules")) {
+            return;
+          }
+
+          if (id.includes("recharts")) {
+            return "charts";
+          }
+
+          if (id.includes("@radix-ui")) {
+            return "radix";
+          }
+
+          if (
+            id.includes("react-hook-form") ||
+            id.includes("@hookform") ||
+            id.includes("zod")
+          ) {
+            return "forms";
+          }
+
+          if (
+            id.includes("@tanstack/react-query") ||
+            id.includes("wouter")
+          ) {
+            return "app-core";
+          }
+
+          if (id.includes("react-dom") || id.includes("/react/")) {
+            return "react-vendor";
+          }
+
+          if (
+            id.includes("lucide-react") ||
+            id.includes("date-fns") ||
+            id.includes("embla-carousel-react")
+          ) {
+            return "ui-vendor";
+          }
+        },
+      },
+    },
   },
   server: {
     port,

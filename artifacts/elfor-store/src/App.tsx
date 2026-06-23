@@ -1,3 +1,4 @@
+import { lazy, Suspense, type ComponentType } from "react";
 import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -12,33 +13,55 @@ import NotFound from "@/pages/not-found";
 import { PublicLayout } from "@/components/layout/public-layout";
 import { AdminLayout } from "@/components/layout/admin-layout";
 
-import Home from "@/pages/home";
-import Catalog from "@/pages/catalog";
-import ProductDetail from "@/pages/product-detail";
-import Category from "@/pages/category";
-import News from "@/pages/news";
-import Article from "@/pages/article";
-import About from "@/pages/about";
-import Contacts from "@/pages/contacts";
-import Cart from "@/pages/cart";
-import Compare from "@/pages/compare";
-
-import AdminDashboard from "@/pages/admin/dashboard";
-import AdminProducts from "@/pages/admin/products";
-import AdminProductForm from "@/pages/admin/product-form";
-import AdminCategories from "@/pages/admin/categories";
-import AdminOrders from "@/pages/admin/orders";
-import AdminOrderDetail from "@/pages/admin/order-detail";
-import AdminArticles from "@/pages/admin/articles";
-import AdminArticleForm from "@/pages/admin/article-form";
-import AdminCatalog from "@/pages/admin/catalog";
-import AdminDocuments from "@/pages/admin/documents";
-import AdminSettings from "@/pages/admin/settings";
-import AdminAnalytics from "@/pages/admin/analytics";
-import AdminChat from "@/pages/admin/chat";
-import AdminCalcRequests from "@/pages/admin/calc-requests";
-
 const queryClient = new QueryClient();
+
+function PageFallback() {
+  return (
+    <div className="flex min-h-[40vh] items-center justify-center">
+      <div className="h-8 w-8 animate-spin rounded-full border-4 border-accent border-t-transparent" />
+    </div>
+  );
+}
+
+function lazyRoute<TModule extends { default: ComponentType<any> }>(
+  loader: () => Promise<TModule>,
+) {
+  const LazyComponent = lazy(loader);
+
+  return function LazyRouteComponent() {
+    return (
+      <Suspense fallback={<PageFallback />}>
+        <LazyComponent />
+      </Suspense>
+    );
+  };
+}
+
+const Home = lazyRoute(() => import("@/pages/home"));
+const Catalog = lazyRoute(() => import("@/pages/catalog"));
+const ProductDetail = lazyRoute(() => import("@/pages/product-detail"));
+const Category = lazyRoute(() => import("@/pages/category"));
+const News = lazyRoute(() => import("@/pages/news"));
+const Article = lazyRoute(() => import("@/pages/article"));
+const About = lazyRoute(() => import("@/pages/about"));
+const Contacts = lazyRoute(() => import("@/pages/contacts"));
+const Cart = lazyRoute(() => import("@/pages/cart"));
+const Compare = lazyRoute(() => import("@/pages/compare"));
+
+const AdminDashboard = lazyRoute(() => import("@/pages/admin/dashboard"));
+const AdminProducts = lazyRoute(() => import("@/pages/admin/products"));
+const AdminProductForm = lazyRoute(() => import("@/pages/admin/product-form"));
+const AdminCategories = lazyRoute(() => import("@/pages/admin/categories"));
+const AdminOrders = lazyRoute(() => import("@/pages/admin/orders"));
+const AdminOrderDetail = lazyRoute(() => import("@/pages/admin/order-detail"));
+const AdminArticles = lazyRoute(() => import("@/pages/admin/articles"));
+const AdminArticleForm = lazyRoute(() => import("@/pages/admin/article-form"));
+const AdminCatalog = lazyRoute(() => import("@/pages/admin/catalog"));
+const AdminDocuments = lazyRoute(() => import("@/pages/admin/documents"));
+const AdminSettings = lazyRoute(() => import("@/pages/admin/settings"));
+const AdminAnalytics = lazyRoute(() => import("@/pages/admin/analytics"));
+const AdminChat = lazyRoute(() => import("@/pages/admin/chat"));
+const AdminCalcRequests = lazyRoute(() => import("@/pages/admin/calc-requests"));
 
 function AppContent() {
   const [location] = useLocation();
