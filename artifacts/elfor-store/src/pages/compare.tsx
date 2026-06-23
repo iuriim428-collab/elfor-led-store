@@ -3,7 +3,7 @@ import { X, ShoppingCart, ArrowLeft, GitCompareArrows } from "lucide-react";
 import { useComparison } from "@/hooks/use-comparison";
 import { useCart } from "@/hooks/use-cart";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn, formatValueWithUnit } from "@/lib/utils";
 
 type SpecRow = { key: string; values: (string | null)[] };
 
@@ -17,8 +17,8 @@ function buildSpecRows(products: ReturnType<typeof useComparison>["items"]): Spe
         map[s.key] = s.unit ? `${s.value}\u00a0${s.unit}` : s.value;
       }
     }
-    if (p.power) map["Мощность"] = `${p.power} Вт`;
-    if (p.lumens) map["Световой поток"] = `${p.lumens} лм`;
+    if (p.power) map["Мощность"] = formatValueWithUnit(p.power, "Вт");
+    if (p.lumens) map["Световой поток"] = formatValueWithUnit(p.lumens, "лм");
     if (p.colorTemp) map["Цветовая температура"] = p.colorTemp;
     if (p.ipRating) map["Степень защиты"] = p.ipRating;
     if (p.warranty) map["Гарантия"] = `${p.warranty} лет`;

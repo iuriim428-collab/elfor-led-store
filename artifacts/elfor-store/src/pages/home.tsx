@@ -1,12 +1,14 @@
 import { useListFeaturedProducts, useListCategories, useListArticles } from "@workspace/api-client-react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 import { Link } from "wouter";
 import { ArrowRight, Zap, Shield, Factory, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { formatValueWithUnit } from "@/lib/utils";
 
 export default function Home() {
-  const { data: featuredProducts = [], isLoading: isLoadingProducts } = useListFeaturedProducts();
+  const isMobile = useIsMobile();
   const { data: categories = [] } = useListCategories();
-  const { data: articles = [] } = useListArticles({ type: "news", limit: 3, published: true });
 
   return (
     <div className="flex flex-col">
@@ -106,7 +108,7 @@ export default function Home() {
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {categories.map((cat) => (
-              <Link key={cat.id} href={`/categories/${cat.slug}`} className="group block border border-border bg-background overflow-hidden hover-elevate">
+              <Link key={cat.id} href={`/categories/${cat.slug}`} className="group block border border-border bg-background overflow-hidden hover-elevate [content-visibility:auto] [contain-intrinsic-size:320px]">
                 <div className="aspect-[4/3] bg-muted relative p-6 flex flex-col justify-end">
                   <div className="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent z-10" />
                   {cat.imageUrl && (
@@ -120,83 +122,156 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Featured Products */}
-      <section className="py-12 sm:py-24 border-b border-border bg-background">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-between items-end mb-8 sm:mb-12">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif font-black uppercase">Популярные модели</h2>
-          </div>
+      <DeferredSection enabled={isMobile} minHeight={720}>
+        <FeaturedProductsSection />
+      </DeferredSection>
 
-          {isLoadingProducts ? (
-            <div className="flex justify-center py-12"><div className="w-8 h-8 border-4 border-accent border-t-transparent rounded-full animate-spin"></div></div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {featuredProducts.map((product) => (
-                <Link key={product.id} href={`/catalog/${product.id}`} className="group flex flex-col border border-border bg-card hover-elevate h-full">
-                  <div className="aspect-square overflow-hidden flex items-center justify-center border-b border-border relative bg-[#1a1a1a]">
-                    {product.imageUrl ? (
-                      <img src={product.imageUrl} alt={product.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform" loading="lazy" decoding="async" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-[#555] font-mono text-xs">Нет фото</div>
-                    )}
-                    {product.stock > 0 ? (
-                      <div className="absolute top-2 left-2 px-2 py-1 bg-green-500/10 text-green-700 border border-green-500/20 text-[10px] font-mono font-bold uppercase tracking-wider">В наличии</div>
-                    ) : (
-                      <div className="absolute top-2 left-2 px-2 py-1 bg-yellow-500/10 text-yellow-700 border border-yellow-500/20 text-[10px] font-mono font-bold uppercase tracking-wider">Под заказ</div>
-                    )}
-                  </div>
-                  <div className="p-4 flex-1 flex flex-col">
-                    <div className="text-xs font-mono text-muted-foreground mb-2">{product.sku}</div>
-                    <h3 className="font-serif font-bold text-sm uppercase leading-tight mb-4 flex-1 group-hover:text-accent transition-colors">{product.name}</h3>
-                    <div className="flex flex-wrap gap-2 mb-4 font-mono text-[10px] text-muted-foreground">
-                      {product.power && <span className="px-2 py-1 bg-muted border border-border">{product.power} Вт</span>}
-                      {product.lumens && <span className="px-2 py-1 bg-muted border border-border">{product.lumens} лм</span>}
-                    </div>
-                    <div className="flex items-end justify-between mt-auto">
-                      <div>
-                        {product.oldPrice && <div className="text-xs font-mono line-through text-muted-foreground">{product.oldPrice.toLocaleString("ru-RU")} ₽</div>}
-                        <div className="font-mono font-bold text-lg">{product.price.toLocaleString("ru-RU")} ₽</div>
-                      </div>
-                      <Button size="icon" className="rounded-none border border-border bg-primary text-primary-foreground hover:bg-accent hover:border-accent hover:text-white transition-colors h-10 w-10">
-                        <ArrowRight className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
+      <DeferredSection enabled={isMobile} minHeight={520}>
+        <NewsPreviewSection />
+      </DeferredSection>
+    </div>
+  );
+}
+
+function DeferredSection({
+  children,
+  enabled,
+  minHeight,
+}: {
+  children: ReactNode;
+  enabled: boolean;
+  minHeight: number;
+}) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [isVisible, setIsVisible] = useState(!enabled);
+
+  useEffect(() => {
+    if (!enabled) {
+      setIsVisible(true);
+      return;
+    }
+
+    if (!ref.current || isVisible) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "280px 0px" }
+    );
+
+    observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [enabled, isVisible]);
+
+  return (
+    <div ref={ref}>
+      {isVisible ? (
+        children
+      ) : (
+        <section className="py-12 sm:py-24 border-b border-border bg-background">
+          <div className="container mx-auto px-4">
+            <div
+              aria-hidden="true"
+              className="w-full border border-border bg-muted/30 animate-pulse"
+              style={{ minHeight }}
+            />
+          </div>
+        </section>
+      )}
+    </div>
+  );
+}
+
+function FeaturedProductsSection() {
+  const { data: featuredProducts = [], isLoading: isLoadingProducts } = useListFeaturedProducts();
+
+  return (
+    <section className="py-12 sm:py-24 border-b border-border bg-background">
+      <div className="container mx-auto px-4">
+        <div className="flex justify-between items-end mb-8 sm:mb-12">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif font-black uppercase">Популярные модели</h2>
         </div>
-      </section>
 
-      {/* News Preview */}
-      <section className="py-12 sm:py-24 bg-card">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-between items-end mb-8 sm:mb-12">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif font-black uppercase">Новости</h2>
-            <Link href="/news" className="hidden md:flex items-center gap-2 font-mono text-sm font-bold uppercase tracking-wider text-accent hover:text-primary transition-colors">
-              Все новости <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {articles.map((article) => (
-              <Link key={article.id} href={`/news/${article.id}`} className="group flex flex-col border border-border bg-background hover-elevate">
-                {article.imageUrl && (
-                  <div className="aspect-video border-b border-border overflow-hidden bg-muted">
-                    <img src={article.imageUrl} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" decoding="async" />
+        {isLoadingProducts ? (
+          <div className="flex justify-center py-12"><div className="w-8 h-8 border-4 border-accent border-t-transparent rounded-full animate-spin"></div></div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {featuredProducts.map((product) => (
+              <Link key={product.id} href={`/catalog/${product.id}`} className="group flex flex-col border border-border bg-card hover-elevate h-full [content-visibility:auto] [contain-intrinsic-size:540px]">
+                <div className="aspect-square overflow-hidden flex items-center justify-center border-b border-border relative bg-[#1a1a1a]">
+                  {product.imageUrl ? (
+                    <img src={product.imageUrl} alt={product.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform" loading="lazy" decoding="async" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-[#555] font-mono text-xs">Нет фото</div>
+                  )}
+                  {product.stock > 0 ? (
+                    <div className="absolute top-2 left-2 px-2 py-1 bg-green-500/10 text-green-700 border border-green-500/20 text-[10px] font-mono font-bold uppercase tracking-wider">В наличии</div>
+                  ) : (
+                    <div className="absolute top-2 left-2 px-2 py-1 bg-yellow-500/10 text-yellow-700 border border-yellow-500/20 text-[10px] font-mono font-bold uppercase tracking-wider">Под заказ</div>
+                  )}
+                </div>
+                <div className="p-4 flex-1 flex flex-col">
+                  <div className="text-xs font-mono text-muted-foreground mb-2">{product.sku}</div>
+                  <h3 className="font-serif font-bold text-sm uppercase leading-tight mb-4 flex-1 group-hover:text-accent transition-colors">{product.name}</h3>
+                  <div className="flex flex-wrap gap-2 mb-4 font-mono text-[10px] text-muted-foreground">
+                    {product.power && <span className="px-2 py-1 bg-muted border border-border">{formatValueWithUnit(product.power, "Вт")}</span>}
+                    {product.lumens && <span className="px-2 py-1 bg-muted border border-border">{formatValueWithUnit(product.lumens, "лм")}</span>}
                   </div>
-                )}
-                <div className="p-6 flex flex-col flex-1">
-                  <div className="text-xs font-mono text-accent mb-3">{new Date(article.createdAt).toLocaleDateString('ru-RU')}</div>
-                  <h3 className="font-serif font-bold text-lg uppercase leading-tight mb-3 group-hover:text-accent transition-colors">{article.title}</h3>
-                  {article.excerpt && <p className="text-sm font-mono text-muted-foreground line-clamp-3">{article.excerpt}</p>}
+                  <div className="flex items-end justify-between mt-auto">
+                    <div>
+                      {product.oldPrice && <div className="text-xs font-mono line-through text-muted-foreground">{product.oldPrice.toLocaleString("ru-RU")} ₽</div>}
+                      <div className="font-mono font-bold text-lg">{product.price.toLocaleString("ru-RU")} ₽</div>
+                    </div>
+                    <Button size="icon" className="rounded-none border border-border bg-primary text-primary-foreground hover:bg-accent hover:border-accent hover:text-white transition-colors h-10 w-10">
+                      <ArrowRight className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </Link>
             ))}
           </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function NewsPreviewSection() {
+  const { data: articles = [] } = useListArticles({ type: "news", limit: 3, published: true });
+
+  return (
+    <section className="py-12 sm:py-24 bg-card">
+      <div className="container mx-auto px-4">
+        <div className="flex justify-between items-end mb-8 sm:mb-12">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif font-black uppercase">Новости</h2>
+          <Link href="/news" className="hidden md:flex items-center gap-2 font-mono text-sm font-bold uppercase tracking-wider text-accent hover:text-primary transition-colors">
+            Все новости <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
-      </section>
-    </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {articles.map((article) => (
+            <Link key={article.id} href={`/news/${article.id}`} className="group flex flex-col border border-border bg-background hover-elevate [content-visibility:auto] [contain-intrinsic-size:360px]">
+              {article.imageUrl && (
+                <div className="aspect-video border-b border-border overflow-hidden bg-muted">
+                  <img src={article.imageUrl} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" decoding="async" />
+                </div>
+              )}
+              <div className="p-6 flex flex-col flex-1">
+                <div className="text-xs font-mono text-accent mb-3">{new Date(article.createdAt).toLocaleDateString("ru-RU")}</div>
+                <h3 className="font-serif font-bold text-lg uppercase leading-tight mb-3 group-hover:text-accent transition-colors">{article.title}</h3>
+                {article.excerpt && <p className="text-sm font-mono text-muted-foreground line-clamp-3">{article.excerpt}</p>}
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }

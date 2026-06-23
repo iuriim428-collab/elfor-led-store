@@ -10,7 +10,7 @@ import { useCart } from "@/hooks/use-cart";
 import { useState, useEffect, useCallback } from "react";
 import { ShoppingCart, Check, ChevronRight, GitCompareArrows, Calculator, X, ZoomIn } from "lucide-react";
 import { useComparison } from "@/hooks/use-comparison";
-import { cn } from "@/lib/utils";
+import { cn, formatValueWithUnit } from "@/lib/utils";
 
 const KELVIN_LABELS: Record<string, string> = {
   "3000K": "ТЁПЛЫЙ",
@@ -416,13 +416,13 @@ export default function ProductDetail() {
               {product.power && (
                 <div className="flex justify-between border-b border-border border-dashed pb-2">
                   <span className="text-muted-foreground">Мощность</span>
-                  <span className="font-bold text-right">{product.power} Вт</span>
+                  <span className="font-bold text-right">{formatValueWithUnit(product.power, "Вт")}</span>
                 </div>
               )}
               {product.lumens && (
                 <div className="flex justify-between border-b border-border border-dashed pb-2">
                   <span className="text-muted-foreground">Световой поток</span>
-                  <span className="font-bold text-right">{product.lumens} лм</span>
+                  <span className="font-bold text-right">{formatValueWithUnit(product.lumens, "лм")}</span>
                 </div>
               )}
               {product.colorTemp && (

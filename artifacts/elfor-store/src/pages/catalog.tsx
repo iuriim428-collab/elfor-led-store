@@ -1,9 +1,9 @@
 import { useListProducts, useListCategories } from "@workspace/api-client-react";
 import { Link, useSearch } from "wouter";
-import { ArrowRight, Search, Download, SlidersHorizontal, Loader2, GitCompareArrows } from "lucide-react";
+import { ArrowRight, Search, Download, SlidersHorizontal, Loader2, GitCompareArrows, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useDeferredValue, useState } from "react";
 import { useComparison } from "@/hooks/use-comparison";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
@@ -15,6 +15,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface CatalogInfo {
   objectPath: string | null;
@@ -22,15 +23,18 @@ interface CatalogInfo {
 }
 
 export default function Catalog() {
+  const isMobile = useIsMobile();
   const [searchParams] = useSearch();
   const searchObj = new URLSearchParams(searchParams);
   const initialSearch = searchObj.get("search") || "";
   const categoryIdParam = searchObj.get("categoryId");
 
   const [search, setSearch] = useState(initialSearch);
+  const deferredSearch = useDeferredValue(search);
   const [selectedCategory, setSelectedCategory] = useState<number | undefined>(
     categoryIdParam ? parseInt(categoryIdParam) : undefined
   );
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [phone, setPhone] = useState("");
@@ -42,7 +46,7 @@ export default function Catalog() {
 
   const { data: categories = [] } = useListCategories();
   const { data: products = [], isLoading } = useListProducts({
-    search: search || undefined,
+    search: deferredSearch.trim() || undefined,
     categoryId: selectedCategory,
   });
   const descProduct = products.find(p => p.id === descProductId) ?? null;
@@ -109,6 +113,21 @@ export default function Catalog() {
           </button>
         )}
       </div>
+
+      {isMobile && (
+        <div className="mb-6">
+          <button
+            onClick={() => setFiltersOpen((open) => !open)}
+            className="inline-flex w-full items-center justify-between gap-3 border border-border bg-card px-4 py-3 font-mono text-sm font-bold uppercase tracking-wider"
+          >
+            <span className="inline-flex items-center gap-2">
+              <SlidersHorizontal className="h-4 w-4" />
+              Фильтры и поиск
+            </span>
+            <ChevronDown className={cn("h-4 w-4 transition-transform", filtersOpen && "rotate-180")} />
+          </button>
+        </div>
+      )}
 
       {/* Download Modal */}
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
@@ -192,48 +211,56 @@ export default function Catalog() {
 
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Sidebar */}
-        <aside className="w-full lg:w-64 shrink-0 flex flex-col gap-8">
-          <div>
-            <h3 className="font-serif font-bold uppercase mb-4 text-sm tracking-widest flex items-center gap-2">
-              <Search className="h-4 w-4" /> Поиск
-            </h3>
-            <Input 
-              placeholder="Артикул или название" 
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="rounded-none border-border font-mono text-sm h-12"
-            />
-          </div>
+        {(!isMobile || filtersOpen) && (
+          <aside className="w-full lg:w-64 shrink-0 flex flex-col gap-8">
+            <div>
+              <h3 className="font-serif font-bold uppercase mb-4 text-sm tracking-widest flex items-center gap-2">
+                <Search className="h-4 w-4" /> Поиск
+              </h3>
+              <Input 
+                placeholder="Артикул или название" 
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="rounded-none border-border font-mono text-sm h-12"
+              />
+            </div>
 
-          <div>
-            <h3 className="font-serif font-bold uppercase mb-4 text-sm tracking-widest flex items-center gap-2">
-              <SlidersHorizontal className="h-4 w-4" /> Категории
-            </h3>
-            <div className="flex flex-col gap-2 font-mono text-sm">
-              <button
-                onClick={() => setSelectedCategory(undefined)}
-                className={cn(
-                  "text-left px-3 py-2 border border-transparent hover:border-border transition-colors",
-                  selectedCategory === undefined ? "bg-primary text-primary-foreground border-primary" : "text-muted-foreground"
-                )}
-              >
-                Все категории
-              </button>
-              {categories.map((cat) => (
+            <div>
+              <h3 className="font-serif font-bold uppercase mb-4 text-sm tracking-widest flex items-center gap-2">
+                <SlidersHorizontal className="h-4 w-4" /> Категории
+              </h3>
+              <div className="flex flex-col gap-2 font-mono text-sm">
                 <button
-                  key={cat.id}
-                  onClick={() => setSelectedCategory(cat.id)}
+                  onClick={() => {
+                    setSelectedCategory(undefined);
+                    if (isMobile) setFiltersOpen(false);
+                  }}
                   className={cn(
                     "text-left px-3 py-2 border border-transparent hover:border-border transition-colors",
-                    selectedCategory === cat.id ? "bg-primary text-primary-foreground border-primary" : "text-muted-foreground"
+                    selectedCategory === undefined ? "bg-primary text-primary-foreground border-primary" : "text-muted-foreground"
                   )}
                 >
-                  {cat.name}
+                  Все категории
                 </button>
-              ))}
+                {categories.map((cat) => (
+                  <button
+                    key={cat.id}
+                    onClick={() => {
+                      setSelectedCategory(cat.id);
+                      if (isMobile) setFiltersOpen(false);
+                    }}
+                    className={cn(
+                      "text-left px-3 py-2 border border-transparent hover:border-border transition-colors",
+                      selectedCategory === cat.id ? "bg-primary text-primary-foreground border-primary" : "text-muted-foreground"
+                    )}
+                  >
+                    {cat.name}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
-        </aside>
+          </aside>
+        )}
 
         {/* Product Grid */}
         <div className="flex-1">
@@ -247,7 +274,7 @@ export default function Catalog() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
               {products.map((product) => (
-                <Link key={product.id} href={`/catalog/${product.id}`} className="group flex flex-col border border-border bg-card hover-elevate h-full">
+                <Link key={product.id} href={`/catalog/${product.id}`} className="group flex flex-col border border-border bg-card hover-elevate h-full [content-visibility:auto] [contain-intrinsic-size:540px]">
                   <div className="aspect-square overflow-hidden flex items-center justify-center border-b border-border relative bg-[#1a1a1a]">
                     {product.imageUrl ? (
                       <img src={product.imageUrl} alt={product.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform" loading="lazy" decoding="async" />
