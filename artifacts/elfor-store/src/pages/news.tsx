@@ -24,7 +24,7 @@ export default function News() {
             <Link key={article.id} href={`/news/${article.id}`} className="group flex flex-col border border-border bg-background hover-elevate">
               {article.imageUrl && (
                 <div className="aspect-video border-b border-border overflow-hidden bg-muted">
-                  <img src={article.imageUrl} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                  <img src={article.imageUrl} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" decoding="async" />
                 </div>
               )}
               <div className="p-6 flex flex-col flex-1">

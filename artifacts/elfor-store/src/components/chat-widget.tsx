@@ -17,6 +17,11 @@ interface Session {
   status: string;
 }
 
+interface ChatOpenRequest {
+  id: number;
+  message?: string;
+}
+
 const TOKEN_KEY = "elfor_chat_token";
 
 function formatPhone(raw: string): string {
@@ -51,7 +56,7 @@ function formatTime(iso: string) {
   return new Date(iso).toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" });
 }
 
-export function ChatWidget() {
+export function ChatWidget({ openRequest }: { openRequest?: ChatOpenRequest | null }) {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState<"form" | "chat">("form");
   const [name, setName] = useState("");
@@ -75,6 +80,12 @@ export function ChatWidget() {
     window.addEventListener("elfor:open-chat", handler);
     return () => window.removeEventListener("elfor:open-chat", handler);
   }, []);
+
+  useEffect(() => {
+    if (!openRequest?.id) return;
+    if (openRequest.message) pendingMessageRef.current = openRequest.message;
+    setOpen(true);
+  }, [openRequest]);
 
   // Restore session from localStorage
   useEffect(() => {

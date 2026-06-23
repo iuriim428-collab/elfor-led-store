@@ -1,13 +1,12 @@
+import { lazy, Suspense, useEffect, useState } from "react";
 import { Link, useLocation } from "wouter";
 import { useCart } from "@/hooks/use-cart";
 import { ShoppingCart, Menu, X, Phone, Mail, ChevronRight, PhoneCall } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useListCategories } from "@workspace/api-client-react";
 import { useQuery } from "@tanstack/react-query";
 import { useSettings } from "@/hooks/use-settings";
-import { ChatWidget } from "@/components/chat-widget";
 
 interface DocInfo {
   objectPath: string | null;
@@ -20,10 +19,22 @@ interface DocumentsData {
   offer: DocInfo;
 }
 
+interface ChatOpenRequest {
+  id: number;
+  message?: string;
+}
+
+const LazyChatWidget = lazy(async () => {
+  const module = await import("@/components/chat-widget");
+  return { default: module.ChatWidget };
+});
+
 export function PublicLayout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
   const { totalItems, totalPrice } = useCart();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [shouldLoadChat, setShouldLoadChat] = useState(false);
+  const [chatOpenRequest, setChatOpenRequest] = useState<ChatOpenRequest | null>(null);
 
   const { data: categories = [] } = useListCategories();
   const { data: s = {} } = useSettings();
@@ -49,6 +60,16 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
     { href: "/contacts", label: "Контакты" },
   ];
 
+  useEffect(() => {
+    const timer = window.setTimeout(() => setShouldLoadChat(true), 1500);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  const openChat = (message?: string) => {
+    setShouldLoadChat(true);
+    setChatOpenRequest({ id: Date.now(), message });
+  };
+
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background selection:bg-accent selection:text-white">
       {/* Top bar */}
@@ -61,7 +82,7 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
                 <span>{phone}</span>
               </a>
               <button
-                onClick={() => window.dispatchEvent(new CustomEvent("elfor:open-chat", { detail: { message: "Прошу перезвонить мне" } }))}
+                onClick={() => openChat("Прошу перезвонить мне")}
                 className="flex items-center gap-1 text-accent hover:text-accent/80 transition-colors border-b border-dashed border-accent/40 hover:border-accent pb-px self-start"
                 style={{ fontSize: "9px" }}
               >
@@ -86,7 +107,7 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
         <div className="container mx-auto px-4 h-20 flex items-center justify-between">
           <div className="flex items-center gap-8">
             <Link href="/" className="flex items-center">
-              <img src="/logo.png" alt="ЭЛФОР" className="h-10 w-auto" />
+              <img src="/logo.png" alt="ЭЛФОР" className="h-10 w-auto" decoding="async" fetchPriority="high" />
             </Link>
             
             <nav className="hidden lg:flex items-center gap-1">
@@ -128,6 +149,7 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
             <button
               className="lg:hidden p-2"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label={mobileMenuOpen ? "Закрыть меню" : "Открыть меню"}
             >
               {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
@@ -171,7 +193,11 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
         {children}
       </main>
 
-      <ChatWidget />
+      {shouldLoadChat && (
+        <Suspense fallback={null}>
+          <LazyChatWidget openRequest={chatOpenRequest} />
+        </Suspense>
+      )}
 
       {/* Footer */}
       <footer className="bg-primary text-primary-foreground border-t border-border pt-16 pb-8">
@@ -179,7 +205,7 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
             <div>
               <Link href="/" className="mb-6 block">
-                <img src="/logo.png" alt="ЭЛФОР" className="h-9 w-auto brightness-0 invert" />
+                <img src="/logo.png" alt="ЭЛФОР" className="h-9 w-auto brightness-0 invert" loading="lazy" decoding="async" />
               </Link>
               <p className="text-sm text-primary-foreground/60 mb-6 font-mono leading-relaxed">
                 Российский производитель промышленных светодиодных светильников. 

@@ -33,7 +33,7 @@ export default function Home() {
           right: "4%", top: "50%", transform: "translateY(-50%)",
           width: "38%", opacity: 0.07,
         }}>
-          <img src="/logo.png" alt="" className="w-full h-auto brightness-0 invert" draggable={false} />
+          <img src="/logo.png" alt="" className="w-full h-auto brightness-0 invert" draggable={false} decoding="async" />
         </div>
         {/* Horizontal scanline accent */}
         <div className="absolute pointer-events-none" style={{
@@ -110,7 +110,7 @@ export default function Home() {
                 <div className="aspect-[4/3] bg-muted relative p-6 flex flex-col justify-end">
                   <div className="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent z-10" />
                   {cat.imageUrl && (
-                    <img src={cat.imageUrl} alt={cat.name} className="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-50 group-hover:scale-105 transition-transform duration-700" />
+                    <img src={cat.imageUrl} alt={cat.name} className="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-50 group-hover:scale-105 transition-transform duration-700" loading="lazy" decoding="async" />
                   )}
                   <h3 className="relative z-20 text-white font-serif font-bold text-xl uppercase">{cat.name}</h3>
                 </div>
@@ -135,7 +135,7 @@ export default function Home() {
                 <Link key={product.id} href={`/catalog/${product.id}`} className="group flex flex-col border border-border bg-card hover-elevate h-full">
                   <div className="aspect-square overflow-hidden flex items-center justify-center border-b border-border relative bg-[#1a1a1a]">
                     {product.imageUrl ? (
-                      <img src={product.imageUrl} alt={product.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform" />
+                      <img src={product.imageUrl} alt={product.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform" loading="lazy" decoding="async" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-[#555] font-mono text-xs">Нет фото</div>
                     )}
@@ -184,7 +184,7 @@ export default function Home() {
               <Link key={article.id} href={`/news/${article.id}`} className="group flex flex-col border border-border bg-background hover-elevate">
                 {article.imageUrl && (
                   <div className="aspect-video border-b border-border overflow-hidden bg-muted">
-                    <img src={article.imageUrl} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                    <img src={article.imageUrl} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" decoding="async" />
                   </div>
                 )}
                 <div className="p-6 flex flex-col flex-1">

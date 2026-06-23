@@ -27,7 +27,7 @@ export default function Article() {
 
       {article.imageUrl && (
         <div className="mb-12 border border-border">
-          <img src={article.imageUrl} alt={article.title} className="w-full object-cover max-h-[500px]" />
+          <img src={article.imageUrl} alt={article.title} className="w-full object-cover max-h-[500px]" decoding="async" fetchPriority="high" />
         </div>
       )}
 
