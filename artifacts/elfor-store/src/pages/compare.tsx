@@ -21,7 +21,7 @@ function buildSpecRows(products: ReturnType<typeof useComparison>["items"]): Spe
     if (p.lumens) map["Световой поток"] = formatValueWithUnit(p.lumens, "лм");
     if (p.colorTemp) map["Цветовая температура"] = p.colorTemp;
     if (p.ipRating) map["Степень защиты"] = p.ipRating;
-    if (p.warranty) map["Гарантия"] = `${p.warranty} лет`;
+    if (p.warranty) map["Гарантия"] = formatValueWithUnit(p.warranty, "лет");
     return map;
   };
 

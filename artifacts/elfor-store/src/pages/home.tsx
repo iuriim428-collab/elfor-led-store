@@ -264,7 +264,7 @@ function NewsPreviewSection() {
                 </div>
               )}
               <div className="p-6 flex flex-col flex-1">
-                <div className="text-xs font-mono text-accent mb-3">{new Date(article.createdAt).toLocaleDateString("ru-RU")}</div>
+                <div className="text-xs font-mono text-accent mb-3">{new Date(article.publishedAt ?? article.createdAt).toLocaleDateString("ru-RU")}</div>
                 <h3 className="font-serif font-bold text-lg uppercase leading-tight mb-3 group-hover:text-accent transition-colors">{article.title}</h3>
                 {article.excerpt && <p className="text-sm font-mono text-muted-foreground line-clamp-3">{article.excerpt}</p>}
               </div>

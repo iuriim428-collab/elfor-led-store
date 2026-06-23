@@ -22,7 +22,7 @@ export default function Article() {
         <span className="text-primary truncate max-w-[200px]">{article.title}</span>
       </div>
 
-      <div className="text-xs font-mono text-accent mb-4">{new Date(article.createdAt).toLocaleDateString('ru-RU')}</div>
+      <div className="text-xs font-mono text-accent mb-4">{new Date(article.publishedAt ?? article.createdAt).toLocaleDateString('ru-RU')}</div>
       <h1 className="text-3xl md:text-5xl font-serif font-black uppercase mb-12 leading-tight">{article.title}</h1>
 
       {article.imageUrl && (
