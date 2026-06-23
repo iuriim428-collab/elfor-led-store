@@ -29,6 +29,8 @@ services:
     environment:
       NODE_ENV: production
       PORT: 5000
+    volumes:
+      - object_storage_data:/var/lib/elfor/object-storage
 
   web:
     build:
@@ -43,3 +45,4 @@ services:
 
 volumes:
   postgres_data:
+  object_storage_data:

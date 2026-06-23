@@ -1,6 +1,8 @@
 import { Storage, File } from "@google-cloud/storage";
 import { Readable } from "stream";
 import { randomUUID } from "crypto";
+import { promises as fs } from "fs";
+import path from "path";
 import {
   ObjectAclPolicy,
   ObjectPermission,
@@ -10,6 +12,7 @@ import {
 } from "./objectAcl";
 
 const REPLIT_SIDECAR_ENDPOINT = "http://127.0.0.1:1106";
+const LOCAL_UPLOAD_ROUTE_PREFIX = "/api/storage/uploads/direct/";
 
 export const objectStorageClient = new Storage({
   credentials: {
@@ -39,6 +42,142 @@ export class ObjectNotFoundError extends Error {
 
 export class ObjectStorageService {
   constructor() {}
+
+  isLocalObjectStorageEnabled(): boolean {
+    return Boolean(process.env.LOCAL_OBJECT_STORAGE_DIR?.trim());
+  }
+
+  getLocalObjectStorageDir(): string {
+    const dir = process.env.LOCAL_OBJECT_STORAGE_DIR?.trim() || "";
+    if (!dir) {
+      throw new Error(
+        "LOCAL_OBJECT_STORAGE_DIR not set. Set it to a writable directory to enable local object storage."
+      );
+    }
+    return path.resolve(dir);
+  }
+
+  private parseLocalUploadPath(rawPath: string): string | null {
+    let pathname = rawPath;
+
+    if (rawPath.startsWith("http://") || rawPath.startsWith("https://")) {
+      pathname = new URL(rawPath).pathname;
+    }
+
+    if (!pathname.startsWith(LOCAL_UPLOAD_ROUTE_PREFIX)) {
+      return null;
+    }
+
+    const objectId = pathname.slice(LOCAL_UPLOAD_ROUTE_PREFIX.length).trim();
+    if (!/^[A-Za-z0-9-]+$/.test(objectId)) {
+      throw new Error("Invalid local upload path");
+    }
+
+    return `/objects/uploads/${objectId}`;
+  }
+
+  private resolveLocalObjectPath(objectPath: string): string {
+    if (!objectPath.startsWith("/objects/")) {
+      throw new ObjectNotFoundError();
+    }
+
+    const relativePath = objectPath.slice("/objects/".length);
+    if (!relativePath) {
+      throw new ObjectNotFoundError();
+    }
+
+    const baseDir = this.getLocalObjectStorageDir();
+    const absolutePath = path.resolve(baseDir, relativePath);
+    const allowedPrefix = `${baseDir}${path.sep}`;
+
+    if (absolutePath !== baseDir && !absolutePath.startsWith(allowedPrefix)) {
+      throw new ObjectNotFoundError();
+    }
+
+    return absolutePath;
+  }
+
+  getLocalObjectEntityAbsolutePath(objectPath: string): string | null {
+    if (!this.isLocalObjectStorageEnabled()) {
+      return null;
+    }
+
+    return this.resolveLocalObjectPath(objectPath);
+  }
+
+  async assertLocalObjectEntityExists(objectPath: string): Promise<string | null> {
+    const absolutePath = this.getLocalObjectEntityAbsolutePath(objectPath);
+    if (!absolutePath) {
+      return null;
+    }
+
+    try {
+      const stat = await fs.stat(absolutePath);
+      if (!stat.isFile()) {
+        throw new ObjectNotFoundError();
+      }
+      return absolutePath;
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+        throw new ObjectNotFoundError();
+      }
+      throw error;
+    }
+  }
+
+  async saveLocalObjectEntity({
+    objectId,
+    body,
+    contentType,
+  }: {
+    objectId: string;
+    body: Buffer;
+    contentType?: string;
+  }): Promise<string> {
+    if (!this.isLocalObjectStorageEnabled()) {
+      throw new Error("Local object storage is not enabled");
+    }
+
+    if (!/^[A-Za-z0-9-]+$/.test(objectId)) {
+      throw new Error("Invalid object id");
+    }
+
+    const objectPath = `/objects/uploads/${objectId}`;
+    const absolutePath = this.resolveLocalObjectPath(objectPath);
+
+    await fs.mkdir(path.dirname(absolutePath), { recursive: true });
+    await fs.writeFile(absolutePath, body);
+    await fs.writeFile(
+      `${absolutePath}.meta.json`,
+      JSON.stringify(
+        {
+          contentType: contentType || "application/octet-stream",
+          size: body.length,
+        },
+        null,
+        2
+      )
+    );
+
+    return objectPath;
+  }
+
+  async getLocalObjectEntityMetadata(objectPath: string): Promise<{ contentType?: string; size?: number } | null> {
+    const absolutePath = this.getLocalObjectEntityAbsolutePath(objectPath);
+    if (!absolutePath) {
+      return null;
+    }
+
+    try {
+      const raw = await fs.readFile(`${absolutePath}.meta.json`, "utf8");
+      return JSON.parse(raw) as { contentType?: string; size?: number };
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+        return null;
+      }
+      throw error;
+    }
+  }
 
   getPublicObjectSearchPaths(): Array<string> {
     const pathsStr = process.env.PUBLIC_OBJECT_SEARCH_PATHS || "";
@@ -107,6 +246,11 @@ export class ObjectStorageService {
   }
 
   async getObjectEntityUploadURL(): Promise<string> {
+    if (this.isLocalObjectStorageEnabled()) {
+      const objectId = randomUUID();
+      return `${LOCAL_UPLOAD_ROUTE_PREFIX}${objectId}`;
+    }
+
     const privateObjectDir = this.getPrivateObjectDir();
     if (!privateObjectDir) {
       throw new Error(
@@ -155,6 +299,11 @@ export class ObjectStorageService {
   }
 
   normalizeObjectEntityPath(rawPath: string): string {
+    const localObjectPath = this.parseLocalUploadPath(rawPath);
+    if (localObjectPath) {
+      return localObjectPath;
+    }
+
     if (!rawPath.startsWith("https://storage.googleapis.com/")) {
       return rawPath;
     }

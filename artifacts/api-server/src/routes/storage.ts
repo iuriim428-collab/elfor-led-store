@@ -1,4 +1,5 @@
-import { Router, type IRouter, type Request, type Response } from "express";
+import express, { Router, type IRouter, type Request, type Response } from "express";
+import { createReadStream } from "fs";
 import { Readable } from "stream";
 import { ObjectStorageService, ObjectNotFoundError } from "../lib/objectStorage";
 
@@ -12,6 +13,7 @@ function validateUploadBody(body: unknown): body is { name: string; size: number
 
 const router: IRouter = Router();
 const objectStorageService = new ObjectStorageService();
+const rawUploadParser = express.raw({ type: () => true, limit: "25mb" });
 
 /**
  * POST /storage/uploads/request-url
@@ -36,6 +38,38 @@ router.post("/storage/uploads/request-url", async (req: Request, res: Response) 
   } catch (error) {
     req.log.error({ err: error }, "Error generating upload URL");
     res.status(500).json({ error: "Failed to generate upload URL" });
+  }
+});
+
+router.put("/storage/uploads/direct/:objectId", rawUploadParser, async (req: Request, res: Response) => {
+  try {
+    if (!objectStorageService.isLocalObjectStorageEnabled()) {
+      res.status(404).json({ error: "Local object storage is not enabled" });
+      return;
+    }
+
+    const rawObjectId = req.params.objectId;
+    const objectId = Array.isArray(rawObjectId) ? rawObjectId[0] : rawObjectId;
+    if (!objectId) {
+      res.status(400).json({ error: "Missing object id" });
+      return;
+    }
+
+    if (!Buffer.isBuffer(req.body) || req.body.length === 0) {
+      res.status(400).json({ error: "Missing upload body" });
+      return;
+    }
+
+    await objectStorageService.saveLocalObjectEntity({
+      objectId,
+      body: req.body,
+      contentType: req.header("content-type") || "application/octet-stream",
+    });
+
+    res.status(204).end();
+  } catch (error) {
+    req.log.error({ err: error }, "Error saving local object");
+    res.status(500).json({ error: "Failed to save local object" });
   }
 });
 
@@ -85,6 +119,20 @@ router.get("/storage/objects/*path", async (req: Request, res: Response) => {
     const raw = req.params.path;
     const wildcardPath = Array.isArray(raw) ? raw.join("/") : raw;
     const objectPath = `/objects/${wildcardPath}`;
+
+    const localAbsolutePath = await objectStorageService.assertLocalObjectEntityExists(objectPath);
+    if (localAbsolutePath) {
+      const metadata = await objectStorageService.getLocalObjectEntityMetadata(objectPath);
+      const stat = await import("fs").then(fs => fs.promises.stat(localAbsolutePath));
+
+      res.setHeader("Content-Type", metadata?.contentType || "application/octet-stream");
+      res.setHeader("Content-Length", String(stat.size));
+      res.setHeader("Cache-Control", "private, max-age=3600");
+
+      createReadStream(localAbsolutePath).pipe(res);
+      return;
+    }
+
     const objectFile = await objectStorageService.getObjectEntityFile(objectPath);
 
     // --- Protected route example (uncomment when using replit-auth) ---

@@ -10,7 +10,7 @@ import { useCart } from "@/hooks/use-cart";
 import { useState, useEffect, useCallback } from "react";
 import { ShoppingCart, Check, ChevronRight, GitCompareArrows, Calculator, X, ZoomIn } from "lucide-react";
 import { useComparison } from "@/hooks/use-comparison";
-import { cn, formatValueWithUnit } from "@/lib/utils";
+import { cn, formatValueWithUnit, resolveStorageUrl } from "@/lib/utils";
 
 const KELVIN_LABELS: Record<string, string> = {
   "3000K": "ТЁПЛЫЙ",
@@ -46,6 +46,7 @@ export default function ProductDetail() {
   const [activeTab, setActiveTab] = useState<"specs" | "desc">("specs");
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [activeImageIdx, setActiveImageIdx] = useState(0);
+  const [passportStatus, setPassportStatus] = useState<"idle" | "checking" | "available" | "missing">("idle");
 
   const closeLightbox = useCallback(() => setLightboxOpen(false), []);
   useEffect(() => {
@@ -60,6 +61,8 @@ export default function ProductDetail() {
   const colorTemps = (product?.colorTemps ?? []) as string[];
   const beamAngles = (product?.beamAngles ?? []) as string[];
   const variantStocks = (product?.variantStocks ?? []) as { kelvin: string; stock: number }[];
+  const passportPath = (product as { passportUrl?: string | null } | undefined)?.passportUrl ?? null;
+  const passportUrl = passportPath ? resolveStorageUrl(passportPath) : null;
 
   const activeKelvin = selectedKelvin ?? (colorTemps[0] || null);
   const activeAngle = selectedAngle ?? (beamAngles[0] || null);
@@ -73,6 +76,32 @@ export default function ProductDetail() {
   useEffect(() => {
     setQuantity(q => Math.min(q, maxQty));
   }, [activeKelvin, maxQty]);
+
+  useEffect(() => {
+    if (!passportUrl) {
+      setPassportStatus("idle");
+      return;
+    }
+
+    let cancelled = false;
+    setPassportStatus("checking");
+
+    fetch(passportUrl, { method: "HEAD" })
+      .then(response => {
+        if (!cancelled) {
+          setPassportStatus(response.ok ? "available" : "missing");
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setPassportStatus("missing");
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [passportUrl]);
 
   if (isLoading) return <div className="p-12 text-center font-mono">Загрузка...</div>;
   if (!product) return <div className="p-12 text-center font-mono text-red-500">Товар не найден</div>;
@@ -243,9 +272,9 @@ export default function ProductDetail() {
               <GitCompareArrows className="h-3 w-3" />
               {isInComparison(product.id) ? "В сравнении" : "Сравнить"}
             </button>
-            {(product as { passportUrl?: string | null }).passportUrl ? (
+            {passportUrl && passportStatus === "available" ? (
               <a
-                href={(product as { passportUrl?: string | null }).passportUrl!}
+                href={passportUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1.5 px-3 py-1 border border-accent/40 text-accent hover:bg-accent/10 transition-colors ml-auto"
