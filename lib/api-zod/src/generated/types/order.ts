@@ -24,4 +24,6 @@ export interface Order {
   items: OrderItem[];
   createdAt: string;
   updatedAt?: string;
+  /** @nullable */
+  invoiceFilePath?: string | null;
 }

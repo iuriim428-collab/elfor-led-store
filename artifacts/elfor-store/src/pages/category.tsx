@@ -1,4 +1,8 @@
-import { useListProducts, useListCategories } from "@workspace/api-client-react";
+import {
+  getListProductsQueryKey,
+  useListProducts,
+  useListCategories,
+} from "@workspace/api-client-react";
 import { useParams, Link } from "wouter";
 import { ArrowRight, GitCompareArrows } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -22,7 +26,12 @@ export default function Category() {
   
   const { data: products = [], isLoading } = useListProducts({
     categoryId: category?.id,
-  }, { query: { enabled: !!category } });
+  }, {
+    query: {
+      enabled: !!category,
+      queryKey: getListProductsQueryKey({ categoryId: category?.id }),
+    },
+  });
 
   const descProduct = products.find(p => p.id === descProductId) ?? null;
 

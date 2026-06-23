@@ -11,4 +11,6 @@ export interface OrderPatch {
   status?: OrderPatchStatus;
   /** @nullable */
   comment?: string | null;
+  /** @nullable */
+  invoiceFilePath?: string | null;
 }

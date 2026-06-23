@@ -1,4 +1,9 @@
-import { useGetOrder, useUpdateOrder, useSendInvoice } from "@workspace/api-client-react";
+import {
+  getGetOrderQueryKey,
+  useGetOrder,
+  useSendInvoice,
+  useUpdateOrder,
+} from "@workspace/api-client-react";
 import { useParams, Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -10,7 +15,9 @@ import { useRef, useState } from "react";
 export default function AdminOrderDetail() {
   const { id } = useParams();
   const orderId = parseInt(id!);
-  const { data: order, isLoading } = useGetOrder(orderId, { query: { enabled: !!orderId } });
+  const { data: order, isLoading } = useGetOrder(orderId, {
+    query: { enabled: !!orderId, queryKey: getGetOrderQueryKey(orderId) },
+  });
   const updateOrder = useUpdateOrder();
   const sendInvoice = useSendInvoice();
   const queryClient = useQueryClient();

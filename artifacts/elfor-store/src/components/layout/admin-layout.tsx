@@ -52,7 +52,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
               >
                 <item.icon className="h-5 w-5 shrink-0" />
                 <span className="flex-1">{item.name}</span>
-                {"badge" in item && item.badge > 0 && (
+                {typeof item.badge === "number" && item.badge > 0 && (
                   <span className="w-5 h-5 rounded-full bg-green-500 text-white text-[10px] font-bold flex items-center justify-center shrink-0">
                     {item.badge > 9 ? "9+" : item.badge}
                   </span>

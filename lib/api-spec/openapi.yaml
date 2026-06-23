@@ -1044,6 +1044,8 @@ components:
           type: string
         updatedAt:
           type: string
+        invoiceFilePath:
+          type: ["string", "null"]
 
     OrderInput:
       type: object
@@ -1076,6 +1078,8 @@ components:
           type: string
           enum: [new, processing, shipped, delivered, cancelled, archive]
         comment:
+          type: ["string", "null"]
+        invoiceFilePath:
           type: ["string", "null"]
 
     # ===== STORAGE =====

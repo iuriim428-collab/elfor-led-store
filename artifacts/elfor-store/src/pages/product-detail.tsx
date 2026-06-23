@@ -1,4 +1,8 @@
-import { useGetProduct, useCreateCalcRequest } from "@workspace/api-client-react";
+import {
+  getGetProductQueryKey,
+  useCreateCalcRequest,
+  useGetProduct,
+} from "@workspace/api-client-react";
 import { useParams, Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,7 +27,9 @@ export default function ProductDetail() {
   const { id } = useParams();
   const productId = parseInt(id!);
   
-  const { data: product, isLoading } = useGetProduct(productId, { query: { enabled: !!productId } });
+  const { data: product, isLoading } = useGetProduct(productId, {
+    query: { enabled: !!productId, queryKey: getGetProductQueryKey(productId) },
+  });
   const { addItem } = useCart();
   const { toggleItem, isInComparison } = useComparison();
   const { mutate: submitCalcRequest, isPending: calcPending } = useCreateCalcRequest();

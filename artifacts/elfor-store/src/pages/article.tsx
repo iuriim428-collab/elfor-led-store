@@ -1,11 +1,13 @@
-import { useGetArticle } from "@workspace/api-client-react";
+import { getGetArticleQueryKey, useGetArticle } from "@workspace/api-client-react";
 import { useParams, Link } from "wouter";
 
 export default function Article() {
   const { id } = useParams();
   const articleId = parseInt(id!);
   
-  const { data: article, isLoading } = useGetArticle(articleId, { query: { enabled: !!articleId } });
+  const { data: article, isLoading } = useGetArticle(articleId, {
+    query: { enabled: !!articleId, queryKey: getGetArticleQueryKey(articleId) },
+  });
 
   if (isLoading) return <div className="p-24 text-center font-mono">Загрузка...</div>;
   if (!article) return <div className="p-24 text-center font-mono text-destructive">Статья не найдена</div>;

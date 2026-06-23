@@ -279,6 +279,8 @@ export interface Order {
   items: OrderItem[];
   createdAt: string;
   updatedAt?: string;
+  /** @nullable */
+  invoiceFilePath?: string | null;
 }
 
 export interface OrderInput {
@@ -310,6 +312,8 @@ export interface OrderPatch {
   status?: OrderPatchStatus;
   /** @nullable */
   comment?: string | null;
+  /** @nullable */
+  invoiceFilePath?: string | null;
 }
 
 export interface UploadUrlRequest {

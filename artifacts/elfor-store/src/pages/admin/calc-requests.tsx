@@ -49,7 +49,7 @@ async function uploadToStorage(uploadURL: string, file: File): Promise<void> {
 interface RowDetailProps {
   req: {
     id: number;
-    name: string | null;
+    name?: string | null;
     phone: string;
     email?: string | null;
     productId?: number | null;

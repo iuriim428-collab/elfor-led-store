@@ -1,0 +1,11 @@
+.git
+.agents
+node_modules
+**/node_modules
+**/dist
+**/.turbo
+**/.cache
+*.log
+.env
+.env.*
+!.env.staging.example

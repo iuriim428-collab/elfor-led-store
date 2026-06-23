@@ -239,8 +239,9 @@ export default function AdminProductForm() {
   const queryClient = useQueryClient();
 
   const { data: categories = [] } = useListCategories();
-  const { data: product, isLoading: isLoadingProduct } = useGetProduct(parseInt(id!), { 
-    query: { enabled: isEditing } 
+  const productId = parseInt(id!);
+  const { data: product, isLoading: isLoadingProduct } = useGetProduct(productId, { 
+    query: { enabled: isEditing, queryKey: getGetProductQueryKey(productId) } 
   });
 
   const createProduct = useCreateProduct();
@@ -356,7 +357,6 @@ export default function AdminProductForm() {
     };
 
     if (isEditing) {
-      const productId = parseInt(id!);
       updateProduct.mutate({ id: productId, data }, {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["/api/products"] });

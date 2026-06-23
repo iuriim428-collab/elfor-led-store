@@ -1,4 +1,9 @@
-import { useCreateArticle, useUpdateArticle, useGetArticle } from "@workspace/api-client-react";
+import {
+  getGetArticleQueryKey,
+  useCreateArticle,
+  useGetArticle,
+  useUpdateArticle,
+} from "@workspace/api-client-react";
 import { useParams, useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -30,8 +35,9 @@ export default function AdminArticleForm() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: article, isLoading } = useGetArticle(parseInt(id!), { 
-    query: { enabled: isEditing } 
+  const articleId = parseInt(id!);
+  const { data: article, isLoading } = useGetArticle(articleId, { 
+    query: { enabled: isEditing, queryKey: getGetArticleQueryKey(articleId) } 
   });
 
   const createArticle = useCreateArticle();

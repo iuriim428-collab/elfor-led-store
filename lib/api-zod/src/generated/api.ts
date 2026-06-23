@@ -529,7 +529,8 @@ export const ListOrdersResponseItem = zod.object({
   "selectedAngle": zod.string().nullish()
 })),
   "createdAt": zod.string(),
-  "updatedAt": zod.string().optional()
+  "updatedAt": zod.string().optional(),
+  "invoiceFilePath": zod.string().nullish()
 })
 export const ListOrdersResponse = zod.array(ListOrdersResponseItem)
 
@@ -601,7 +602,8 @@ export const GetOrderResponse = zod.object({
   "selectedAngle": zod.string().nullish()
 })),
   "createdAt": zod.string(),
-  "updatedAt": zod.string().optional()
+  "updatedAt": zod.string().optional(),
+  "invoiceFilePath": zod.string().nullish()
 })
 
 
@@ -614,7 +616,8 @@ export const UpdateOrderParams = zod.object({
 
 export const UpdateOrderBody = zod.object({
   "status": zod.enum(['new', 'processing', 'shipped', 'delivered', 'cancelled', 'archive']).optional(),
-  "comment": zod.string().nullish()
+  "comment": zod.string().nullish(),
+  "invoiceFilePath": zod.string().nullish()
 })
 
 export const UpdateOrderResponse = zod.object({
@@ -637,7 +640,8 @@ export const UpdateOrderResponse = zod.object({
   "selectedAngle": zod.string().nullish()
 })),
   "createdAt": zod.string(),
-  "updatedAt": zod.string().optional()
+  "updatedAt": zod.string().optional(),
+  "invoiceFilePath": zod.string().nullish()
 })
 
 
@@ -774,7 +778,8 @@ export const GetDashboardStatsResponse = zod.object({
   "selectedAngle": zod.string().nullish()
 })),
   "createdAt": zod.string(),
-  "updatedAt": zod.string().optional()
+  "updatedAt": zod.string().optional(),
+  "invoiceFilePath": zod.string().nullish()
 })),
   "ordersByStatus": zod.array(zod.object({
   "status": zod.string(),
