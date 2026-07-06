@@ -43,6 +43,7 @@ const ProductDetail = lazyRoute(() => import("@/pages/product-detail"));
 const Category = lazyRoute(() => import("@/pages/category"));
 const News = lazyRoute(() => import("@/pages/news"));
 const Article = lazyRoute(() => import("@/pages/article"));
+const Projects = lazyRoute(() => import("@/pages/projects"));
 const About = lazyRoute(() => import("@/pages/about"));
 const Contacts = lazyRoute(() => import("@/pages/contacts"));
 const Cart = lazyRoute(() => import("@/pages/cart"));
@@ -56,6 +57,8 @@ const AdminOrders = lazyRoute(() => import("@/pages/admin/orders"));
 const AdminOrderDetail = lazyRoute(() => import("@/pages/admin/order-detail"));
 const AdminArticles = lazyRoute(() => import("@/pages/admin/articles"));
 const AdminArticleForm = lazyRoute(() => import("@/pages/admin/article-form"));
+const AdminProjects = lazyRoute(() => import("@/pages/admin/projects"));
+const AdminProjectForm = lazyRoute(() => import("@/pages/admin/project-form"));
 const AdminCatalog = lazyRoute(() => import("@/pages/admin/catalog"));
 const AdminDocuments = lazyRoute(() => import("@/pages/admin/documents"));
 const AdminSettings = lazyRoute(() => import("@/pages/admin/settings"));
@@ -82,6 +85,9 @@ function AppContent() {
             <Route path="/articles/new" component={AdminArticleForm} />
             <Route path="/articles/:id" component={AdminArticleForm} />
             <Route path="/articles" component={AdminArticles} />
+            <Route path="/projects/new" component={AdminProjectForm} />
+            <Route path="/projects/:id" component={AdminProjectForm} />
+            <Route path="/projects" component={AdminProjects} />
             <Route path="/catalog" component={AdminCatalog} />
             <Route path="/documents" component={AdminDocuments} />
             <Route path="/settings" component={AdminSettings} />
@@ -107,6 +113,7 @@ function AppContent() {
             <Route path="/categories/:slug" component={Category} />
             <Route path="/news" component={News} />
             <Route path="/news/:id" component={Article} />
+            <Route path="/projects" component={Projects} />
             <Route path="/about" component={About} />
             <Route path="/contacts" component={Contacts} />
             <Route path="/cart" component={Cart} />

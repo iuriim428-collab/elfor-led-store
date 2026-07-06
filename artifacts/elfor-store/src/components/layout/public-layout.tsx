@@ -59,6 +59,7 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
     { href: "/news", label: "Новости" },
     { href: "/contacts", label: "Контакты" },
   ];
+  navLinks.splice(3, 0, { href: "/projects", label: "Наши проекты" });
 
   useEffect(() => {
     const timer = window.setTimeout(() => setShouldLoadChat(true), 1500);

@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { LayoutDashboard, Package, FolderTree, ShoppingBag, FileText, Store, LogOut, BookOpen, FileArchive, Settings, BarChart2, MessageCircle, Calculator } from "lucide-react";
+import { LayoutDashboard, Package, FolderTree, ShoppingBag, FileText, Store, LogOut, BookOpen, FileArchive, Settings, BarChart2, MessageCircle, Calculator, ImageIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAdminAuth } from "@/hooks/use-admin-auth";
 import { useOpenChats } from "@/hooks/use-open-chats";
@@ -22,6 +22,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
     { name: "Расчёты освещения", href: "/calc-requests", icon: Calculator },
     { name: "Настройки", href: "/settings", icon: Settings },
   ];
+  navigation.splice(5, 0, { name: "Проекты", href: "/projects", icon: ImageIcon });
 
   return (
     <div className="min-h-screen bg-background flex">
