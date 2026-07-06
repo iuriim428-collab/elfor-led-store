@@ -4,7 +4,8 @@ import { Link } from "wouter";
 import { ArrowRight, Zap, Shield, Factory, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { formatValueWithUnit } from "@/lib/utils";
+import { formatValueWithUnit, resolveStorageUrl } from "@/lib/utils";
+import { ProductCardImageCarousel } from "@/components/product-card-image-carousel";
 
 export default function Home() {
   const isMobile = useIsMobile();
@@ -112,7 +113,7 @@ export default function Home() {
                 <div className="aspect-[4/3] bg-muted relative p-6 flex flex-col justify-end">
                   <div className="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent z-10" />
                   {cat.imageUrl && (
-                    <img src={cat.imageUrl} alt={cat.name} className="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-50 group-hover:scale-105 transition-transform duration-700" loading="lazy" decoding="async" />
+                    <img src={resolveStorageUrl(cat.imageUrl)} alt={cat.name} className="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-50 group-hover:scale-105 transition-transform duration-700" loading="lazy" decoding="async" />
                   )}
                   <h3 className="relative z-20 text-white font-serif font-bold text-xl uppercase">{cat.name}</h3>
                 </div>
@@ -204,12 +205,12 @@ function FeaturedProductsSection() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {featuredProducts.map((product) => (
               <Link key={product.id} href={`/catalog/${product.id}`} className="group flex flex-col border border-border bg-card hover-elevate h-full [content-visibility:auto] [contain-intrinsic-size:540px]">
-                <div className="aspect-square overflow-hidden flex items-center justify-center border-b border-border relative bg-[#1a1a1a]">
-                  {product.imageUrl ? (
-                    <img src={product.imageUrl} alt={product.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform" loading="lazy" decoding="async" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-[#555] font-mono text-xs">Нет фото</div>
-                  )}
+                <div className="relative">
+                  <ProductCardImageCarousel
+                    imageUrl={product.imageUrl}
+                    images={product.images ?? []}
+                    name={product.name}
+                  />
                   {product.stock > 0 ? (
                     <div className="absolute top-2 left-2 px-2 py-1 bg-green-500/10 text-green-700 border border-green-500/20 text-[10px] font-mono font-bold uppercase tracking-wider">В наличии</div>
                   ) : (

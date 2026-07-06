@@ -3,12 +3,33 @@ import { createReadStream } from "fs";
 import { Readable } from "stream";
 import { ObjectStorageService, ObjectNotFoundError } from "../lib/objectStorage";
 
-function validateUploadBody(body: unknown): body is { name: string; size: number; contentType: string } {
-  if (!body || typeof body !== "object") return false;
+type UploadRequestBody = {
+  name: string;
+  size: number;
+  contentType: string;
+};
+
+function parseUploadBody(body: unknown): UploadRequestBody | null {
+  if (!body || typeof body !== "object") return null;
   const b = body as Record<string, unknown>;
-  return typeof b.name === "string" && b.name.length > 0 &&
-    typeof b.size === "number" && b.size > 0 &&
-    typeof b.contentType === "string" && b.contentType.length > 0;
+
+  const rawName = typeof b.name === "string" ? b.name.trim() : "";
+  const rawSize = typeof b.size === "number"
+    ? b.size
+    : typeof b.size === "string"
+      ? Number(b.size)
+      : Number.NaN;
+  const rawContentType = typeof b.contentType === "string" ? b.contentType.trim() : "";
+
+  if (!rawName || !Number.isFinite(rawSize) || rawSize <= 0) {
+    return null;
+  }
+
+  return {
+    name: rawName,
+    size: rawSize,
+    contentType: rawContentType || "application/octet-stream",
+  };
 }
 
 const router: IRouter = Router();
@@ -23,13 +44,15 @@ const rawUploadParser = express.raw({ type: () => true, limit: "25mb" });
  * Then uploads the file directly to the returned presigned URL.
  */
 router.post("/storage/uploads/request-url", async (req: Request, res: Response) => {
-  if (!validateUploadBody(req.body)) {
+  const uploadBody = parseUploadBody(req.body);
+
+  if (!uploadBody) {
     res.status(400).json({ error: "Missing or invalid required fields" });
     return;
   }
 
   try {
-    const { name, size, contentType } = req.body;
+    const { name, size, contentType } = uploadBody;
 
     const uploadURL = await objectStorageService.getObjectEntityUploadURL();
     const objectPath = objectStorageService.normalizeObjectEntityPath(uploadURL);
@@ -70,6 +93,25 @@ router.put("/storage/uploads/direct/:objectId", rawUploadParser, async (req: Req
   } catch (error) {
     req.log.error({ err: error }, "Error saving local object");
     res.status(500).json({ error: "Failed to save local object" });
+  }
+});
+
+router.post("/storage/uploads/file", rawUploadParser, async (req: Request, res: Response) => {
+  try {
+    if (!Buffer.isBuffer(req.body) || req.body.length === 0) {
+      res.status(400).json({ error: "Missing upload body" });
+      return;
+    }
+
+    const objectPath = await objectStorageService.saveObjectEntity({
+      body: req.body,
+      contentType: req.header("content-type") || "application/octet-stream",
+    });
+
+    res.status(201).json({ objectPath });
+  } catch (error) {
+    req.log.error({ err: error }, "Error uploading file directly");
+    res.status(500).json({ error: "Failed to upload file" });
   }
 });
 

@@ -43,18 +43,26 @@ export class ObjectNotFoundError extends Error {
 export class ObjectStorageService {
   constructor() {}
 
-  isLocalObjectStorageEnabled(): boolean {
+  private hasLocalObjectStorageDir(): boolean {
     return Boolean(process.env.LOCAL_OBJECT_STORAGE_DIR?.trim());
   }
 
+  private hasPrivateObjectDir(): boolean {
+    return Boolean(process.env.PRIVATE_OBJECT_DIR?.trim());
+  }
+
+  isLocalObjectStorageEnabled(): boolean {
+    return this.hasLocalObjectStorageDir() || !this.hasPrivateObjectDir();
+  }
+
   getLocalObjectStorageDir(): string {
-    const dir = process.env.LOCAL_OBJECT_STORAGE_DIR?.trim() || "";
-    if (!dir) {
-      throw new Error(
-        "LOCAL_OBJECT_STORAGE_DIR not set. Set it to a writable directory to enable local object storage."
-      );
+    const configuredDir = process.env.LOCAL_OBJECT_STORAGE_DIR?.trim();
+    if (configuredDir) {
+      return path.resolve(configuredDir);
     }
-    return path.resolve(dir);
+
+    // Fall back to repo-local storage when cloud object storage is not configured.
+    return path.resolve(process.cwd(), ".local", "object-storage");
   }
 
   private parseLocalUploadPath(rawPath: string): string | null {
@@ -160,6 +168,37 @@ export class ObjectStorageService {
     );
 
     return objectPath;
+  }
+
+  async saveObjectEntity({
+    body,
+    contentType,
+  }: {
+    body: Buffer;
+    contentType?: string;
+  }): Promise<string> {
+    const objectId = randomUUID();
+
+    if (this.isLocalObjectStorageEnabled()) {
+      return this.saveLocalObjectEntity({
+        objectId,
+        body,
+        contentType,
+      });
+    }
+
+    const privateObjectDir = this.getPrivateObjectDir();
+    const fullPath = `${privateObjectDir.replace(/\/$/, "")}/uploads/${objectId}`;
+    const { bucketName, objectName } = parseObjectPath(fullPath);
+    const bucket = objectStorageClient.bucket(bucketName);
+    const objectFile = bucket.file(objectName);
+
+    await objectFile.save(body, {
+      resumable: false,
+      contentType: contentType || "application/octet-stream",
+    });
+
+    return `/objects/uploads/${objectId}`;
   }
 
   async getLocalObjectEntityMetadata(objectPath: string): Promise<{ contentType?: string; size?: number } | null> {

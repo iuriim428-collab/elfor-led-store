@@ -2,6 +2,7 @@ import { Link } from "wouter";
 import { X, GitCompareArrows } from "lucide-react";
 import { useComparison } from "@/hooks/use-comparison";
 import { Button } from "@/components/ui/button";
+import { resolveStorageUrl } from "@/lib/utils";
 
 export function ComparisonBar() {
   const { items, removeItem, clearComparison, count } = useComparison();
@@ -25,7 +26,7 @@ export function ComparisonBar() {
             >
               {product.imageUrl && (
                 <img
-                  src={product.imageUrl}
+                  src={resolveStorageUrl(product.imageUrl)}
                   alt={product.name}
                   className="h-8 w-8 object-contain bg-[#1a1a1a]"
                 />

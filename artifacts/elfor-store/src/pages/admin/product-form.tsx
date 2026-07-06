@@ -13,6 +13,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Trash2, Plus, Upload, X, FileText, ImageIcon, Loader2 } from "lucide-react";
 import { useEffect, useRef, useMemo, useState, useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { resolveStorageUrl } from "@/lib/utils";
 
 const formSchema = z.object({
   name: z.string().min(1, "Название обязательно"),
@@ -47,6 +48,44 @@ const formSchema = z.object({
 
 type UploadState = "idle" | "uploading" | "done" | "error";
 
+async function uploadProductFile(file: File): Promise<string> {
+  return uploadProductFileViaRequestUrl(file);
+}
+
+async function uploadProductFileViaRequestUrl(file: File): Promise<string> {
+  const uploadRequest = await fetch("/api/storage/uploads/request-url", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      name: file.name,
+      size: file.size,
+      contentType: file.type || "application/octet-stream",
+    }),
+  });
+
+  if (!uploadRequest.ok) {
+    const errorData = await uploadRequest.json().catch(() => null);
+    throw new Error(errorData?.error || `Не удалось получить URL для загрузки (${uploadRequest.status})`);
+  }
+
+  const data = await uploadRequest.json() as { uploadURL: string; objectPath: string };
+  const uploadResponse = await fetch(data.uploadURL, {
+    method: "PUT",
+    headers: {
+      "Content-Type": file.type || "application/octet-stream",
+    },
+    body: file,
+  });
+
+  if (!uploadResponse.ok) {
+    throw new Error(`Не удалось загрузить файл (${uploadResponse.status})`);
+  }
+
+  return data.objectPath;
+}
+
 interface FileUploadWidgetProps {
   label: string;
   accept: string;
@@ -66,21 +105,7 @@ function FileUploadWidget({ label, accept, value, onChange, icon, hint }: FileUp
     setState("uploading");
     setFileName(file.name);
     try {
-      const metaRes = await fetch("/api/storage/uploads/request-url", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: file.name, size: file.size, contentType: file.type }),
-      });
-      if (!metaRes.ok) throw new Error("Не удалось получить URL загрузки");
-      const { uploadURL, objectPath } = await metaRes.json();
-
-      const putRes = await fetch(uploadURL, {
-        method: "PUT",
-        headers: { "Content-Type": file.type },
-        body: file,
-      });
-      if (!putRes.ok) throw new Error("Ошибка загрузки файла");
-
+      const objectPath = await uploadProductFile(file);
       onChange(objectPath);
       setState("done");
     } catch (err) {
@@ -108,6 +133,7 @@ function FileUploadWidget({ label, accept, value, onChange, icon, hint }: FileUp
   }, [onChange]);
 
   const isImage = accept.includes("image");
+  const resolvedValue = value ? resolveStorageUrl(value) : value;
   const displayName = value
     ? (value.startsWith("/api/storage/") ? (fileName || value.split("/").pop() || "файл") : value.split("/").pop() || value)
     : "";
@@ -119,7 +145,7 @@ function FileUploadWidget({ label, accept, value, onChange, icon, hint }: FileUp
       {value ? (
         <div className="border border-border bg-card p-3 flex items-center gap-3">
           {isImage ? (
-            <img src={value} alt="" className="h-16 w-16 object-contain bg-[#1a1a1a] shrink-0" />
+            <img src={resolvedValue ?? undefined} alt="" className="h-16 w-16 object-contain bg-[#1a1a1a] shrink-0" />
           ) : (
             <div className="h-16 w-16 bg-accent/10 border border-accent/20 flex items-center justify-center shrink-0">
               <FileText className="h-6 w-6 text-accent" />
@@ -168,43 +194,103 @@ function FileUploadWidget({ label, accept, value, onChange, icon, hint }: FileUp
   );
 }
 
-function GalleryAddButton({ onAdd }: { onAdd: (url: string) => void }) {
+function GalleryUploader({ onAdd }: { onAdd: (urls: string[]) => void }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const [uploadTotal, setUploadTotal] = useState(0);
   const { toast } = useToast();
 
-  const handleFile = useCallback(async (file: File) => {
+  const uploadSingleFile = useCallback(async (file: File) => {
+      return uploadProductFile(file);
+  }, []);
+
+  const handleFiles = useCallback(async (files: FileList | File[]) => {
+    const selectedFiles = Array.from(files).filter((file) => file.type.startsWith("image/"));
+    if (selectedFiles.length === 0) return;
+
     setUploading(true);
+    setUploadTotal(selectedFiles.length);
     try {
-      const metaRes = await fetch("/api/storage/uploads/request-url", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: file.name, size: file.size, contentType: file.type }),
-      });
-      if (!metaRes.ok) throw new Error("Не удалось получить URL загрузки");
-      const { uploadURL, objectPath } = await metaRes.json();
-      const putRes = await fetch(uploadURL, { method: "PUT", headers: { "Content-Type": file.type }, body: file });
-      if (!putRes.ok) throw new Error("Ошибка загрузки");
-      onAdd(objectPath);
+      const uploaded: string[] = [];
+      let failedCount = 0;
+
+      for (const file of selectedFiles) {
+        try {
+          uploaded.push(await uploadSingleFile(file));
+        } catch (error) {
+          failedCount += 1;
+          if (selectedFiles.length === 1) {
+            throw error;
+          }
+        }
+      }
+
+      if (uploaded.length > 0) {
+        onAdd(uploaded);
+      }
+
+      if (failedCount > 0) {
+        toast({
+          title: uploaded.length > 0 ? "Часть фото не загружена" : "Ошибка загрузки",
+          description:
+            uploaded.length > 0
+              ? `Загружено ${uploaded.length}, с ошибкой ${failedCount}`
+              : "Не удалось загрузить фотографии",
+          variant: "destructive",
+        });
+      }
     } catch (err) {
       toast({ title: "Ошибка загрузки", description: String(err), variant: "destructive" });
     } finally {
       setUploading(false);
+      setUploadTotal(0);
       if (inputRef.current) inputRef.current.value = "";
     }
-  }, [onAdd, toast]);
+  }, [onAdd, toast, uploadSingleFile]);
 
   return (
-    <>
-      <Button type="button" variant="outline" size="sm" disabled={uploading}
-        onClick={() => inputRef.current?.click()}
-        className="rounded-none border-border h-8 text-xs">
-        {uploading ? <Loader2 className="h-3 w-3 mr-1 animate-spin" /> : <Plus className="h-3 w-3 mr-1" />}
-        Добавить фото
-      </Button>
-      <input ref={inputRef} type="file" accept="image/*" className="hidden"
-        onChange={e => { const f = e.target.files?.[0]; if (f) handleFile(f); }} />
-    </>
+    <div
+      onDrop={(e) => {
+        e.preventDefault();
+        void handleFiles(e.dataTransfer.files);
+      }}
+      onDragOver={(e) => e.preventDefault()}
+      className="border border-dashed border-border p-4 bg-muted/20"
+    >
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="space-y-1">
+          <div className="font-mono text-xs font-bold uppercase">Загрузить дополнительные фото</div>
+          <p className="font-mono text-[10px] text-muted-foreground">
+            Можно выбрать или перетащить сразу несколько изображений.
+          </p>
+        </div>
+
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          disabled={uploading}
+          onClick={() => inputRef.current?.click()}
+          className="rounded-none border-border h-8 text-xs"
+        >
+          {uploading ? <Loader2 className="h-3 w-3 mr-1 animate-spin" /> : <Plus className="h-3 w-3 mr-1" />}
+          {uploading ? `Загрузка ${uploadTotal} фото` : "Выбрать фото"}
+        </Button>
+      </div>
+
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        multiple
+        className="hidden"
+        onChange={(e) => {
+          if (e.target.files?.length) {
+            void handleFiles(e.target.files);
+          }
+        }}
+      />
+    </div>
   );
 }
 
@@ -220,7 +306,7 @@ function GalleryGrid({ images, onRemove }: { images: string[]; onRemove: (idx: n
     <div className="flex flex-wrap gap-3">
       {images.map((url, idx) => (
         <div key={idx} className="relative group border border-border bg-[#1a1a1a]">
-          <img src={url} alt="" className="h-20 w-20 object-contain" />
+          <img src={resolveStorageUrl(url)} alt="" className="h-20 w-20 object-contain" />
           <button type="button" onClick={() => onRemove(idx)}
             className="absolute top-0.5 right-0.5 opacity-0 group-hover:opacity-100 transition-opacity bg-black/70 rounded-full p-0.5 text-white hover:bg-destructive">
             <X className="h-3 w-3" />
@@ -620,13 +706,14 @@ export default function AdminProductForm() {
             <div className="space-y-3">
               <div className="flex justify-between items-center">
                 <label className="text-xs font-bold uppercase font-mono">Дополнительные фотографии</label>
-                <GalleryAddButton
-                  onAdd={(url) => {
-                    const cur = form.getValues("images") ?? [];
-                    form.setValue("images", [...cur, url], { shouldDirty: true });
-                  }}
-                />
               </div>
+              <GalleryUploader
+                onAdd={(urls) => {
+                  if (urls.length === 0) return;
+                    const cur = form.getValues("images") ?? [];
+                    form.setValue("images", [...cur, ...urls], { shouldDirty: true });
+                }}
+              />
               <GalleryGrid
                 images={form.watch("images") ?? []}
                 onRemove={(idx) => {

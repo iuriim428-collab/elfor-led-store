@@ -3,9 +3,9 @@ import { Link, useSearch } from "wouter";
 import { ArrowRight, Search, Download, SlidersHorizontal, Loader2, GitCompareArrows, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useDeferredValue, useState } from "react";
+import { useDeferredValue, useEffect, useState } from "react";
 import { useComparison } from "@/hooks/use-comparison";
-import { cn } from "@/lib/utils";
+import { cn, resolveStorageUrl } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import {
   Dialog,
@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { ProductCardImageCarousel } from "@/components/product-card-image-carousel";
 
 interface CatalogInfo {
   objectPath: string | null;
@@ -23,6 +24,7 @@ interface CatalogInfo {
 }
 
 export default function Catalog() {
+  const hiddenCatalogCategorySlugs = new Set(["parkovoe"]);
   const isMobile = useIsMobile();
   const [searchParams] = useSearch();
   const searchObj = new URLSearchParams(searchParams);
@@ -49,12 +51,24 @@ export default function Catalog() {
     search: deferredSearch.trim() || undefined,
     categoryId: selectedCategory,
   });
+  const visibleCategories = categories.filter((category) => !hiddenCatalogCategorySlugs.has(category.slug));
   const descProduct = products.find(p => p.id === descProductId) ?? null;
   const { data: catalog } = useQuery<CatalogInfo>({
     queryKey: ["catalog"],
     queryFn: async () => (await fetch("/api/catalog")).json(),
     staleTime: 5 * 60 * 1000,
   });
+
+  useEffect(() => {
+    if (selectedCategory === undefined) {
+      return;
+    }
+
+    const isVisibleCategory = visibleCategories.some((category) => category.id === selectedCategory);
+    if (!isVisibleCategory) {
+      setSelectedCategory(undefined);
+    }
+  }, [selectedCategory, visibleCategories]);
 
   async function handleDownloadSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -242,7 +256,7 @@ export default function Catalog() {
                 >
                   Все категории
                 </button>
-                {categories.map((cat) => (
+                {visibleCategories.map((cat) => (
                   <button
                     key={cat.id}
                     onClick={() => {
@@ -275,13 +289,11 @@ export default function Catalog() {
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
               {products.map((product) => (
                 <Link key={product.id} href={`/catalog/${product.id}`} className="group flex flex-col border border-border bg-card hover-elevate h-full [content-visibility:auto] [contain-intrinsic-size:540px]">
-                  <div className="aspect-square overflow-hidden flex items-center justify-center border-b border-border relative bg-[#1a1a1a]">
-                    {product.imageUrl ? (
-                      <img src={product.imageUrl} alt={product.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform" loading="lazy" decoding="async" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-[#555] font-mono text-xs">Нет фото</div>
-                    )}
-                  </div>
+                  <ProductCardImageCarousel
+                    imageUrl={product.imageUrl}
+                    images={product.images ?? []}
+                    name={product.name}
+                  />
                   <div className="p-4 flex-1 flex flex-col">
                     <div className="text-xs font-mono text-muted-foreground mb-2">{product.sku}</div>
                     <h3 className="font-serif font-bold text-sm uppercase leading-tight mb-2 flex-1 group-hover:text-accent transition-colors">{product.name}</h3>

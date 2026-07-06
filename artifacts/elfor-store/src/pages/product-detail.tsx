@@ -7,6 +7,7 @@ import { useParams, Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCart } from "@/hooks/use-cart";
+import { hasDarkBackgroundImage, sortProductImages } from "@/lib/product-images";
 import { useState, useEffect, useCallback } from "react";
 import { ShoppingCart, Check, ChevronRight, GitCompareArrows, Calculator, X, ZoomIn } from "lucide-react";
 import { useComparison } from "@/hooks/use-comparison";
@@ -138,32 +139,43 @@ export default function ProductDetail() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-12 mb-10 sm:mb-16">
         {/* Images Gallery */}
         {(() => {
-          const extraImages = (product.images ?? []) as string[];
-          const allImages = [
-            ...(product.imageUrl ? [product.imageUrl] : []),
+          const extraImages = ((product.images ?? []) as string[]).map((url) => resolveStorageUrl(url));
+          const allImages = sortProductImages([
+            ...(product.imageUrl ? [resolveStorageUrl(product.imageUrl)] : []),
             ...extraImages,
-          ];
+          ]);
           const activeImg = allImages[activeImageIdx] ?? null;
-          const isStorageImg = activeImg?.startsWith("/api/storage/");
+          const hasDarkBackground = activeImg ? hasDarkBackgroundImage(activeImg) : false;
+          const isReducedImage = hasDarkBackground;
 
           return (
             <div className="flex flex-col gap-3">
               {/* Main image */}
               <div className="flex justify-center items-start">
                 <div
-                  className={`border border-border overflow-hidden w-fit relative group ${isStorageImg ? "bg-[#1a1a1a]" : "bg-white"} ${activeImg ? "cursor-zoom-in" : ""}`}
-                  style={{ minWidth: 160, minHeight: 160 }}
+                  className={`border border-border overflow-hidden relative group w-full ${
+                    hasDarkBackground ? "max-w-[520px] bg-[#1a1a1a]" : "max-w-[620px] bg-white"
+                  } ${activeImg ? "cursor-zoom-in" : ""}`}
+                  style={{ minHeight: 160 }}
                   onClick={() => activeImg && setLightboxOpen(true)}
                 >
                   {activeImg ? (
                     <>
-                      <img
-                        src={activeImg}
-                        alt={product.name}
-                        className={`block max-h-[480px] max-w-full w-auto h-auto transition-transform duration-300 group-hover:scale-[1.02] ${isStorageImg ? "" : "mix-blend-multiply"}`}
-                        decoding="async"
-                        fetchPriority="high"
-                      />
+                      <div
+                        className={`flex items-center justify-center ${
+                          isReducedImage ? "px-4 py-4 sm:px-6 sm:py-5" : "px-3 py-3 sm:px-4 sm:py-4"
+                        }`}
+                      >
+                        <img
+                          src={activeImg}
+                          alt={product.name}
+                          className={`block max-w-full w-auto h-auto transition-transform duration-300 ${
+                            isReducedImage ? "group-hover:scale-100 max-h-[360px] sm:max-h-[420px] max-w-[88%]" : "group-hover:scale-[1.02] max-h-[440px] sm:max-h-[480px] mix-blend-multiply"
+                          }`}
+                          decoding="async"
+                          fetchPriority="high"
+                        />
+                      </div>
                       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200 flex items-center justify-center">
                         <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black/50 rounded-full p-2">
                           <ZoomIn className="h-5 w-5 text-white" />
@@ -180,17 +192,21 @@ export default function ProductDetail() {
               {allImages.length > 1 && (
                 <div className="flex gap-2 flex-wrap justify-center">
                   {allImages.map((url, idx) => {
-                    const isStorage = url.startsWith("/api/storage/");
+                    const thumbnailHasDarkBackground = hasDarkBackgroundImage(url);
                     return (
                       <button
                         key={idx}
                         onClick={() => setActiveImageIdx(idx)}
-                        className={`border-2 transition-colors overflow-hidden shrink-0 ${activeImageIdx === idx ? "border-accent" : "border-border hover:border-accent/50"} ${isStorage ? "bg-[#1a1a1a]" : "bg-white"}`}
+                        className={`border-2 transition-colors overflow-hidden shrink-0 ${
+                          activeImageIdx === idx ? "border-accent" : "border-border hover:border-accent/50"
+                        } ${thumbnailHasDarkBackground ? "bg-[#1a1a1a]" : "bg-white"}`}
                       >
                         <img
                           src={url}
                           alt={`${product.name} ${idx + 1}`}
-                          className={`h-16 w-16 object-contain ${isStorage ? "" : "mix-blend-multiply"}`}
+                          className={`h-16 w-16 object-contain ${
+                            thumbnailHasDarkBackground ? "p-1" : "mix-blend-multiply"
+                          }`}
                           loading="lazy"
                           decoding="async"
                         />

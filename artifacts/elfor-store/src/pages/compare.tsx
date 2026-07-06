@@ -3,7 +3,7 @@ import { X, ShoppingCart, ArrowLeft, GitCompareArrows } from "lucide-react";
 import { useComparison } from "@/hooks/use-comparison";
 import { useCart } from "@/hooks/use-cart";
 import { Button } from "@/components/ui/button";
-import { cn, formatValueWithUnit } from "@/lib/utils";
+import { cn, formatValueWithUnit, resolveStorageUrl } from "@/lib/utils";
 
 type SpecRow = { key: string; values: (string | null)[] };
 
@@ -98,7 +98,7 @@ export default function Compare() {
                       <div className="aspect-square overflow-hidden border-b border-border bg-[#1a1a1a] flex items-center justify-center">
                         {product.imageUrl ? (
                           <img
-                            src={product.imageUrl}
+                            src={resolveStorageUrl(product.imageUrl)}
                             alt={product.name}
                             className="w-full h-full object-contain hover:scale-105 transition-transform"
                           />
