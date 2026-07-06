@@ -18,6 +18,7 @@ export interface Category {
   /** @nullable */
   imageUrl?: string | null;
   sortOrder?: number;
+  isHidden: boolean;
   createdAt: string;
 }
 
@@ -29,6 +30,7 @@ export interface CategoryInput {
   description?: string;
   imageUrl?: string;
   sortOrder?: number;
+  isHidden?: boolean;
 }
 
 export interface CategoryPatch {
@@ -41,6 +43,7 @@ export interface CategoryPatch {
   /** @nullable */
   imageUrl?: string | null;
   sortOrder?: number;
+  isHidden?: boolean;
 }
 
 export interface PriceTier {
@@ -407,6 +410,10 @@ export interface CalcRequestFileUpdate {
   /** @nullable */
   calcFileUrl?: string | null;
 }
+
+export type ListCategoriesParams = {
+includeHidden?: boolean;
+};
 
 export type ListProductsParams = {
 categoryId?: number;

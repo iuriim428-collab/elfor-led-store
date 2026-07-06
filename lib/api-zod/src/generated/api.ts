@@ -19,6 +19,10 @@ export const HealthCheckResponse = zod.object({
 /**
  * @summary List all categories
  */
+export const ListCategoriesQueryParams = zod.object({
+  "includeHidden": zod.coerce.boolean().optional()
+})
+
 export const ListCategoriesResponseItem = zod.object({
   "id": zod.number(),
   "name": zod.string(),
@@ -26,6 +30,7 @@ export const ListCategoriesResponseItem = zod.object({
   "description": zod.string().nullish(),
   "imageUrl": zod.string().nullish(),
   "sortOrder": zod.number().optional(),
+  "isHidden": zod.boolean(),
   "createdAt": zod.string()
 })
 export const ListCategoriesResponse = zod.array(ListCategoriesResponseItem)
@@ -43,7 +48,8 @@ export const CreateCategoryBody = zod.object({
   "slug": zod.string().min(1),
   "description": zod.string().optional(),
   "imageUrl": zod.string().optional(),
-  "sortOrder": zod.number().optional()
+  "sortOrder": zod.number().optional(),
+  "isHidden": zod.boolean().optional()
 })
 
 
@@ -61,6 +67,7 @@ export const GetCategoryResponse = zod.object({
   "description": zod.string().nullish(),
   "imageUrl": zod.string().nullish(),
   "sortOrder": zod.number().optional(),
+  "isHidden": zod.boolean(),
   "createdAt": zod.string()
 })
 
@@ -81,7 +88,8 @@ export const UpdateCategoryBody = zod.object({
   "slug": zod.string().min(1).optional(),
   "description": zod.string().nullish(),
   "imageUrl": zod.string().nullish(),
-  "sortOrder": zod.number().optional()
+  "sortOrder": zod.number().optional(),
+  "isHidden": zod.boolean().optional()
 })
 
 export const UpdateCategoryResponse = zod.object({
@@ -91,6 +99,7 @@ export const UpdateCategoryResponse = zod.object({
   "description": zod.string().nullish(),
   "imageUrl": zod.string().nullish(),
   "sortOrder": zod.number().optional(),
+  "isHidden": zod.boolean(),
   "createdAt": zod.string()
 })
 

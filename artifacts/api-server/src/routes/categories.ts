@@ -15,9 +15,15 @@ import {
 const router: IRouter = Router();
 
 router.get("/categories", async (req, res): Promise<void> => {
+  const includeHidden = (() => {
+    const raw = Array.isArray(req.query.includeHidden) ? req.query.includeHidden[0] : req.query.includeHidden;
+    return raw === "true" || raw === "1";
+  })();
+
   const rows = await db
     .select()
     .from(categoriesTable)
+    .where(includeHidden ? undefined : eq(categoriesTable.isHidden, false))
     .orderBy(categoriesTable.sortOrder, categoriesTable.createdAt);
   res.json(ListCategoriesResponse.parse(rows.map(r => ({ ...r, createdAt: r.createdAt.toISOString() }))));
 });

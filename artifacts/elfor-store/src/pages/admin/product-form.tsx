@@ -324,7 +324,7 @@ export default function AdminProductForm() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: categories = [] } = useListCategories();
+  const { data: categories = [] } = useListCategories({ includeHidden: true });
   const productId = parseInt(id!);
   const { data: product, isLoading: isLoadingProduct } = useGetProduct(productId, { 
     query: { enabled: isEditing, queryKey: getGetProductQueryKey(productId) } 
