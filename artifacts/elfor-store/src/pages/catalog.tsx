@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useDeferredValue, useEffect, useState } from "react";
 import { useComparison } from "@/hooks/use-comparison";
-import { cn, resolveStorageUrl } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import {
   Dialog,
@@ -21,6 +21,7 @@ import { ProductCardImageCarousel } from "@/components/product-card-image-carous
 interface CatalogInfo {
   objectPath: string | null;
   filename: string | null;
+  isVisible: boolean;
 }
 
 export default function Catalog() {
@@ -43,6 +44,7 @@ export default function Catalog() {
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [requestSent, setRequestSent] = useState(false);
   const [descProductId, setDescProductId] = useState<number | null>(null);
   const { toggleItem, isInComparison, isFull } = useComparison();
 
@@ -52,7 +54,7 @@ export default function Catalog() {
     categoryId: selectedCategory,
   });
   const visibleCategories = categories.filter((category) => !hiddenCatalogCategorySlugs.has(category.slug));
-  const descProduct = products.find(p => p.id === descProductId) ?? null;
+  const descProduct = products.find((p) => p.id === descProductId) ?? null;
   const { data: catalog } = useQuery<CatalogInfo>({
     queryKey: ["catalog"],
     queryFn: async () => (await fetch("/api/catalog")).json(),
@@ -73,15 +75,19 @@ export default function Catalog() {
   async function handleDownloadSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+
     if (!phone.trim() || phone.trim().length < 6) {
       setError("Укажите телефон");
       return;
     }
+
     if (!email.trim() || !email.includes("@")) {
       setError("Укажите корректный email");
       return;
     }
+
     setSubmitting(true);
+
     try {
       await fetch("/api/catalog-leads", {
         method: "POST",
@@ -89,13 +95,16 @@ export default function Catalog() {
         body: JSON.stringify({ phone: phone.trim(), email: email.trim() }),
       });
     } catch {
+      // The lead request is best-effort; the user flow continues.
     } finally {
       setSubmitting(false);
     }
-    setModalOpen(false);
-    setPhone("");
-    setEmail("");
-    if (catalog?.objectPath) {
+
+    if (catalog?.isVisible && catalog?.objectPath) {
+      setModalOpen(false);
+      setPhone("");
+      setEmail("");
+
       const link = document.createElement("a");
       link.href = `/api/storage${catalog.objectPath}`;
       link.download = catalog.filename ?? "ELFOR-catalog.pdf";
@@ -103,12 +112,17 @@ export default function Catalog() {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      return;
     }
+
+    setRequestSent(true);
   }
+
+  const catalogButtonLabel = catalog?.isVisible ? "Скачать каталог PDF" : "Запросить каталог PDF";
+  const catalogSubmitLabel = catalog?.isVisible ? "Скачать" : "Отправить запрос";
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Breadcrumbs */}
       <div className="flex gap-2 text-xs font-mono text-muted-foreground mb-8">
         <Link href="/" className="hover:text-primary">Главная</Link>
         <span>/</span>
@@ -119,11 +133,15 @@ export default function Catalog() {
         <h1 className="text-4xl font-serif font-black uppercase">Каталог</h1>
         {catalog?.objectPath && (
           <button
-            onClick={() => setModalOpen(true)}
+            onClick={() => {
+              setModalOpen(true);
+              setRequestSent(false);
+              setError(null);
+            }}
             className="inline-flex items-center gap-2 px-5 py-3 bg-primary text-primary-foreground font-bold text-sm uppercase tracking-wider hover:bg-accent transition-colors"
           >
             <Download className="h-4 w-4" />
-            Скачать каталог PDF
+            {catalogButtonLabel}
           </button>
         )}
       </div>
@@ -143,96 +161,112 @@ export default function Catalog() {
         </div>
       )}
 
-      {/* Download Modal */}
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent className="rounded-none border border-border bg-background max-w-md p-0 overflow-hidden">
           <div className="bg-primary text-primary-foreground px-6 py-5">
             <DialogHeader>
               <DialogTitle className="font-serif font-black text-xl uppercase tracking-tight">
-                Скачать каталог PDF
+                {catalogButtonLabel}
               </DialogTitle>
               <DialogDescription className="text-primary-foreground/70 font-mono text-sm mt-1">
-                Оставьте контакты — мы пришлём обновления каталога на ваш email
+                {catalog?.isVisible
+                  ? "Оставьте контакты — после этого вы сможете скачать PDF-каталог."
+                  : "Оставьте контакты — после запроса с вами свяжется наш менеджер."}
               </DialogDescription>
             </DialogHeader>
           </div>
 
-          <form onSubmit={handleDownloadSubmit} className="px-6 py-6 flex flex-col gap-4">
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="lead-phone" className="font-mono text-xs uppercase tracking-wider">
-                Телефон <span className="text-accent">*</span>
-              </Label>
-              <Input
-                id="lead-phone"
-                type="tel"
-                placeholder="+7 (999) 000-00-00"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="rounded-none border-border font-mono h-12"
-                required
-              />
-            </div>
-
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="lead-email" className="font-mono text-xs uppercase tracking-wider">
-                Email <span className="text-accent">*</span>
-              </Label>
-              <Input
-                id="lead-email"
-                type="email"
-                placeholder="example@company.ru"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="rounded-none border-border font-mono h-12"
-                required
-              />
-            </div>
-
-            {error && (
-              <p className="text-sm font-mono text-red-600">{error}</p>
-            )}
-
-            <div className="flex gap-3 pt-2">
-              <Button
-                type="submit"
-                disabled={submitting}
-                className="flex-1 rounded-none bg-accent text-white hover:bg-accent/90 font-bold uppercase tracking-wider h-12 gap-2"
-              >
-                {submitting ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Download className="h-4 w-4" />
-                )}
-                Скачать
-              </Button>
+          {requestSent ? (
+            <div className="px-6 py-6 flex flex-col gap-4">
+              <div className="border border-green-600/20 bg-green-600/5 px-4 py-4 text-sm font-mono leading-relaxed">
+                Спасибо! С вами свяжется наш менеджер.
+              </div>
               <Button
                 type="button"
-                variant="outline"
-                onClick={() => setModalOpen(false)}
-                className="rounded-none border-border font-bold uppercase tracking-wider h-12 px-6"
+                onClick={() => {
+                  setModalOpen(false);
+                  setRequestSent(false);
+                  setPhone("");
+                  setEmail("");
+                }}
+                className="w-full rounded-none bg-accent text-white hover:bg-accent/90 font-bold uppercase tracking-wider h-12"
               >
-                Отмена
+                Закрыть
               </Button>
             </div>
+          ) : (
+            <form onSubmit={handleDownloadSubmit} className="px-6 py-6 flex flex-col gap-4">
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="lead-phone" className="font-mono text-xs uppercase tracking-wider">
+                  Телефон <span className="text-accent">*</span>
+                </Label>
+                <Input
+                  id="lead-phone"
+                  type="tel"
+                  placeholder="+7 (999) 000-00-00"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="rounded-none border-border font-mono h-12"
+                  required
+                />
+              </div>
 
-            <p className="text-xs font-mono text-muted-foreground text-center leading-relaxed">
-              Нажимая «Скачать», вы соглашаетесь с&nbsp;
-              <Link href="/privacy" className="underline hover:text-primary">политикой конфиденциальности</Link>
-            </p>
-          </form>
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="lead-email" className="font-mono text-xs uppercase tracking-wider">
+                  Email <span className="text-accent">*</span>
+                </Label>
+                <Input
+                  id="lead-email"
+                  type="email"
+                  placeholder="example@company.ru"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="rounded-none border-border font-mono h-12"
+                  required
+                />
+              </div>
+
+              {error && <p className="text-sm font-mono text-red-600">{error}</p>}
+
+              <div className="flex gap-3 pt-2">
+                <Button
+                  type="submit"
+                  disabled={submitting}
+                  className="flex-1 rounded-none bg-accent text-white hover:bg-accent/90 font-bold uppercase tracking-wider h-12 gap-2"
+                >
+                  {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
+                  {catalogSubmitLabel}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setModalOpen(false)}
+                  className="rounded-none border-border font-bold uppercase tracking-wider h-12 px-6"
+                >
+                  Отмена
+                </Button>
+              </div>
+
+              <p className="text-xs font-mono text-muted-foreground text-center leading-relaxed">
+                Нажимая «{catalogSubmitLabel}», вы соглашаетесь с{" "}
+                <Link href="/privacy" className="underline hover:text-primary">
+                  политикой конфиденциальности
+                </Link>
+              </p>
+            </form>
+          )}
         </DialogContent>
       </Dialog>
 
       <div className="flex flex-col lg:flex-row gap-8">
-        {/* Sidebar */}
         {(!isMobile || filtersOpen) && (
           <aside className="w-full lg:w-64 shrink-0 flex flex-col gap-8">
             <div>
               <h3 className="font-serif font-bold uppercase mb-4 text-sm tracking-widest flex items-center gap-2">
                 <Search className="h-4 w-4" /> Поиск
               </h3>
-              <Input 
-                placeholder="Артикул или название" 
+              <Input
+                placeholder="Артикул или название"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="rounded-none border-border font-mono text-sm h-12"
@@ -276,10 +310,11 @@ export default function Catalog() {
           </aside>
         )}
 
-        {/* Product Grid */}
         <div className="flex-1">
           {isLoading ? (
-            <div className="flex justify-center py-24"><div className="w-8 h-8 border-4 border-accent border-t-transparent rounded-full animate-spin"></div></div>
+            <div className="flex justify-center py-24">
+              <div className="w-8 h-8 border-4 border-accent border-t-transparent rounded-full animate-spin"></div>
+            </div>
           ) : products.length === 0 ? (
             <div className="py-24 text-center border border-border bg-card">
               <h3 className="font-serif font-bold text-xl uppercase mb-2">Товары не найдены</h3>
@@ -288,7 +323,11 @@ export default function Catalog() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
               {products.map((product) => (
-                <Link key={product.id} href={`/catalog/${product.id}`} className="group flex flex-col border border-border bg-card hover-elevate h-full [content-visibility:auto] [contain-intrinsic-size:540px]">
+                <Link
+                  key={product.id}
+                  href={`/catalog/${product.id}`}
+                  className="group flex flex-col border border-border bg-card hover-elevate h-full [content-visibility:auto] [contain-intrinsic-size:540px]"
+                >
                   <ProductCardImageCarousel
                     imageUrl={product.imageUrl}
                     images={product.images ?? []}
@@ -296,36 +335,59 @@ export default function Catalog() {
                   />
                   <div className="p-4 flex-1 flex flex-col">
                     <div className="text-xs font-mono text-muted-foreground mb-2">{product.sku}</div>
-                    <h3 className="font-serif font-bold text-sm uppercase leading-tight mb-2 flex-1 group-hover:text-accent transition-colors">{product.name}</h3>
+                    <h3 className="font-serif font-bold text-sm uppercase leading-tight mb-2 flex-1 group-hover:text-accent transition-colors">
+                      {product.name}
+                    </h3>
                     {(product.fullDescription || product.shortDescription) && (
                       <button
                         className="text-xs font-mono text-accent underline underline-offset-2 hover:opacity-70 transition-opacity mb-3 text-left w-fit"
-                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); setDescProductId(product.id); }}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setDescProductId(product.id);
+                        }}
                       >
                         Описание
                       </button>
                     )}
                     <div className="flex items-end justify-between mt-auto">
                       <div>
-                        {product.oldPrice && <div className="text-xs font-mono line-through text-muted-foreground">{product.oldPrice.toLocaleString("ru-RU")} ₽</div>}
+                        {product.oldPrice && (
+                          <div className="text-xs font-mono line-through text-muted-foreground">
+                            {product.oldPrice.toLocaleString("ru-RU")} ₽
+                          </div>
+                        )}
                         <div className="font-mono font-bold text-lg">{product.price.toLocaleString("ru-RU")} ₽</div>
                       </div>
                       <div className="flex items-center gap-1">
                         <button
-                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleItem(product); }}
-                          title={isInComparison(product.id) ? "Убрать из сравнения" : isFull ? "Максимум 4 товара" : "Добавить к сравнению"}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            toggleItem(product);
+                          }}
+                          title={
+                            isInComparison(product.id)
+                              ? "Убрать из сравнения"
+                              : isFull
+                                ? "Максимум 4 товара"
+                                : "Добавить к сравнению"
+                          }
                           className={cn(
                             "h-10 w-10 flex items-center justify-center border transition-colors",
                             isInComparison(product.id)
                               ? "bg-accent border-accent text-white"
                               : isFull
-                              ? "border-border bg-card text-muted-foreground cursor-not-allowed opacity-50"
-                              : "border-border bg-card text-muted-foreground hover:text-accent hover:border-accent"
+                                ? "border-border bg-card text-muted-foreground cursor-not-allowed opacity-50"
+                                : "border-border bg-card text-muted-foreground hover:text-accent hover:border-accent"
                           )}
                         >
                           <GitCompareArrows className="h-4 w-4" />
                         </button>
-                        <Button size="icon" className="rounded-none border border-border bg-primary text-primary-foreground hover:bg-accent hover:border-accent hover:text-white transition-colors h-10 w-10">
+                        <Button
+                          size="icon"
+                          className="rounded-none border border-border bg-primary text-primary-foreground hover:bg-accent hover:border-accent hover:text-white transition-colors h-10 w-10"
+                        >
                           <ArrowRight className="h-4 w-4" />
                         </Button>
                       </div>

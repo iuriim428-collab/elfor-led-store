@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Upload, FileText, Trash2, Download, AlertCircle, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useAdminAuth } from "@/hooks/use-admin-auth";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
@@ -11,6 +12,7 @@ interface CatalogInfo {
   objectPath: string | null;
   filename: string | null;
   updatedAt: string | null;
+  isVisible: boolean;
 }
 
 async function requestUploadUrl(file: File): Promise<{ uploadURL: string; objectPath: string }> {
@@ -39,6 +41,7 @@ export default function AdminCatalog() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState<string | null>(null);
+  const [togglingVisibility, setTogglingVisibility] = useState(false);
 
   const { data: catalog, isLoading } = useQuery<CatalogInfo>({
     queryKey: ["catalog"],
@@ -47,6 +50,10 @@ export default function AdminCatalog() {
       return res.json();
     },
   });
+
+  async function refreshCatalog() {
+    await queryClient.invalidateQueries({ queryKey: ["catalog"] });
+  }
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -83,7 +90,7 @@ export default function AdminCatalog() {
 
       if (!saveRes.ok) throw new Error("Не удалось сохранить каталог");
 
-      await queryClient.invalidateQueries({ queryKey: ["catalog"] });
+      await refreshCatalog();
       toast({ title: "Каталог загружен", description: `${file.name} успешно опубликован` });
     } catch (err) {
       toast({
@@ -98,16 +105,57 @@ export default function AdminCatalog() {
     }
   }
 
+  async function handleVisibilityChange(checked: boolean) {
+    if (!catalog?.objectPath) {
+      return;
+    }
+
+    setTogglingVisibility(true);
+
+    try {
+      const res = await fetch("/api/catalog", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-password": password ?? "",
+        },
+        body: JSON.stringify({ isVisible: checked }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Не удалось обновить режим каталога");
+      }
+
+      await refreshCatalog();
+      toast({
+        title: checked ? "Каталог доступен для скачивания" : "Каталог переведен в режим запроса",
+        description: checked
+          ? "Клиенты смогут скачать PDF после отправки формы."
+          : "После отправки формы клиент увидит сообщение о звонке менеджера.",
+      });
+    } catch (err) {
+      toast({
+        title: "Ошибка",
+        description: err instanceof Error ? err.message : "Не удалось обновить режим каталога",
+        variant: "destructive",
+      });
+    } finally {
+      setTogglingVisibility(false);
+    }
+  }
+
   async function handleDelete() {
     if (!confirm("Удалить текущий каталог с сайта?")) return;
+
     const res = await fetch("/api/catalog", {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-admin-password": password ?? "" },
       body: JSON.stringify({ objectPath: "", filename: "" }),
     });
+
     if (res.ok) {
-      await queryClient.invalidateQueries({ queryKey: ["catalog"] });
-      toast({ title: "Каталог удалён", description: "Кнопка скачивания скрыта на сайте" });
+      await refreshCatalog();
+      toast({ title: "Каталог удалён", description: "Файл убран из публичной части сайта." });
     }
   }
 
@@ -116,11 +164,10 @@ export default function AdminCatalog() {
       <div>
         <h2 className="text-2xl font-serif font-bold uppercase tracking-wide mb-1">Каталог продукции</h2>
         <p className="text-muted-foreground text-sm">
-          Загрузите PDF-каталог — он появится на сайте как кнопка для скачивания.
+          Загрузите PDF-каталог и выберите режим: мгновенное скачивание или запрос через менеджера.
         </p>
       </div>
 
-      {/* Current catalog status */}
       <div className="border border-border p-6 space-y-4">
         <h3 className="font-semibold uppercase tracking-wider text-sm">Текущий каталог</h3>
 
@@ -139,6 +186,29 @@ export default function AdminCatalog() {
                 )}
               </div>
             </div>
+
+            <div className="border border-border p-4 flex items-start justify-between gap-4">
+              <div className="space-y-1">
+                <div className="font-semibold text-sm uppercase tracking-wider">Режим выдачи каталога</div>
+                <div className="text-sm text-muted-foreground">
+                  {catalog.isVisible
+                    ? "После отправки формы клиент сможет сразу скачать PDF."
+                    : "После отправки формы клиент увидит сообщение, что с ним свяжется менеджер."}
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className={catalog.isVisible ? "text-xs font-bold text-green-700 uppercase" : "text-xs font-bold text-amber-700 uppercase"}>
+                  {catalog.isVisible ? "Доступен" : "По запросу"}
+                </span>
+                <Checkbox
+                  checked={catalog.isVisible}
+                  disabled={togglingVisibility}
+                  onCheckedChange={(checked) => handleVisibilityChange(Boolean(checked))}
+                  className="rounded-none border-border data-[state=checked]:bg-accent data-[state=checked]:border-accent"
+                />
+              </div>
+            </div>
+
             <div className="flex gap-2">
               <a
                 href={`/api/storage${catalog.objectPath}`}
@@ -158,12 +228,11 @@ export default function AdminCatalog() {
         ) : (
           <div className="flex items-center gap-3 text-muted-foreground">
             <AlertCircle className="h-5 w-5 flex-shrink-0" />
-            <span className="text-sm">Каталог ещё не загружен. Кнопка скачивания скрыта на сайте.</span>
+            <span className="text-sm">Каталог ещё не загружен. Сначала загрузите PDF, затем включите нужный режим.</span>
           </div>
         )}
       </div>
 
-      {/* Upload section */}
       <div className="border border-border p-6 space-y-4">
         <h3 className="font-semibold uppercase tracking-wider text-sm">
           {catalog?.objectPath ? "Заменить каталог" : "Загрузить каталог"}
